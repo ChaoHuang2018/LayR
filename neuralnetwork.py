@@ -6,48 +6,67 @@ class NN(object):
     """
     a neural network with relu activation function
     """
-    def __init__(self, res, activation):
-        # activation type
-        activations = activation.split('_')
-        if len(activations) > 1:
-            self.activation = activations[0]
-            self.last_layer_activation = activations[1]
+    def __init__(self, res=None, activation=None, keras=False, model=None):
+        if not keras:
+            # activation type
+            activations = activation.split('_')
+            if len(activations) > 1:
+                self.activation = activations[0]
+                self.last_layer_activation = activations[1]
+            else:
+                self.activation = activation
+                self.last_layer_activation = None
+            # affine mapping of the output
+            self.offset = res[-2]
+            self.scale_factor = res[-1]
+
+            # parse structure of neural networks
+            self.num_of_inputs = int(res[0])
+            self.num_of_outputs = int(res[1])
+            self.num_of_hidden_layers = int(res[2])
+            self.network_structure = np.zeros(self.num_of_hidden_layers + 1,
+                                              dtype=int)
+
+            self.activations = [self.activation] * (self.num_of_hidden_layers + 1)
+            if self.last_layer_activation is not None:
+                self.activations[-1] = self.last_layer_activation
+
+            # pointer is current reading index
+            self.pointer = 3
+
+            # num of neurons of each layer
+            for i in range(self.num_of_hidden_layers):
+                self.network_structure[i] = int(res[self.pointer])
+                self.pointer += 1
+
+            # output layer
+            self.network_structure[-1] = self.num_of_outputs
+
+            # all values from the text file
+            self.param = res
+
+            # store the weights and bias in two lists
+            # self.weights
+            # self.bias
+            self.parse_w_b()
         else:
-            self.activation = activation
-            self.last_layer_activation = None
-        # affine mapping of the output
-        self.offset = res[-2]
-        self.scale_factor = res[-1]
+            params = []
+            self.weights = []
+            self.bias = []
+            for layer in model.layers:
+                params.append(layer.get_weights())  # list of numpy arrays
+            for param in params:
+                if len(param) == 0:
+                    continue
+                else:
+                    self.weights.append(param[0])
+                    self.bias.append(param[1])
+            self.model = model
 
-        # parse structure of neural networks
-        self.num_of_inputs = int(res[0])
-        self.num_of_outputs = int(res[1])
-        self.num_of_hidden_layers = int(res[2])
-        self.network_structure = np.zeros(self.num_of_hidden_layers + 1,
-                                          dtype=int)
-
-        self.activations = [self.activation] * (self.num_of_hidden_layers + 1)
-        if self.last_layer_activation is not None:
-            self.activations[-1] = self.last_layer_activation
-
-        # pointer is current reading index
-        self.pointer = 3
-
-        # num of neurons of each layer
-        for i in range(self.num_of_hidden_layers):
-            self.network_structure[i] = int(res[self.pointer])
-            self.pointer += 1
-
-        # output layer
-        self.network_structure[-1] = self.num_of_outputs
-
-        # all values from the text file
-        self.param = res
-
-        # store the weights and bias in two lists
-        # self.weights
-        # self.bias
-        self.parse_w_b()
+    def keras_model(self, x):
+        if self.model is not None:
+            y = self.model.predict(x)
+            return y
 
     def activate(self, x):
         """
