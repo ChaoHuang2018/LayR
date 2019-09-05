@@ -22,12 +22,12 @@ def nn_controller(filename, activation, keras=False):
         controller = NN_controller.controller
     else:
         # load json and create model
-        json_file = open('model/model.json', 'r')
+        json_file = open('model/' + filename + '.json', 'r')
         loaded_model_json = json_file.read()
         json_file.close()
         loaded_model = model_from_json(loaded_model_json)
         # load weights into new model
-        loaded_model.load_weights('model/model.h5')
+        loaded_model.load_weights('model/' + filename + 'model.h5')
         print("Loaded kera model from disk.")
         NN_controller = NN(keras=True, model=loaded_model)
         controller = NN_controller.keras_model
