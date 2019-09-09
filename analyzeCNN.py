@@ -24,7 +24,7 @@ import copy
 ## layer.type = {'Convolutional', 'Pooling', 'Fully_connected'}
 ## layer.weight = weight if type = 'Fully_connected', n*n indentical matrix otherwise, n is the dimension of the output of the previous layer
 ## layer.bias = bias if type = 'Fully_connected', n*1 zero vector otherwise
-## layer.activation = {'ReLU', 'tanh', 'sigmoid'} if type = 'Fully_connected', 'convolutional' if type = 'Convolutional', {'max', 'average'} if type = 'Pooling'
+## layer.activation = {'ReLU', 'tanh', 'sigmoid'} if type = 'Fully_connected', 'Convolutional' if type = 'Convolutional', {'max', 'average'} if type = 'Pooling'
 
 ##############################################################
 # output range analysis by MILP relaxation for convolutional neural network
