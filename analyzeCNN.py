@@ -21,7 +21,7 @@ import copy
 # Data structure of a neural network
 # NN.type = {'Convolutional', 'Fully_connected'}
 # NN.layers: list of layers
-## layer.type = {'Convolutional', 'Pooling', 'Fully_connected'}
+## layer.type = {'Convolutional', 'Pooling', 'Fully_connected', 'Flatten'}
 ## layer.weight = weight if type = 'Fully_connected', n*n indentical matrix otherwise, n is the dimension of the output of the previous layer
 ## layer.bias = bias if type = 'Fully_connected', n*1 zero vector otherwise
 ## layer.activation = {'ReLU', 'tanh', 'sigmoid'} if type = 'Fully_connected', 'Convolutional' if type = 'Convolutional', {'max', 'average'} if type = 'Pooling'
