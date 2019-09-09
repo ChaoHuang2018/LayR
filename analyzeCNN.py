@@ -17,16 +17,27 @@ import random
 import time
 import copy
 
-
+##############################################################
+# Data structure of a neural network
+# NN.layers: list of layers
+# layer.type = {'Convolutional', 'Pooling', 'Fully_connected'}
+# layer.weight = weight if type = 'Fully_connected', n*n indentical matrix otherwise, n is the dimension of the output of the previous layer
+# layer.bias = bias if type = 'Fully_connected', n*1 zero vector otherwise
+# layer.activation = {'ReLU', 'tanh', 'sigmoid'} if type = 'Fully_connected', 'convolutional' if type = 'Convolutional', {'max', 'average'} if type = 'Pooling'
 
 ##############################################################
-# output range analysis by MILP relaxation
-def output_range_MILP(NN_controller, network_input_box, output_index):
-    weight_all_layer = NN_controller.weights
-    bias_all_layer = NN_controller.bias
-    offset = NN_controller.offset
-    scale_factor = NN_controller.scale_factor
-    activation_all_layer = NN_controller.activations
+# output range analysis by MILP relaxation for convolutional neural network
+def output_range_MILP_CNN(NN, network_input_box, output_index):
+    layers = NN.layers
+
+##############################################################
+# output range analysis by MILP relaxation for fully connected neural network
+def output_range_MILP_simpleNN(NN, network_input_box, output_index):
+    weight_all_layer = NN.weights
+    bias_all_layer = NN.bias
+    offset = NN.offset
+    scale_factor = NN.scale_factor
+    activation_all_layer = NN.activations
 
 
     # initialization of the input range of all the neurons by naive method
