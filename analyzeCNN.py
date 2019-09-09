@@ -19,16 +19,18 @@ import copy
 
 ##############################################################
 # Data structure of a neural network
+# NN.type = {'Convolutional', 'Fully_connected'}
 # NN.layers: list of layers
-# layer.type = {'Convolutional', 'Pooling', 'Fully_connected'}
-# layer.weight = weight if type = 'Fully_connected', n*n indentical matrix otherwise, n is the dimension of the output of the previous layer
-# layer.bias = bias if type = 'Fully_connected', n*1 zero vector otherwise
-# layer.activation = {'ReLU', 'tanh', 'sigmoid'} if type = 'Fully_connected', 'convolutional' if type = 'Convolutional', {'max', 'average'} if type = 'Pooling'
+## layer.type = {'Convolutional', 'Pooling', 'Fully_connected'}
+## layer.weight = weight if type = 'Fully_connected', n*n indentical matrix otherwise, n is the dimension of the output of the previous layer
+## layer.bias = bias if type = 'Fully_connected', n*1 zero vector otherwise
+## layer.activation = {'ReLU', 'tanh', 'sigmoid'} if type = 'Fully_connected', 'convolutional' if type = 'Convolutional', {'max', 'average'} if type = 'Pooling'
 
 ##############################################################
 # output range analysis by MILP relaxation for convolutional neural network
 def output_range_MILP_CNN(NN, network_input_box, output_index):
     layers = NN.layers
+    layers
 
 ##############################################################
 # output range analysis by MILP relaxation for fully connected neural network
@@ -254,7 +256,9 @@ def relaxation_activation_layer(x_in, x_out, z, input_range_all, layer, activati
             return sigmoid_de_right(x)
         elif activation == 'tanh':
             return tanh_de_right(x)
-    
+
+
+    if len(shape)
     constraints = []
     for i in range(weight_j.shape[0]):
         low = input_range_all[j][i][0][0]
