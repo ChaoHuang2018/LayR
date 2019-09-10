@@ -25,141 +25,123 @@ import copy
 ## layer.weight = weight if type = 'Fully_connected', n*n indentical matrix otherwise, n is the dimension of the output of the previous layer
 ## layer.bias = bias if type = 'Fully_connected', n*1 zero vector otherwise
 ## layer.activation = {'ReLU', 'tanh', 'sigmoid'} if type = 'Fully_connected', 'Convolutional' if type = 'Convolutional', {'max', 'average'} if type = 'Pooling'
+# Keep the original properties:
+## size_of_inputs: matrix (n*1 matrix for FC network)
+## size_of_outputs: n*1 matrix
+## num_of_hidden_layers: integer
+## network_structure: matrix (n*1 matrix for FC network/layers)
+## scale_factor: number
+## offset: number
 
 ##############################################################
 # output range analysis by MILP relaxation for convolutional neural network
 def output_range_MILP_CNN(NN, network_input_box, output_index):
     layers = NN.layers
-    layers
+    offset = NN.offset
+    scale_factor = NN.scale_factor
 
 ##############################################################
 # output range analysis by MILP relaxation for fully connected neural network
-def output_range_MILP_simpleNN(NN, network_input_box, output_index):
-    weight_all_layer = NN.weights
-    bias_all_layer = NN.bias
-    offset = NN.offset
-    scale_factor = NN.scale_factor
-    activation_all_layer = NN.activations
+#  network_input_box: list of a two-element list
+def output_range_MILP_FC(NN, network_input_box, output_index):
 
 
     # initialization of the input range of all the neurons by naive method
+    # input range is a list 'matrix'
     input_range_all = []
-    layers = len(bias_all_layer)
     output_range_last_layer = network_input_box
-    for j in range(layers):
-        if j < layers - 1:
-            weight_j = weight_all_layer[j]
+    for i in range(NN.num_of_hidden_layers):
+        # in the output layer, only take the weight of bias of the 'output_index'-th neuron
+        if i < NN.num_of_hidden_layers - 1:
+            weight_i = NN.layers[i].weight
+            bias_i = NN.layers[i].bias
         else:
-            weight_j = np.reshape(weight_all_layer[j][output_index], (1, -1))
-        if j < layers - 1:
-            bias_j = bias_all_layer[j]
-        else:
-            bias_j = np.reshape(bias_all_layer[j][output_index], (1, -1))
-        input_range_layer = neuron_range_layer_basic(weight_j, bias_j, output_range_last_layer, activation_all_layer[j])
+            weight_i = np.reshape(NN.layers.weight[i][output_index], (1, -1))
+            bias_i = np.reshape(NN.layers.bias[i][output_index], (1, -1))
+        
+        input_range_layer = neuron_range_layer_basic(weight_i, bias_i, output_range_last_layer)
         #print(input_range_layer[0][1][0])
         #print('range of layer ' + str(j) + ': ' + str(input_range_layer))
         input_range_all.append(input_range_layer)
-        output_range_last_layer, _ = output_range_layer(weight_j, bias_j, output_range_last_layer, activation_all_layer[j])
+        output_range_last_layer, _ = output_range_layer(weight_i, bias_i, output_range_last_layer, NN.layer[i].activation)
     print("intput range by naive method: " + str([input_range_layer[0][0], input_range_layer[0][1]]))
-    print("Output range by naive method: " + str([(output_range_last_layer[0][0]-offset)*scale_factor, (output_range_last_layer[0][1]-offset)*scale_factor]))
+    print("Output range by naive method: " + str([(output_range_last_layer[0][0]-NN.offset)*NN.scale_factor, (output_range_last_layer[0][1]-NN.offset)*NN.scale_factor]))
 
     layer_index = 1
     neuron_index = 0
     
     #print('Output range by naive test: ' + str([input_range_all[layer_index][neuron_index]]))
     # compute by milp relaxation
-    network_last_input,_ = neuron_input_range(weight_all_layer, bias_all_layer, layers-1, output_index, network_input_box, input_range_all, activation_all_layer)
-    #network_last_input,_ = neuron_input_range(weight_all_layer, bias_all_layer, layer_index, neuron_index, network_input_box, input_range_all, activation_all_layer)
-    print("Output range by MILP relaxation: " + str([(sigmoid(network_last_input[0])-offset)*scale_factor, (sigmoid(network_last_input[1])-offset)*scale_factor]))
+    network_update_input,_ = neuron_input_range_fc(NN, layer_index, neuron_index, network_input_box, input_range_all)
+    print("Output range by MILP relaxation: " + str([(sigmoid(network_update_input[0])-NN.offset)*NN.scale_factor, (sigmoid(network_update_input[1])-NN.offset)*NN.scale_factor]))
 
     range_update = copy.deepcopy(input_range_all)
-    for j in range(layers):
-        for i in range(len(bias_all_layer[j])):
-            _, range_update = neuron_input_range(weight_all_layer, bias_all_layer, layers-1, output_index, network_input_box, range_update, activation_all_layer)
+    for i in range(NN.num_of_hidden_layers):
+        for j in range(network_structure.shape[0]):
+            _, range_update = neuron_input_range_fc(NN, i, j, network_input_box, range_update)
     print(str(range_update[-1]))
-    print(str([(sigmoid(range_update[-1][0][0])-offset)*scale_factor, (sigmoid(range_update[-1][0][1])-offset)*scale_factor]))
 
-    return network_last_input[0], network_last_input[1]
+
+    def activate(activation, x):
+        if activation == 'ReLU':
+            return relu(x)
+        elif activation == 'sigmoid':
+            return sigmoid(x)
+        elif activation == 'tanh':
+            return tanh(x)
+
+    lower_bound = (activate(NN.layers[i].activation, range_update[-1][0][0])-NN.offset)*NN.scale_factor
+    upper_bound = (activate(NN.layers[i].activation, range_update[-1][0][1])-NN.offset)*NN.scale_factor
+    print(str([lower_bound,upper_bound]))
+
+    return lower_bound, upper_bound
 
         
 # Compute the input range for a specific neuron and return the updated input_range_all
 # When layer_index = layers, this function outputs the output range of the neural network
-def neuron_input_range(weights, bias, layer_index, neuron_index, network_input_box, input_range_all, activation_all_layer):
-    weight_all_layer = weights
-    bias_all_layer = bias
-    layers = len(bias_all_layer)
-    width = max([len(b) for b in bias_all_layer])
+def neuron_input_range_fc(NN, layer_index, neuron_index, network_input_box, input_range_all):
+    
+    layers = NN.layers
 
     # define large positive number M to enable Big M method
     M = 10e4
     # variables in the input layer
-    network_in = cp.Variable((len(network_input_box),1))
+    network_in = cp.Variable((NN.num_of_inputs,1))
     # variables in previous layers
-    if layer_index >= 1:
-        x_in = cp.Variable((width, layer_index))
-        x_out = cp.Variable((width, layer_index))
-        z = {}
-        z[0] = cp.Variable((width, layer_index), integer=True)
-        z[1] = cp.Variable((width, layer_index), integer=True)
+    x_in = {}
+    x_out = {}
+    z0 = {}
+    z1 = {}
+    for i in range(layer_index):
+        x_in[i] = cp.Variable((NN.network_structure[i][0], NN.network_structure[i][1]))
+        x_out[i] = cp.Variable((NN.network_structure[i][0], NN.network_structure[i][1]))
+        z0[i] = cp.Variable((NN.network_structure[i][0], NN.network_structure[i][1]), boolean=True)
+        z1[i] = cp.Variable((NN.network_structure[i][0], NN.network_structure[i][1]), boolean=True)
     # variables for the specific neuron
     x_in_neuron = cp.Variable()
 
     constraints = []
+    
     # add constraints for the input layer
-    if layer_index >= 1:
-        constraints += [ 0 <= z[0] ]
-        constraints += [ z[0] <= 1]
-        constraints += [ 0 <= z[1]]
-        constraints += [ z[1] <= 1]
-    for i in range(len(network_input_box)):
+    for i in range(NN.num_of_inputs):
         constraints += [network_in[i,0] >= network_input_box[i][0]]
         constraints += [network_in[i,0] <= network_input_box[i][1]]
 
-        #constraints += [network_in[i,0] == 0.7]
-
-    if layer_index >= 1:
-        #print(x_in[0,0].shape)
-        #print(np.array(weight_all_layer[0]).shape)
-        #print(network_in.shape)
-        #print((np.array(weight_all_layer[0]) @ network_in).shape)
-        #print(bias_all_layer[0].shape)
-        constraints += [x_in[:,0:1] == np.array(weight_all_layer[0]) @ network_in + bias_all_layer[0]]
 
     # add constraints for the layers before the neuron
-    for j in range(layer_index):
-        weight_j = weight_all_layer[j]
-        bias_j = bias_all_layer[j]
+    for i in range(layer_index):
 
         # add constraint for linear transformation between layers
-        if j+1 <= layer_index-1:
-            weight_j_next = weight_all_layer[j+1]
-            bias_j_next = bias_all_layer[j+1]
-            
-            #print(x_in[:,j+1:j+2].shape)
-            #print(weight_j_next.shape)
-            #print(x_out[:,j:j+1].shape)
-            #print(bias_j_next.shape)
-            constraints += [x_in[0:len(bias_j_next),j+1:j+2] == weight_j_next @ x_out[0:len(bias_j),j:j+1] + bias_j_next]
+        weight_i = NN.layers[i].weight
+        bias_i = NN.layers[i].bias
+        if i == 0:
+            constraints += [x_in[i] == weight_i @ network_in + bias_i]
+        else:
+            constraints += [x_in[i] == weight_i @ x_in[i-1] + bias_i]
 
-        # add constraint for sigmoid function relaxation
-        for i in range(weight_j.shape[0]):
-            low = input_range_all[j][i][0][0]
-            upp = input_range_all[j][i][1][0]
-            
-            # define slack integers
-            constraints += [z[0][i,j] + z[1][i,j] == 1]
-            # The triangle constraint for 0<=x<=u
-            constraints += [-x_in[i,j] <= M * (1-z[0][i,j])]
-            constraints += [x_in[i,j] - upp <= M * (1-z[0][i,j])]
-            constraints += [x_out[i,j] - sigmoid(0)*(1-sigmoid(0))*x_in[i,j]-sigmoid(0) <= M * (1-z[0][i,j])]
-            constraints += [x_out[i,j] - sigmoid(upp)*(1-sigmoid(upp))*(x_in[i,j]-upp) - sigmoid(upp) <= M * (1-z[0][i,j])]
-            constraints += [-x_out[i,j] + (sigmoid(upp)-sigmoid(0))/upp*x_in[i,j] + sigmoid(0) <= M * (1-z[0][i,j])]
-            # The triangle constraint for l<=x<=0
-            constraints += [x_in[i,j] <= M * (1-z[1][i,j])]
-            constraints += [-x_in[i,j] + low <= M * (1-z[1][i,j])]
-            constraints += [-x_out[i,j] + sigmoid(0)*(1-sigmoid(0))*x_in[i,j] + sigmoid(0) <= M * (1-z[1][i,j])]
-            constraints += [-x_out[i,j] + sigmoid(low)*(1-sigmoid(low))*(x_in[i,j]-low) + sigmoid(low) <= M * (1-z[1][i,j])]
-            constraints += [x_out[i,j] - (sigmoid(low)-sigmoid(0))/low*x_in[i,j] - sigmoid(0) <= M * (1-z[1][i,j])]
+        # add constraint for activation function relaxation
+        constraints += relaxation_activation_layer_fc(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], activation)
+        
 
     # add constraint for the last layer and the neuron
     weight_neuron = np.reshape(weight_all_layer[layer_index][neuron_index], (1, -1))
@@ -207,7 +189,7 @@ def neuron_input_range(weights, bias, layer_index, neuron_index, network_input_b
 
         
 
-def neuron_range_layer_basic(weight, bias, output_range_last_layer, activation):
+def neuron_range_layer_basic(weight, bias, output_range_last_layer):
     # solving LPs
     neuron_dim = bias.shape[0]
     input_range_box = []
@@ -228,10 +210,9 @@ def neuron_range_layer_basic(weight, bias, output_range_last_layer, activation):
     return input_range_box
 
 ## Constraints of MILP relaxation for different layers
-
-# Layer for Relu/tanh/sigmoid activation 
-def relaxation_activation_layer(x_in, x_out, z, input_range_all, layer, activation):
-    j = layer
+# Relu/tanh/sigmoid activation layer NOT in fully connected layers/network
+def relaxation_activation_layer(x_in, x_out, z0, z1, input_range_all, layer_number, activation):
+    j = layer_number
 
     def activate(activation, x):
         if activation == 'ReLU':
@@ -258,26 +239,56 @@ def relaxation_activation_layer(x_in, x_out, z, input_range_all, layer, activati
             return tanh_de_right(x)
 
 
-    if len(shape)
     constraints = []
-    for i in range(weight_j.shape[0]):
-        low = input_range_all[j][i][0][0]
-        upp = input_range_all[j][i][1][0]
+    
+
+# Relu/tanh/sigmoid activation layer in fully connected layers/network
+def relaxation_activation_layer_fc(x_in, x_out, z0, z1, input_range_layer, activation):
+
+    def activate(activation, x):
+        if activation == 'ReLU':
+            return relu(x)
+        elif activation == 'sigmoid':
+            return sigmoid(x)
+        elif activation == 'tanh':
+            return tanh(x)
+
+    def activate_de_left(activation, x):
+        if activation == 'ReLU':
+            return relu_de_left(x)
+        elif activation == 'sigmoid':
+            return sigmoid_de_left(x)
+        elif activation == 'tanh':
+            return tanh_de_left(x)
+
+    def activate_de_right(activation, x):
+        if activation == 'ReLU':
+            return relu_de_right(x)
+        elif activation == 'sigmoid':
+            return sigmoid_de_right(x)
+        elif activation == 'tanh':
+            return tanh_de_right(x)
+
+
+    constraints = []
+    for i in range(len(input_range_layer)):
+        low = input_range_all[i][0][0]
+        upp = input_range_all[i][1][0]
         
         # define slack integers
-        constraints += [z[0][i,j] + z[1][i,j] == 1]
+        constraints += [z0[i,0] + z1[i,0] == 1]
         # The triangle constraint for 0<=x<=u
-        constraints += [-x_in[i,j] <= M * (1-z[0][i,j])]
-        constraints += [x_in[i,j] - upp <= M * (1-z[0][i,j])]
-        constraints += [x_out[i,j] - activate_de_right(activation,0)*x_in[i,j] - activate(activation,0) <= M * (1-z[0][i,j])]
-        constraints += [x_out[i,j] - activate_de_left(activation,upp)*(x_in[i,j]-upp) - activate(activation,upp) <= M * (1-z[0][i,j])]
-        constraints += [-x_out[i,j] + (activate(activation,upp)-activate(activation,0))/upp*x_in[i,j] + activate(activation,0) <= M * (1-z[0][i,j])]
+        constraints += [-x_in[i,0] <= M * (1-z0[i,0])]
+        constraints += [x_in[i,0] - upp <= M * (1-z0[i,0])]
+        constraints += [x_out[i,0] - activate_de_right(activation,0)*x_in[i,0] - activate(activation,0) <= M * (1-z0[i,0])]
+        constraints += [x_out[i,0] - activate_de_left(activation,upp)*(x_in[i,0]-upp) - activate(activation,upp) <= M * (1-z0[i,0])]
+        constraints += [-x_out[i,0] + (activate(activation,upp)-activate(activation,0))/upp*x_in[i,0] + activate(activation,0) <= M * (1-z0[i,0])]
         # The triangle constraint for l<=x<=0
-        constraints += [x_in[i,j] <= M * (1-z[1][i,j])]
-        constraints += [-x_in[i,j] + low <= M * (1-z[1][i,j])]
-        constraints += [-x_out[i,j] + activate_de_left(activation,0)*x_in[i,j] + activate(activation,0) <= M * (1-z[1][i,j])]
-        constraints += [-x_out[i,j] + activate_de_right(activation,low)*(x_in[i,j]-low) + activate(activation,low) <= M * (1-z[1][i,j])]
-        constraints += [x_out[i,j] - (activate(activation,low)-activate(activation,0))/low*x_in[i,j] - activate(activation,0) <= M * (1-z[1][i,j])]
+        constraints += [x_in[i,0] <= M * (1-z1[i,0])]
+        constraints += [-x_in[i,0] + low <= M * (1-z1[i,0])]
+        constraints += [-x_out[i,0] + activate_de_left(activation,0)*x_in[i,0] + activate(activation,0) <= M * (1-z1[i,0])]
+        constraints += [-x_out[i,0] + activate_de_right(activation,low)*(x_in[i,0]-low) + activate(activation,low) <= M * (1-z1[i,0])]
+        constraints += [x_out[i,0] - (activate(activation,low)-activate(activation,0))/low*x_in[i,0] - activate(activation,0) <= M * (1-z1[i,0])]
     return constraints
     
 
