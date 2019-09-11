@@ -24,7 +24,11 @@ import copy
 ## layer.type = {'Convolutional', 'Pooling', 'Fully_connected', 'Flatten'}
 ## layer.weight = weight if type = 'Fully_connected', n*n indentical matrix otherwise, n is the dimension of the output of the previous layer
 ## layer.bias = bias if type = 'Fully_connected', n*1 zero vector otherwise
+## layer.kernal: only for type = 'Convolutional'
+## layer.bias: only for type = 'Convolutional'
+## layer.stride: only for type = 'Convolutional'
 ## layer.activation = {'ReLU', 'tanh', 'sigmoid'} if type = 'Fully_connected', 'Convolutional' if type = 'Convolutional', {'max', 'average'} if type = 'Pooling'
+## layer.filter_size: only for type = 'Pooling'
 # Keep the original properties:
 ## size_of_inputs: matrix (n*1 matrix for FC network)
 ## size_of_outputs: n*1 matrix
@@ -140,7 +144,7 @@ def neuron_input_range_fc(NN, layer_index, neuron_index, network_input_box, inpu
             constraints += [x_in[i] == weight_i @ x_in[i-1] + bias_i]
 
         # add constraint for activation function relaxation
-        constraints += relaxation_activation_layer_fc(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], activation)
+        constraints += relaxation_activation_layer(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], activation)
         
 
     # add constraint for the last layer and the neuron
@@ -210,9 +214,34 @@ def neuron_range_layer_basic(weight, bias, output_range_last_layer):
     return input_range_box
 
 ## Constraints of MILP relaxation for different layers
-# Relu/tanh/sigmoid activation layer NOT in fully connected layers/network
-def relaxation_activation_layer(x_in, x_out, z0, z1, input_range_all, layer_number, activation):
-    j = layer_number
+# convolutional layer
+def relaxation_convolutional_layer(x_in, x_out, kernal, bias, stride):
+    constraints = []
+    for i in range(0, x_in.shape[0]-kernal.shape[0]+1, stride):
+        for j in range(0, x_in.shape[1]-kernal.shape[1]+1, stride):
+            temp_in = cp.vec(x_in[i:i+kernal.shape[0],j:j+kernal.shape[1]])
+            temp_kernal = cp.vec(kernal)
+            constraints += [temp_kernal @ temp_in + bias == x_out[i,j]]
+    return constraints
+
+
+# pooling layer
+def relaxation_pooling_layer(x_in, x_out, filter_size, pooling_type):
+    constraints = []
+    if pooling_type == 'max':    
+        for i in range(round(x_in.shape[0]/filter_size[0])):
+            for j in range(round(x_in.shape[1]/filter_size[1])):
+            constraints += [cp.max(x_in[i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1)]) == x_out[i,j]]
+    if pooling_type == 'average':    
+        for i in range(round(x_in.shape[0]/filter_size[0])):
+            for j in range(round(x_in.shape[1]/filter_size[1])):
+            constraints += [cp.sum(x_in[i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1)])/(filter_size[0]*filter_size[1]) == x_out[i,j]]
+    return constraints
+
+
+# Relu/tanh/sigmoid activation layer
+# input_range_layer is a matrix of two-element lists
+def relaxation_activation_layer(x_in, x_out, z0, z1, input_range_layer, activation):
 
     def activate(activation, x):
         if activation == 'ReLU':
@@ -241,54 +270,25 @@ def relaxation_activation_layer(x_in, x_out, z0, z1, input_range_all, layer_numb
 
     constraints = []
     
-
-# Relu/tanh/sigmoid activation layer in fully connected layers/network
-def relaxation_activation_layer_fc(x_in, x_out, z0, z1, input_range_layer, activation):
-
-    def activate(activation, x):
-        if activation == 'ReLU':
-            return relu(x)
-        elif activation == 'sigmoid':
-            return sigmoid(x)
-        elif activation == 'tanh':
-            return tanh(x)
-
-    def activate_de_left(activation, x):
-        if activation == 'ReLU':
-            return relu_de_left(x)
-        elif activation == 'sigmoid':
-            return sigmoid_de_left(x)
-        elif activation == 'tanh':
-            return tanh_de_left(x)
-
-    def activate_de_right(activation, x):
-        if activation == 'ReLU':
-            return relu_de_right(x)
-        elif activation == 'sigmoid':
-            return sigmoid_de_right(x)
-        elif activation == 'tanh':
-            return tanh_de_right(x)
-
-
-    constraints = []
-    for i in range(len(input_range_layer)):
-        low = input_range_all[i][0][0]
-        upp = input_range_all[i][1][0]
-        
-        # define slack integers
-        constraints += [z0[i,0] + z1[i,0] == 1]
-        # The triangle constraint for 0<=x<=u
-        constraints += [-x_in[i,0] <= M * (1-z0[i,0])]
-        constraints += [x_in[i,0] - upp <= M * (1-z0[i,0])]
-        constraints += [x_out[i,0] - activate_de_right(activation,0)*x_in[i,0] - activate(activation,0) <= M * (1-z0[i,0])]
-        constraints += [x_out[i,0] - activate_de_left(activation,upp)*(x_in[i,0]-upp) - activate(activation,upp) <= M * (1-z0[i,0])]
-        constraints += [-x_out[i,0] + (activate(activation,upp)-activate(activation,0))/upp*x_in[i,0] + activate(activation,0) <= M * (1-z0[i,0])]
-        # The triangle constraint for l<=x<=0
-        constraints += [x_in[i,0] <= M * (1-z1[i,0])]
-        constraints += [-x_in[i,0] + low <= M * (1-z1[i,0])]
-        constraints += [-x_out[i,0] + activate_de_left(activation,0)*x_in[i,0] + activate(activation,0) <= M * (1-z1[i,0])]
-        constraints += [-x_out[i,0] + activate_de_right(activation,low)*(x_in[i,0]-low) + activate(activation,low) <= M * (1-z1[i,0])]
-        constraints += [x_out[i,0] - (activate(activation,low)-activate(activation,0))/low*x_in[i,0] - activate(activation,0) <= M * (1-z1[i,0])]
+    for i in range(x_in.shape[0]):
+        for j in range(x_in.shape[1]):
+            low = input_range_layer[i][j][0][0]
+            upp = input_range_layer[i][j][1][0]
+            
+            # define slack integers
+            constraints += [z0[i,j] + z1[i,j] == 1]
+            # The triangle constraint for 0<=x<=u
+            constraints += [-x_in[i,j] <= M * (1-z0[i,j])]
+            constraints += [x_in[i,j] - upp <= M * (1-z0[i,j])]
+            constraints += [x_out[i,j] - activate_de_right(activation,0)*x_in[i,j] - activate(activation,0) <= M * (1-z0[i,j])]
+            constraints += [x_out[i,j] - activate_de_left(activation,upp)*(x_in[i,j]-upp) - activate(activation,upp) <= M * (1-z0[i,j])]
+            constraints += [-x_out[i,j] + (activate(activation,upp)-activate(activation,0))/upp*x_in[i,j] + activate(activation,j) <= M * (1-z0[i,j])]
+            # The triangle constraint for l<=x<=0
+            constraints += [x_in[i,j] <= M * (1-z1[i,j])]
+            constraints += [-x_in[i,j] + low <= M * (1-z1[i,j])]
+            constraints += [-x_out[i,j] + activate_de_left(activation,0)*x_in[i,j] + activate(activation,0) <= M * (1-z1[i,j])]
+            constraints += [-x_out[i,j] + activate_de_right(activation,low)*(x_in[i,0]-low) + activate(activation,low) <= M * (1-z1[i,j])]
+            constraints += [x_out[i,j] - (activate(activation,low)-activate(activation,0))/low*x_in[i,j] - activate(activation,0) <= M * (1-z1[i,j])]
     return constraints
     
 
