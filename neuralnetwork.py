@@ -6,7 +6,7 @@ class NN(object):
     """
     a neural network with relu activation function
     """
-    def __init__(self, res=None, activation=None, keras=False, model=None):
+    def __init__(self, res=None, activation=None, keras=False, model=None, model_json=None):
         if not keras:
             # activation type
             activations = activation.split('_')

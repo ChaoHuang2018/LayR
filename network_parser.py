@@ -29,7 +29,7 @@ def nn_controller(filename, activation, keras=False):
         # load weights into new model
         loaded_model.load_weights('model/' + filename + 'model.h5')
         print("Loaded kera model from disk.")
-        NN_controller = NN(keras=True, model=loaded_model)
+        NN_controller = NN(keras=True, model=loaded_model, model_json=loaded_model_json)
         controller = NN_controller.keras_model
     return controller
 
