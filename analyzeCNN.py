@@ -52,7 +52,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
         if i == NN.num_of_hidden_layers - 1 and NN.layers[i].type == 'Fully_connected':
             weight_i = np.reshape(NN.layers.weight[i][output_index], (1, -1))
             bias_i = np.reshape(NN.layers.bias[i][output_index], (1, -1))
-        else
+        else:
             weight_i = NN.layers[i].weight
             bias_i = NN.layers[i].bias
 
