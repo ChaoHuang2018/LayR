@@ -28,6 +28,7 @@ import copy
 ## layer.stride: only for type = 'Convolutional'
 ## layer.activation = {'ReLU', 'tanh', 'sigmoid'} if type = 'Fully_connected', 'Convolutional' if type = 'Convolutional', {'max', 'average'} if type = 'Pooling'
 ## layer.filter_size: only for type = 'Pooling'
+## layer.dim = m \times n
 # Keep the original properties:
 ## size_of_inputs: matrix (n*1 matrix for FC network)
 ## size_of_outputs: n*1 matrix
@@ -54,7 +55,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
         else
             weight_i = NN.layers[i].weight
             bias_i = NN.layers[i].bias
-        
+
         if NN.layers[i].type == 'Convolutional':
             output_range_layer_i = output_range_convolutional_layer_naive(input_range_layer_i, NN.layers[i].kernal, NN.layers[i].bias, NN.layers[i].stride)
         if NN.layers[i].type == 'Activation':
@@ -81,11 +82,11 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
 
     return [lower_bound, upper_bound]
 
-        
+
 # Compute the input range for a specific neuron and return the updated input_range_all
 # When layer_index = layers, this function outputs the output range of the neural network
 def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, input_range_all):
-    
+
     layers = NN.layers
 
     # define large positive number M to enable Big M method
@@ -106,7 +107,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     x_in_neuron = cp.Variable()
 
     constraints = []
-    
+
     # add constraints for the input layer
     for i in range(NN.size_of_inputs[0]):
         for j in range(NN.size_of_inputs[1]):
@@ -122,35 +123,35 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             if i == 0:
                 constraints += [network_in == x_in[i]]
             else:
-                constraints += [x_in[i] == x_out[i-1]]                
+                constraints += [x_in[i] == x_out[i-1]]
         if NN.layers[i].type == 'Activation':
             constraints += relaxation_activation_layer(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], NN.layers[i].activation)
             if i == 0:
                 constraints += [network_in == x_in[i]]
             else:
-                constraints += [x_in[i] == x_out[i-1]]  
+                constraints += [x_in[i] == x_out[i-1]]
         if NN.layers[i].type == 'Pooling':
             constraints += relaxation_pooling_layer(x_in[i], x_out[i], NN.layers[i].filter_size, NN.layers[i].activation)
             if i == 0:
                 constraints += [network_in == x_in[i]]
             else:
-                constraints += [x_in[i] == x_out[i-1]]  
+                constraints += [x_in[i] == x_out[i-1]]
         if NN.layers[i].type == 'Flatten':
             constraints += relaxation_flatten_layer(x_in[i], x_out[i])
             if i == 0:
                 constraints += [network_in == x_in[i]]
             else:
-                constraints += [x_in[i] == x_out[i-1]]  
+                constraints += [x_in[i] == x_out[i-1]]
         if NN.layers[i].type == 'Fully_connected':
             constraints += relaxation_activation_layer(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], NN.layers[i].activation)
-            # add constraint for linear transformation between layers            
+            # add constraint for linear transformation between layers
             weight_i = NN.layers[i].weight
             bias_i = NN.layers[i].bias
             if i == 0:
                 constraints += [x_in[i] == weight_i @ network_in + bias_i]
             else:
-                constraints += [x_in[i] == weight_i @ x_in[i-1] + bias_i]    
-        
+                constraints += [x_in[i] == weight_i @ x_in[i-1] + bias_i]
+
 
     # add constraint for the last layer and the neuron
     # Notice that we only need to handle activation function layer. For other layers, update the input range of the neuron does not improve the result (which is equivalant in fact)
@@ -170,11 +171,11 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     else:
         print('No need to update the input range of this neuron')
         return input_range_all[layer_index][neuron_index[0]][neuron_index[1]], input_range_all
-        
-  
+
+
     # objective: smallest output of [layer_index, neuron_index]
     objective_min = cp.Minimize(x_in_neuron)
-    
+
     prob_min = cp.Problem(objective_min, constraints)
     prob_min.solve(solver=cp.GUROBI)
 
@@ -203,7 +204,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
 
     input_range_all[layer_index][neuron_index[0]][neuron_index[1]] = [l_neuron, u_neuron]
     return [l_neuron, u_neuron], input_range_all
-    
+
 
 ##############################################################
 # output range analysis by MILP relaxation for fully connected neural network
@@ -223,7 +224,7 @@ def output_range_MILP_FC(NN, network_input_box, output_index):
         else:
             weight_i = np.reshape(NN.layers[i].weight[output_index], (1, -1))
             bias_i = np.reshape(NN.layers[i].bias[output_index], (1, -1))
-        
+
         input_range_layer = input_range_fc_layer_naive(weight_i, bias_i, output_range_last_layer)
         #print(input_range_layer[0][1][0])
         #print('range of layer ' + str(j) + ': ' + str(input_range_layer))
@@ -234,7 +235,7 @@ def output_range_MILP_FC(NN, network_input_box, output_index):
 
     layer_index = 1
     neuron_index = 0
-    
+
     #print('Output range by naive test: ' + str([input_range_all[layer_index][neuron_index]]))
     # compute by milp relaxation
     network_update_input,_ = neuron_input_range_fc(NN, layer_index, neuron_index, network_input_box, input_range_all)
@@ -253,11 +254,11 @@ def output_range_MILP_FC(NN, network_input_box, output_index):
 
     return lower_bound, upper_bound
 
-        
+
 # Compute the input range for a specific neuron and return the updated input_range_all
 # When layer_index = layers, this function outputs the output range of the neural network
 def neuron_input_range_fc(NN, layer_index, neuron_index, network_input_box, input_range_all):
-    
+
     layers = NN.layers
 
     # define large positive number M to enable Big M method
@@ -278,7 +279,7 @@ def neuron_input_range_fc(NN, layer_index, neuron_index, network_input_box, inpu
     x_in_neuron = cp.Variable()
 
     constraints = []
-    
+
     # add constraints for the input layer
     for i in range(NN.num_of_inputs):
         constraints += [network_in[i,0] >= network_input_box[i][0]]
@@ -298,7 +299,7 @@ def neuron_input_range_fc(NN, layer_index, neuron_index, network_input_box, inpu
 
         # add constraint for activation function relaxation
         constraints += relaxation_activation_layer(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], activation)
-        
+
 
     # add constraint for the last layer and the neuron
     weight_neuron = np.reshape(NN.layers[layer_index].weight[neuron_index], (1, -1))
@@ -310,11 +311,11 @@ def neuron_input_range_fc(NN, layer_index, neuron_index, network_input_box, inpu
     if layer_index >= 1:
         constraints += [x_in_neuron == weight_neuron @ x_out[layer_index-1] + bias_neuron]
     else:
-        constraints += [x_in_neuron == weight_neuron @ network_in + bias_neuron]    
-  
+        constraints += [x_in_neuron == weight_neuron @ network_in + bias_neuron]
+
     # objective: smallest output of [layer_index, neuron_index]
     objective_min = cp.Minimize(x_in_neuron)
-    
+
     prob_min = cp.Problem(objective_min, constraints)
     prob_min.solve(solver=cp.GUROBI)
 
@@ -345,16 +346,16 @@ def neuron_input_range_fc(NN, layer_index, neuron_index, network_input_box, inpu
     return [l_neuron, u_neuron], input_range_all
 
 #############################################################################################
-# Derive the input range of a fully-connected layer by        
+# Derive the input range of a fully-connected layer by
 # Only in fully-connect layer, the input of the layer is different of the output of the previous layer
-# 
+#
 def input_range_fc_layer_naive(weight, bias, output_range_last_layer):
     # compute the input range of each neuron by solving LPs
     input_range_layer = []
 
-    # define output variables of the last layer 
+    # define output variables of the last layer
     x_out = cp.Variable(weight.shape[1])
-    # define input variables of the this layer 
+    # define input variables of the this layer
     x_in = cp.Variable(weight.shape[0])
 
 
@@ -364,13 +365,13 @@ def input_range_fc_layer_naive(weight, bias, output_range_last_layer):
     # define constraints: output range of the last layer
     for i in range(weight.shape[0]):
         constraints += [x_out[i] >= output_range_last_layer[i][0][0], x_out[i] <= output_range_last_layer[i][0][1]]
-    
+
     for i in range(weight.shape[0]):
         input_range_layer_i = []
-        
+
         # define objective: smallest output of [layer_index, neuron_index]
         objective_min = cp.Minimize(x_in[i])
-    
+
         prob_min = cp.Problem(objective_min, constraints)
         prob_min.solve(solver=cp.GUROBI)
 
@@ -385,7 +386,7 @@ def input_range_fc_layer_naive(weight, bias, output_range_last_layer):
 
         # define objective: smallest output of [layer_index, neuron_index]
         objective_max = cp.Maximize(x_in[i])
-    
+
         prob_max = cp.Problem(objective_max, constraints)
         prob_max.solve(solver=cp.GUROBI)
 
@@ -397,7 +398,7 @@ def input_range_fc_layer_naive(weight, bias, output_range_last_layer):
         else:
             print('prob_max.status: ' + prob_max.status)
             print('Error: No result for upper bound!')
-            
+
         input_range_layer.append([neuron_i_min, neuron_i_max])
     return input_range_layer
 
@@ -410,8 +411,8 @@ def input_range_flatten_layer_naive(output_range_last_layer):
             # add the j-th neuron
             input_range_layer.append(output_range_last_layer[i][j])
     return input_range_layer
-    
-    
+
+
 
 #############################################################################################
 ## Derive the output ranges of different layers
@@ -419,10 +420,10 @@ def input_range_flatten_layer_naive(output_range_last_layer):
 # Convolutional layer
 def output_range_convolutional_layer_naive(input_range_layer, kernal, bias, stride):
     output_range_layer = []
-    
-    # define input variables of this layer, which are also output variables of the last layer 
+
+    # define input variables of this layer, which are also output variables of the last layer
     x_in = cp.Variable((input_range_layer.shape[0],input_range_layer.shape[1]))
-    # define out variables of the this layer 
+    # define out variables of the this layer
     x_out = cp.Variable((math.floor((input_range_layer.shape[0]-kernal.shape[0]+1)/stride), math.floor((input_range_layer.shape[1]-kernal.shape[1]+1)/stride)))
 
     # define constraints
@@ -443,11 +444,11 @@ def output_range_convolutional_layer_naive(input_range_layer, kernal, bias, stri
 
     # compute the range of each neuron
     for i in range(0, x_in.shape[0]-kernal.shape[0]+1, stride):
-        
+
         output_range_layer_i = []
-        
+
         for j in range(0, x_in.shape[1]-kernal.shape[1]+1, stride):
-            objective_min = cp.Minimize(x_out[i,j])    
+            objective_min = cp.Minimize(x_out[i,j])
             prob_min = cp.Problem(objective_min, constraints)
             prob_min.solve(solver=cp.GUROBI)
 
@@ -460,8 +461,8 @@ def output_range_convolutional_layer_naive(input_range_layer, kernal, bias, stri
                 print('prob_min.status: ' + prob_min.status)
                 print('Error: No result for lower bound!')
 
-            # define objective: smallest output 
-            objective_max = cp.Maximize(x_in[i,j])      
+            # define objective: smallest output
+            objective_max = cp.Maximize(x_in[i,j])
             prob_max = cp.Problem(objective_max, constraints)
             prob_max.solve(solver=cp.GUROBI)
 
@@ -474,17 +475,17 @@ def output_range_convolutional_layer_naive(input_range_layer, kernal, bias, stri
                 print('prob_max.status: ' + prob_max.status)
                 print('Error: No result for upper bound!')
             output_range_layer_i.append([neuron_j_min, neuron_j_max])
-            
+
         output_range_layer.append(output_range_layer_i)
     return output_range_layer
 
 # Pooling layer
 def output_range_pooling_layer_naive(input_range_layer, filter_size, pooling_type):
     output_range_layer = []
-    
-    # define input variables of this layer, which are also output variables of the last layer 
+
+    # define input variables of this layer, which are also output variables of the last layer
     x_in = cp.Variable((input_range_layer.shape[0],input_range_layer.shape[1]))
-    # define out variables of the this layer 
+    # define out variables of the this layer
     x_out = cp.Variable((round(x_in.shape[0]/filter_size[0]), round(x_in.shape[1]/filter_size[1])))
 
     # define constraints
@@ -496,22 +497,22 @@ def output_range_pooling_layer_naive(input_range_layer, filter_size, pooling_typ
             constraints += [x_in[i,j] >= input_range_layer[i][j][0], x_in[i,j] <= input_range_layer[i][j][1]]
 
     # add constraints: convolutional operation
-    if pooling_type == 'max':    
+    if pooling_type == 'max':
         for i in range(round(x_in.shape[0]/filter_size[0])):
             for j in range(round(x_in.shape[1]/filter_size[1])):
             constraints += [cp.max(x_in[i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1)]) == x_out[i,j]]
-    if pooling_type == 'average':    
+    if pooling_type == 'average':
         for i in range(round(x_in.shape[0]/filter_size[0])):
             for j in range(round(x_in.shape[1]/filter_size[1])):
             constraints += [cp.sum(x_in[i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1)])/(filter_size[0]*filter_size[1]) == x_out[i,j]]
 
     # compute the range of each neuron
     for i in range(round(x_in.shape[0]/filter_size[0])):
-        
+
         output_range_layer_i = []
-        
+
         for j in range(round(x_in.shape[1]/filter_size[1])):
-            objective_min = cp.Minimize(x_out[i,j])    
+            objective_min = cp.Minimize(x_out[i,j])
             prob_min = cp.Problem(objective_min, constraints)
             prob_min.solve(solver=cp.GUROBI)
 
@@ -524,8 +525,8 @@ def output_range_pooling_layer_naive(input_range_layer, filter_size, pooling_typ
                 print('prob_min.status: ' + prob_min.status)
                 print('Error: No result for lower bound!')
 
-            # define objective: smallest output 
-            objective_max = cp.Maximize(x_in[i,j])      
+            # define objective: smallest output
+            objective_max = cp.Maximize(x_in[i,j])
             prob_max = cp.Problem(objective_max, constraints)
             prob_max.solve(solver=cp.GUROBI)
 
@@ -538,7 +539,7 @@ def output_range_pooling_layer_naive(input_range_layer, filter_size, pooling_typ
                 print('prob_max.status: ' + prob_max.status)
                 print('Error: No result for upper bound!')
             output_range_layer_i.append([neuron_j_min, neuron_j_max])
-            
+
         output_range_layer.append(output_range_layer_i)
     return output_range_layer
 
@@ -559,14 +560,14 @@ def output_range_activation_layer_naive(input_range_layer, activation):
     output_range_box = []
     for i in range(input_range_layer.shape[0]):
         output_range_box_i = []
-        for j in range(input_range_layer.shape[1]): # input_range_layer.shape[1]=1 for fully-connected layer, input_range_layer.shape[2]=2 for any activation layer            
+        for j in range(input_range_layer.shape[1]): # input_range_layer.shape[1]=1 for fully-connected layer, input_range_layer.shape[2]=2 for any activation layer
             # compute the minimal output
-            neuron_j_min = activate(activation, input_range_layer[i][j][0])               
+            neuron_j_min = activate(activation, input_range_layer[i][j][0])
             # compute the maximal output
             neuron_j_max = activate(activation, input_range_layer[i][j][1])
-            output_range_box_i.append([neuron_j_min,neuron_j_max])                                      
+            output_range_box_i.append([neuron_j_min,neuron_j_max])
         output_range_box.append(output_range_box_i)
-        
+
     return output_range_box
 
 #############################################################################################
@@ -585,11 +586,11 @@ def relaxation_convolutional_layer(x_in, x_out, kernal, bias, stride):
 # pooling layer
 def relaxation_pooling_layer(x_in, x_out, filter_size, pooling_type):
     constraints = []
-    if pooling_type == 'max':    
+    if pooling_type == 'max':
         for i in range(round(x_in.shape[0]/filter_size[0])):
             for j in range(round(x_in.shape[1]/filter_size[1])):
             constraints += [cp.max(x_in[i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1)]) == x_out[i,j]]
-    if pooling_type == 'average':    
+    if pooling_type == 'average':
         for i in range(round(x_in.shape[0]/filter_size[0])):
             for j in range(round(x_in.shape[1]/filter_size[1])):
             constraints += [cp.sum(x_in[i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1)])/(filter_size[0]*filter_size[1]) == x_out[i,j]]
@@ -602,19 +603,19 @@ def relaxation_flatten_layer(x_in, x_out):
         for j in range(x_in.shape[1]):
             constraints += [x_in[i,j] == x_out[i*x_in.shape[0]+j,0]]
     return constraints
-    
+
 
 # Relu/tanh/sigmoid activation layer
 # input_range_layer is a matrix of two-element lists
 def relaxation_activation_layer(x_in, x_out, z0, z1, input_range_layer, activation):
 
     constraints = []
-    
+
     for i in range(x_in.shape[0]):
         for j in range(x_in.shape[1]):
             low = input_range_layer[i][j][0][0]
             upp = input_range_layer[i][j][1][0]
-            
+
             # define slack integers
             constraints += [z0[i,j] + z1[i,j] == 1]
             # The triangle constraint for 0<=x<=u
@@ -630,7 +631,7 @@ def relaxation_activation_layer(x_in, x_out, z0, z1, input_range_layer, activati
             constraints += [-x_out[i,j] + activate_de_right(activation,low)*(x_in[i,0]-low) + activate(activation,low) <= M * (1-z1[i,j])]
             constraints += [x_out[i,j] - (activate(activation,low)-activate(activation,0))/low*x_in[i,j] - activate(activation,0) <= M * (1-z1[i,j])]
     return constraints
-    
+
 
 # uniformly represent the activation function and the derivative
 def activate(activation, x):
