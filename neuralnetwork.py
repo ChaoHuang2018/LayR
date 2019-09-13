@@ -62,6 +62,7 @@ class NN(object):
                     self.weights.append(param[0])
                     self.bias.append(param[1])
             self.model = model
+            self.model_json = model_json
 
     def keras_model(self, x):
         if self.model is not None:
