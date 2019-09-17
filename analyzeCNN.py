@@ -28,12 +28,13 @@ import copy
 ## layer.stride: only for type = 'Convolutional'
 ## layer.activation = {'ReLU', 'tanh', 'sigmoid'} if type = 'Fully_connected', 'Convolutional' if type = 'Convolutional', {'max', 'average'} if type = 'Pooling'
 ## layer.filter_size: only for type = 'Pooling'
-## layer.dim = m \times n
+## layer.input_dim = [m, n], n==1 for fully-connected layer
+## layer.output_dim = [m, n]
 # Keep the original properties:
 ## size_of_inputs: matrix (n*1 matrix for FC network)
 ## size_of_outputs: n*1 matrix
 ## num_of_hidden_layers: integer
-## network_structure: matrix (n*1 matrix for FC network/layers)
+## network_structure: matrix (n*1 matrix for FC network/layers) (change to layer.input/output_dim)
 ## scale_factor: number
 ## offset: number
 
@@ -99,10 +100,15 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     z0 = {}
     z1 = {}
     for i in range(layer_index):
-        x_in[i] = cp.Variable((NN.network_structure[i][0], NN.network_structure[i][1]))
-        x_out[i] = cp.Variable((NN.network_structure[i][0], NN.network_structure[i][1]))
-        z0[i] = cp.Variable((NN.network_structure[i][0], NN.network_structure[i][1]), boolean=True)
-        z1[i] = cp.Variable((NN.network_structure[i][0], NN.network_structure[i][1]), boolean=True)
+        x_in[i] = cp.Variable((NN.layer.input_dim[i][0], NN.layer.input_dim[i][1]))
+        x_out[i] = cp.Variable((NN.layer.output_dim[i][0], NN.layer.output_dim[i][1]))
+        # define slack integer variables only for activation layers and fully-connected layers
+        if NN.layers[i].type == 'Fully_connected' or 'Activation':
+            z0[i] = cp.Variable((NN.input_dim[i][0], NN.input_dim[i][1]), boolean=True)
+            z1[i] = cp.Variable((NN.input_dim[i][0], NN.input_dim[i][1]), boolean=True)
+        else:
+            z0[i] = []
+            z1[i] = []
     # variables for the specific neuron
     x_in_neuron = cp.Variable()
 
@@ -243,7 +249,7 @@ def output_range_MILP_FC(NN, network_input_box, output_index):
 
     range_update = copy.deepcopy(input_range_all)
     for i in range(NN.num_of_hidden_layers):
-        for j in range(network_structure.shape[0]):
+        for j in range(NN.layers.input_dim[0]):
             _, range_update = neuron_input_range_fc(NN, i, j, network_input_box, range_update)
     print(str(range_update[-1]))
 
@@ -271,10 +277,15 @@ def neuron_input_range_fc(NN, layer_index, neuron_index, network_input_box, inpu
     z0 = {}
     z1 = {}
     for i in range(layer_index):
-        x_in[i] = cp.Variable((NN.network_structure[i][0], NN.network_structure[i][1]))
-        x_out[i] = cp.Variable((NN.network_structure[i][0], NN.network_structure[i][1]))
-        z0[i] = cp.Variable((NN.network_structure[i][0], NN.network_structure[i][1]), boolean=True)
-        z1[i] = cp.Variable((NN.network_structure[i][0], NN.network_structure[i][1]), boolean=True)
+        x_in[i] = cp.Variable((NN.input_dim[i][0], NN.input_dim[i][1]))
+        x_out[i] = cp.Variable((NN.output_dim[i][0], NN.output_dim[i][1]))
+        # define slack integer variables only for activation layers and fully-connected layers
+        if NN.layers[i].type == 'Fully_connected':
+            z0[i] = cp.Variable((NN.input_dim[i][0], NN.input_dim[i][1]), boolean=True)
+            z1[i] = cp.Variable((NN.input_dim[i][0], NN.input_dim[i][1]), boolean=True)
+        else:
+            z0[i] = []
+            z1[i] = []
     # variables for the specific neuron
     x_in_neuron = cp.Variable()
 
