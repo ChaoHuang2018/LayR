@@ -91,6 +91,7 @@ class NN(object):
         layers_config = self.config['config']
         for idx, layer in enumerate(self.model.layers):
             layer_tmp = Layer()
+            layer_activation = None
             layer_config = layers_config[idx]
             layer_detail = layer_config['config']
             if layer_config['class_name'] == 'Flatten':
@@ -107,6 +108,12 @@ class NN(object):
                     layer_detail['activation']
                 )
                 layer_tmp._filter_size = layer_detail['filters']
+
+                # Activation layer
+                layer_activation = Layer()
+                layer_activation._type = 'Activation'
+                layer_activation._activation = layer_tmp.activation
+
             elif layer_config['class_name'] == 'Dense':
                 layer_tmp._type = 'Fully_connected'
                 layer_tmp._input_dim = layer.input_shape[1:]
@@ -118,6 +125,8 @@ class NN(object):
                 layer_tmp._weight = params[0]
                 layer_tmp._bias = params[1]
             self.layers.append(layer_tmp)
+            if layer_activation:
+                self.layers.append(layer_activation)
 
     def activation_function(self, activation_type):
         if activation_type == 'relu':
