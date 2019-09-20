@@ -103,7 +103,8 @@ class NN(object):
                 layer_tmp._type = 'Convolutional'
                 layer_tmp._input_dim = layer.input_shape[1:]
                 layer_tmp._output_dim = layer.output_shape[1:]
-                layer_tmp._kernal = np.array(layer_detail['kernel_size'])
+                layer_tmp._kernal = layer.get_weights()[0]
+                layer_tmp._bias = layer.get_weights()[1]
                 layer_tmp._stride = np.array(layer_detail['strides'])[0]
                 layer_tmp._activation = self.activation_function(
                     layer_detail['activation']
