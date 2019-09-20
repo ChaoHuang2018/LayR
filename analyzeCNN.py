@@ -75,7 +75,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
         input_range_layer_i = output_range_layer_i
         output_range_layer_i_last = output_range_layer_i
 
-    # only invoke our approach once to obtain the output range and use the basic refinement degree
+    # only invoke our approach once to obtain the output range with the basic refinement degree
     refinement_degree_all = []
     for i in range(NN.num_of_hidden_layers):
         refinement_degree_layer = []
