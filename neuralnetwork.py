@@ -1,4 +1,3 @@
-import json
 import numpy as np
 from numpy import linalg as LA
 
@@ -65,8 +64,7 @@ class NN(object):
             self.weights = []
             self.bias = []
             self.model = model
-            with open(model_json) as json_file:
-                self.config = json.load(json_file)
+            self.config = model_json
             self.set_type()
             self.set_layer()
             for layer in model.layers:
