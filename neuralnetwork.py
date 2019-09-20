@@ -105,17 +105,20 @@ class NN(object):
                 layer_tmp._output_dim = layer.output_shape[1:]
                 layer_tmp._kernal = layer.get_weights()[0]
                 layer_tmp._bias = layer.get_weights()[1]
-                layer_tmp._stride = np.array(layer_detail['strides'])[0]
+                layer_tmp._stride = layer.strides[0]
                 layer_tmp._activation = self.activation_function(
                     layer_detail['activation']
                 )
-                layer_tmp._filter_size = layer_detail['filters']
+                layer_tmp._filter_size = layer.filters
                 self.layers.append(layer_tmp)
 
                 # Activation layer
                 layer_activation = Layer()
                 layer_activation._type = 'Activation'
                 layer_activation._activation = layer_tmp.activation
+                layer_activation._input_dim, layer_activation._output_dim = (
+                    layer_tmp.output_dim
+                )
                 self.layers.append(layer_activation)
 
             elif layer_config['class_name'] == 'Dense':
@@ -129,6 +132,12 @@ class NN(object):
                 layer_tmp._weight = params[0]
                 layer_tmp._bias = params[1]
                 self.layers.append(layer_tmp)
+
+            elif layer_config['class_name'] == 'MaxPooling2D':
+                layer_tmp._type = 'Pooling'
+                layer_tmp._activation = 'max'
+                layer_tmp._stride = layer.strides[0]
+                layer_tmp._filter_size = layer.pool_size
 
     def activation_function(self, activation_type):
         if activation_type == 'relu':
