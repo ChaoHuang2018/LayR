@@ -1,20 +1,19 @@
 #from .NN_Tracking.code.neuralnetwork import NN
 #import outputCNN as oc
+import time
+import keras
+
 import numpy as np
 import sympy as sp
-import time
+import cvxpy as cp
+
 from network_parser import nn_controller, nn_controller_details
 from numpy import pi, tanh, array, dot
-import cvxpy as cp
 from gurobipy import *
+from analyzeCNN import output_range_MILP_CNN
 #import controller_approximation_lib as cal
 
 #import tensorflow as tf
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
-from keras import backend as K
 
 
 
@@ -29,9 +28,10 @@ input_range = []
 for i in range(NN.layers[0].input_dim[0]):
     input_range_row = []
     for j in range(NN.layers[0].input_dim[1]):
-        input_range_row.append([data[0]-eps, data[1]+eps])
+        input_range_row.append([data[i][j] - eps, data[i][j] + eps])
     input_range.append(input_range_row)
-output_l, output_u = bp.output_range_MILP(NN, input_range, 0)
+print(np.array(input_range).shape)
+output_l, output_u = output_range_MILP_CNN(NN, np.array(input_range), 0)
 
 
 # test cvxpy

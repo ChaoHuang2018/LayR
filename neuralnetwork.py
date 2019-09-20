@@ -98,21 +98,24 @@ class NN(object):
                 layer_tmp._type = 'Flatten'
                 layer_tmp._input_dim = layer.input_shape[1:]
                 layer_tmp._output_dim = layer.output_shape[1:]
+                self.layers.append(layer_tmp)
             elif layer_config['class_name'] == 'Conv2D':
                 layer_tmp._type = 'Convolutional'
                 layer_tmp._input_dim = layer.input_shape[1:]
                 layer_tmp._output_dim = layer.output_shape[1:]
-                layer_tmp._kernal = layer_detail['kernel_size']
-                layer_tmp._stride = layer_detail['strides']
+                layer_tmp._kernal = np.array(layer_detail['kernel_size'])
+                layer_tmp._stride = np.array(layer_detail['strides'])[0]
                 layer_tmp._activation = self.activation_function(
                     layer_detail['activation']
                 )
                 layer_tmp._filter_size = layer_detail['filters']
+                self.layers.append(layer_tmp)
 
                 # Activation layer
                 layer_activation = Layer()
                 layer_activation._type = 'Activation'
                 layer_activation._activation = layer_tmp.activation
+                self.layers.append(layer_activation)
 
             elif layer_config['class_name'] == 'Dense':
                 layer_tmp._type = 'Fully_connected'
@@ -124,9 +127,7 @@ class NN(object):
                 params = layer.get_weights()
                 layer_tmp._weight = params[0]
                 layer_tmp._bias = params[1]
-            self.layers.append(layer_tmp)
-            if layer_activation:
-                self.layers.append(layer_activation)
+                self.layers.append(layer_tmp)
 
     def activation_function(self, activation_type):
         if activation_type == 'relu':
