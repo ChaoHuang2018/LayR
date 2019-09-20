@@ -1,3 +1,4 @@
+import json
 import numpy as np
 from numpy import linalg as LA
 
@@ -6,7 +7,14 @@ class NN(object):
     """
     a neural network with relu activation function
     """
-    def __init__(self, res=None, activation=None, keras=False, model=None, model_json=None):
+    def __init__(
+        self,
+        res=None,
+        activation=None,
+        keras=False,
+        model=None,
+        model_json=None
+    ):
         if not keras:
             # activation type
             activations = activation.split('_')
@@ -27,7 +35,8 @@ class NN(object):
             self.network_structure = np.zeros(self.num_of_hidden_layers + 1,
                                               dtype=int)
 
-            self.activations = [self.activation] * (self.num_of_hidden_layers + 1)
+            self.activations = ([self.activation] *
+                                (self.num_of_hidden_layers + 1))
             if self.last_layer_activation is not None:
                 self.activations[-1] = self.last_layer_activation
 
@@ -50,9 +59,16 @@ class NN(object):
             # self.bias
             self.parse_w_b()
         else:
+            self.type = None
+            self.layers = None
             params = []
             self.weights = []
             self.bias = []
+            self.model = model
+            with open(model_json) as json_file:
+                self.config = json.load(json_file)
+            self.set_type()
+            self.set_layer()
             for layer in model.layers:
                 params.append(layer.get_weights())  # list of numpy arrays
             for param in params:
@@ -61,8 +77,53 @@ class NN(object):
                 else:
                     self.weights.append(param[0])
                     self.bias.append(param[1])
-            self.model = model
-            self.model_json = model_json
+
+    def set_type(self):
+        if self.config:
+            for class_name in self.config['config']:
+                if class_name['class_name'][:4] == 'Conv':
+                    self.type = 'Convolutional'
+            if not self.type:
+                self.type = 'Fully_connected'
+
+    def set_layer(self):
+        self.layers = []
+        layers_config = self.config['config']
+        for idx, layer in enumerate(self.model.layers):
+            layer_tmp = Layer()
+            layer_config = layers_config[idx]
+            layer_detail = layer_config['config']
+            if layer_config['class_name'] == 'Flatten':
+                layer_tmp._type = 'Flatten'
+                layer_tmp._input_dim = layer.input_shape[1:]
+                layer_tmp._output_dim = layer.output_shape[1:]
+            elif layer_config['class_name'] == 'Conv2D':
+                layer_tmp._type = 'Convolutional'
+                layer_tmp._input_dim = layer.input_shape[1:]
+                layer_tmp._output_dim = layer.output_shape[1:]
+                layer_tmp._kernal = layer_detail['kernel_size']
+                layer_tmp._stride = layer_detail['strides']
+                layer_tmp._activation = self.activation_function(
+                    layer_detail['activation']
+                )
+                layer_tmp._filter_size = layer_detail['filters']
+            elif layer_config['class_name'] == 'Dense':
+                layer_tmp._type = 'Fully_connected'
+                layer_tmp._input_dim = layer.input_shape[1:]
+                layer_tmp._output_dim = layer.output_shape[1:]
+                layer_tmp._activation = self.activation_function(
+                    layer_detail['activation']
+                )
+                params = layer.get_weights()
+                layer_tmp._weight = params[0]
+                layer_tmp._bias = params[1]
+            self.layers.append(layer_tmp)
+
+    def activation_function(self, activation_type):
+        if activation_type == 'relu':
+            return 'ReLU'
+        else:
+            activation_type
 
     def keras_model(self, x):
         if self.model is not None:
@@ -203,3 +264,64 @@ class NN(object):
                 L *= 1/4
 
         return (L - self.offset) * self.scale_factor
+
+
+class Layer(object):
+    """
+    Layer class with following properties:
+        type
+        weight
+        bias
+        kernal
+        stride
+        activation
+        filter_size
+        input_dim
+        output_dim
+    """
+    def __init__(self):
+        self._type = None
+        self._weight = None
+        self._bias = None
+        self._kernal = None
+        self._stride = None
+        self._activation = None
+        self._filter_size = None
+        self._input_dim = None
+        self._output_dim = None
+
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def weight(self):
+        return self._weight
+
+    @property
+    def bias(self):
+        return self._bias
+
+    @property
+    def kernal(self):
+        return self._kernal
+
+    @property
+    def stride(self):
+        return self._stride
+
+    @property
+    def activation(self):
+        return self._activation
+
+    @property
+    def filter_size(self):
+        return self._filter_size
+
+    @property
+    def input_dim(self):
+        return self._input_dim
+
+    @property
+    def output_dim(self):
+        return self._output_dim
