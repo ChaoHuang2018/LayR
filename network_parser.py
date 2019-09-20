@@ -22,6 +22,7 @@ def nn_controller(filename, activation=None, keras=False):
         controller = NN_controller.controller
     else:
         # load json and create model
+        json_filename = 'model/' + filename + '.json'
         json_file = open('model/' + filename + '.json', 'r')
         loaded_model_json = json_file.read()
         json_file.close()
@@ -29,7 +30,11 @@ def nn_controller(filename, activation=None, keras=False):
         # load weights into new model
         loaded_model.load_weights('model/' + filename + '.h5')
         print("Loaded kera model from disk.")
-        NN_controller = NN(keras=True, model=loaded_model, model_json=loaded_model_json)
+        NN_controller = NN(
+            keras=True,
+            model=loaded_model,
+            model_json=json_filename
+        )
         controller = NN_controller.keras_model
     return controller
 
@@ -52,6 +57,7 @@ def nn_controller_details(filename, activation=None, keras=False):
         NN_controller = NN(res, activation)
     else:
         # load json and create model
+        json_filename = 'model/' + filename + '.json'
         json_file = open('model/' + filename + '.json', 'r')
         loaded_model_json = json_file.read()
         json_file.close()
@@ -59,5 +65,9 @@ def nn_controller_details(filename, activation=None, keras=False):
         # load weights into new model
         loaded_model.load_weights('model/' + filename + '.h5')
         print("Loaded kera model from disk.")
-        NN_controller = NN(keras=True, model=loaded_model, model_json=loaded_model_json)
+        NN_controller = NN(
+            keras=True,
+            model=loaded_model,
+            model_json=json_filename
+        )
     return NN_controller

@@ -21,7 +21,10 @@ from keras import backend as K
 # test new approach for estimating sigmoid network's output range
 eps = 0.1
 NN = nn_controller_details('model_CNN',keras=True)
-data = keras.datasets.fashion_mnist[0]
+# the data, split between train and test sets
+fashion_mnist = keras.datasets.fashion_mnist
+(x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
+data = x_test[0]
 input_range = []
 for i in range(NN.layers[0].input_dim[0]):
     input_range_row = []
