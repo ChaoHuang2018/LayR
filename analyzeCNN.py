@@ -75,8 +75,18 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
         input_range_layer_i = output_range_layer_i
         output_range_layer_i_last = output_range_layer_i
 
-    # only invoke our approach once to obtain the output range
-    input_range_last_neuron,_ = neuron_input_range_cnn(NN, num_of_hidden_layers-1, [0,0], network_input_box, input_range_all)
+    # only invoke our approach once to obtain the output range with the basic refinement degree
+    refinement_degree_all = []
+    for i in range(NN.num_of_hidden_layers):
+        refinement_degree_layer = []
+        for j in range(NN.layer[i].input_dim[0]):
+            refinement_degree_layer_row = []
+            for k in range(NN.layer[i].input_dim[1]):
+                refinement_degree_layer_row.append(1)
+            refinement_degree_layer.append(refinement_degree_layer_row)
+        refinement_degree_all.append(refinement_degree_layer)
+                
+    input_range_last_neuron,_ = neuron_input_range_cnn(NN, num_of_hidden_layers-1, [0,0], network_input_box, input_range_all, refinement_degree_all)
 
     lower_bound = (activate(NN.layers[i].activation, input_range_last_neuron[0])-NN.offset)*NN.scale_factor
     upper_bound = (activate(NN.layers[i].activation, input_range_last_neuron[1])-NN.offset)*NN.scale_factor
@@ -84,28 +94,38 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
     return [lower_bound, upper_bound]
 
 
+# define large positive number M to enable Big M method
+M = 10e4
 # Compute the input range for a specific neuron and return the updated input_range_all
 # When layer_index = layers, this function outputs the output range of the neural network
-def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, input_range_all):
+def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, input_range_all, refinement_degree_all):
 
-    layers = NN.layers
-
-    # define large positive number M to enable Big M method
-    M = 10e4
+    layers = NN.layers    
+    
     # variables in the input layer
     network_in = cp.Variable((NN.size_of_inputs[0],NN.size_of_inputs[1]))
     # variables in previous layers
     x_in = {}
     x_out = {}
-    z0 = {}
-    z1 = {}
+    z0 = []
+    z1 = []
     for i in range(layer_index):
-        x_in[i] = cp.Variable((NN.layer.input_dim[i][0], NN.layer.input_dim[i][1]))
-        x_out[i] = cp.Variable((NN.layer.output_dim[i][0], NN.layer.output_dim[i][1]))
+        x_in[i] = cp.Variable((NN.layeys.input_dim[i][0], NN.layers.input_dim[i][1]))
+        x_out[i] = cp.Variable((NN.layers.output_dim[i][0], NN.layers.output_dim[i][1]))
         # define slack integer variables only for activation layers and fully-connected layers
         if NN.layers[i].type == 'Fully_connected' or 'Activation':
-            z0[i] = cp.Variable((NN.input_dim[i][0], NN.input_dim[i][1]), boolean=True)
-            z1[i] = cp.Variable((NN.input_dim[i][0], NN.input_dim[i][1]), boolean=True)
+            z0_layer = []
+            z1_layer = []
+            for j in range(NN.layer[i].input_dim[0]):
+                z0_row = []
+                z1_row = []
+                for k in range(NN.layer[i].input_dim[1]):
+                    z0_row.append(refinement_degree_all[i][j][k],cp.Variable(boolean=True))
+                    z1_row.append(refinement_degree_all[i][j][k],cp.Variable(boolean=True))
+                z0_layer.append(z0_row)
+                z1_layer.append(z1_row)
+            z0.append(z0_layer)
+            z1.append(z1_layer)
         else:
             z0[i] = []
             z1[i] = []
@@ -131,7 +151,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             else:
                 constraints += [x_in[i] == x_out[i-1]]
         if NN.layers[i].type == 'Activation':
-            constraints += relaxation_activation_layer(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], NN.layers[i].activation)
+            constraints += relaxation_activation_layer(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], NN.layers[i].activation, refinement_degree_all[i])
             if i == 0:
                 constraints += [network_in == x_in[i]]
             else:
@@ -149,7 +169,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             else:
                 constraints += [x_in[i] == x_out[i-1]]
         if NN.layers[i].type == 'Fully_connected':
-            constraints += relaxation_activation_layer(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], NN.layers[i].activation)
+            constraints += relaxation_activation_layer(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], NN.layers[i].activation, refinement_degree_all[i])
             # add constraint for linear transformation between layers
             weight_i = NN.layers[i].weight
             bias_i = NN.layers[i].bias
@@ -274,15 +294,25 @@ def neuron_input_range_fc(NN, layer_index, neuron_index, network_input_box, inpu
     # variables in previous layers
     x_in = {}
     x_out = {}
-    z0 = {}
-    z1 = {}
+    z0 = []
+    z1 = []
     for i in range(layer_index):
         x_in[i] = cp.Variable((NN.input_dim[i][0], NN.input_dim[i][1]))
         x_out[i] = cp.Variable((NN.output_dim[i][0], NN.output_dim[i][1]))
         # define slack integer variables only for activation layers and fully-connected layers
-        if NN.layers[i].type == 'Fully_connected':
-            z0[i] = cp.Variable((NN.input_dim[i][0], NN.input_dim[i][1]), boolean=True)
-            z1[i] = cp.Variable((NN.input_dim[i][0], NN.input_dim[i][1]), boolean=True)
+        if NN.layers[i].type == 'Fully_connected' or 'Activation':
+            z0_layer = []
+            z1_layer = []
+            for j in range(NN.layer[i].input_dim[0]):
+                z0_row = []
+                z1_row = []
+                for k in range(NN.layer[i].input_dim[1]):
+                    z0_row.append(refinement_degree_all[i][j][k],cp.Variable(boolean=True))
+                    z1_row.append(refinement_degree_all[i][j][k],cp.Variable(boolean=True))
+                z0_layer.append(z0_row)
+                z1_layer.append(z1_row)
+            z0.append(z0_layer)
+            z1.append(z1_layer)
         else:
             z0[i] = []
             z1[i] = []
@@ -309,7 +339,7 @@ def neuron_input_range_fc(NN, layer_index, neuron_index, network_input_box, inpu
             constraints += [x_in[i] == weight_i @ x_out[i-1] + bias_i]
 
         # add constraint for activation function relaxation
-        constraints += relaxation_activation_layer(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], activation)
+        constraints += relaxation_activation_layer(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], activation, refinement_degree_all[i])
 
 
     # add constraint for the last layer and the neuron
@@ -618,7 +648,7 @@ def relaxation_flatten_layer(x_in, x_out):
 
 # Relu/tanh/sigmoid activation layer
 # input_range_layer is a matrix of two-element lists
-def relaxation_activation_layer(x_in, x_out, z0, z1, input_range_layer, activation):
+def relaxation_activation_layer(x_in, x_out, z0, z1, input_range_layer, activation, refinement_degree_layer):
 
     constraints = []
 
@@ -626,23 +656,53 @@ def relaxation_activation_layer(x_in, x_out, z0, z1, input_range_layer, activati
         for j in range(x_in.shape[1]):
             low = input_range_layer[i][j][0][0]
             upp = input_range_layer[i][j][1][0]
-
-            # define slack integers
-            constraints += [z0[i,j] + z1[i,j] == 1]
-            # The triangle constraint for 0<=x<=u
-            constraints += [-x_in[i,j] <= M * (1-z0[i,j])]
-            constraints += [x_in[i,j] - upp <= M * (1-z0[i,j])]
-            constraints += [x_out[i,j] - activate_de_right(activation,0)*x_in[i,j] - activate(activation,0) <= M * (1-z0[i,j])]
-            constraints += [x_out[i,j] - activate_de_left(activation,upp)*(x_in[i,j]-upp) - activate(activation,upp) <= M * (1-z0[i,j])]
-            constraints += [-x_out[i,j] + (activate(activation,upp)-activate(activation,0))/upp*x_in[i,j] + activate(activation,j) <= M * (1-z0[i,j])]
-            # The triangle constraint for l<=x<=0
-            constraints += [x_in[i,j] <= M * (1-z1[i,j])]
-            constraints += [-x_in[i,j] + low <= M * (1-z1[i,j])]
-            constraints += [-x_out[i,j] + activate_de_left(activation,0)*x_in[i,j] + activate(activation,0) <= M * (1-z1[i,j])]
-            constraints += [-x_out[i,j] + activate_de_right(activation,low)*(x_in[i,0]-low) + activate(activation,low) <= M * (1-z1[i,j])]
-            constraints += [x_out[i,j] - (activate(activation,low)-activate(activation,0))/low*x_in[i,j] - activate(activation,0) <= M * (1-z1[i,j])]
+            # any neuron can only be within a region, thus sum of slack integers should be 1
+            constraints += [cp.sum(z0[i][j])+cp.sum(z1[i][j])==1]
+            if low < 0 and upp > 0:
+                neg_seg = abs(low)/refinement_degree_layer[i][j]                
+                for k in range(refinement_degree_layer[i][j]):
+                    seg_left = low + neg_seg * k
+                    seg_right = low + neg_seg * (k+1)
+                    constraints += segment_relaxation(x_in[i][j], x_out[i][j], z0[i][j][k], seg_left, seg_right, activation, 'convex')
+                pos_seg = abs(upp)/refinement_degree_layer[i][j]
+                for k in range(refinement_degree_layer[i][j]):
+                    seg_left = 0 + neg_seg * k
+                    seg_right = 0 + neg_seg * (k+1)
+                    constraints += segment_relaxation(x_in[i][j], x_out[i][j], z1[i][j][k], seg_left, seg_right, activation, 'concave')    
+            elif upp <= 0:
+                neg_seg = (upp-low)/refinement_degree_layer[i][j]
+                for k in range(refinement_degree_layer[i][j]):
+                    seg_left = low + neg_seg * k
+                    seg_right = low + neg_seg * (k+1)
+                    constraints += segment_relaxation(x_in[i][j], x_out[i][j], z0[i][j][k], seg_left, seg_right, activation, 'convex')
+            else:
+                pos_seg = (upp-low)/refinement_degree_layer[i][j]
+                for k in range(refinement_degree_layer[i][j]):
+                    seg_left = low + neg_seg * k
+                    seg_right = low + neg_seg * (k+1)
+                    constraints += segment_relaxation(x_in[i][j], x_out[i][j], z1[i][j][k], seg_left, seg_right, activation, 'concave')
+            
     return constraints
 
+
+# generate constraints for a neruon over a simple segment
+def segment_relaxation(x_in_neuron, x_out_neuron, z_seg, seg_left, seg_right, activation, conv_type):
+    constraints = []
+    if conv_type = 'convex':
+        # The triangle constraints of seg_right<=0 for ReLU, sigmoid, tanh
+        constraints += [x_in_neuron - seg_right <= M * (1-z_seg)]
+        constraints += [-x_in_neuron + seg_left <= M * (1-z_seg)]
+        constraints += [-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= M * (1-z_seg)]
+        constraints += [-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) <= M * (1-z_seg)]
+        constraints += [x_out_neuron - (activate(activation,seg_left)-activate(activation,seg_right))/(seg_left-seg_right)*(x_in_neuron-seg_right) - activate(activation,seg_right) <= M * (1-z_seg)]
+    if conv_type = 'concave':
+        # The triangle constraints of seg_left>=0 for ReLU, sigmoid, tanh
+        constraints += [x_in_neuron - seg_right <= M * (1-z_seg)]
+        constraints += [-x_in_neuron + seg_left <= M * (1-z_seg)]
+        constraints += [-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) >= M * (1-z_seg)]
+        constraints += [-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) >= M * (1-z_seg)]
+        constraints += [x_out_neuron - (activate(activation,seg_left)-activate(activation,seg_right))/(seg_left-seg_right)*(x_in_neuron-seg_right) - activate(activation,seg_right) >= M * (1-z_seg)]
+    return constraints        
 
 # uniformly represent the activation function and the derivative
 def activate(activation, x):
