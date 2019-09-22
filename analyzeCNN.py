@@ -405,7 +405,7 @@ def input_range_fc_layer_naive(weight, bias, output_range_last_layer):
 
     # define constraints: output range of the last layer
     for i in range(weight.shape[0]):
-        constraints += [x_out[i] >= output_range_last_layer[i][0][0], x_out[i] <= output_range_last_layer[i][0][1]]
+        constraints += [x_out[i] >= output_range_last_layer[i][0], x_out[i] <= output_range_last_layer[i][1]]
 
     for i in range(weight.shape[0]):
         input_range_layer_i = []
@@ -459,229 +459,312 @@ def input_range_flatten_layer_naive(output_range_last_layer):
 ## Derive the output ranges of different layers
 
 # Convolutional layer
-def output_range_convolutional_layer_naive(input_range_layer, kernal, bias, stride):
-    output_range_layer = []
+# input range and output range should be 4-dimesional
+def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bias, stride):
 
-    # define input variables of this layer, which are also output variables of the last layer
-    x_in = cp.Variable((input_range_layer.shape[0],input_range_layer.shape[1]))
+    
+    # define input variables of this layer
+    x_in = {}
+    for s in range layer.input_dim[2]:
+        x_in[s] = cp.Variable((layer.input_dim[0],layer.input_dim[1]))
     # define out variables of the this layer
-    x_out = cp.Variable((math.floor((input_range_layer.shape[0]-kernal.shape[0]+1)/stride), math.floor((input_range_layer.shape[1]-kernal.shape[1]+1)/stride)))
+    x_out = {}
+    for s in range layer.output_dim[2]:
+        x_out = cp.Variable((layer.output_dim[0], layer.output_dim[1]))
 
     # define constraints
     constraints = []
 
     # add constraints: input range of this layer
-    for i in range(x_in.shape[0]):
-        for j in range(x_in.shape[1]):
-            constraints += [x_in[i,j] >= input_range_layer[i][j][0], x_in[i,j] <= input_range_layer[i][j][1]]
+    for s in range layer.input_dim[2]:
+        for i in range(layer.input_dim[0]):
+            for j in range(layer.input_dim[1]):
+                constraints += [x_in[s][i,j] >= input_range_layer[i][j][s][0], x_in[i,j] <= input_range_layer[i][j][s][1]]
 
     # add constraints: convolutional operation
-    for i in range(0, x_in.shape[0]-kernal.shape[0]+1, stride):
-        for j in range(0, x_in.shape[1]-kernal.shape[1]+1, stride):
-            temp_in = cp.vec(x_in[i:i+kernal.shape[0],j:j+kernal.shape[1]])
-            temp_kernal = cp.vec(kernal)
-            constraints += [temp_kernal @ temp_in + bias == x_out[i,j]]
+    for k in range(layer.output_dim[2]):
+        for i in range(0, x_in.shape[0]-kernal.shape[0]+1, stride):
+            for j in range(0, x_in.shape[1]-kernal.shape[1]+1, stride):
+                sum_expr = 0
+                for s in range layer.input_dim[2]:
+                    temp_in = cp.vec(x_in[i:i+kernal.shape[0],j:j+kernal.shape[1],s])
+                    temp_kernal = cp.vec(kernal[:,:,k])
+                    sum_expr = sum_expr + temp_kernal @ temp_in + bias
+                constraints += [sum_expr == x_out[i,j,k]]
 
 
     # compute the range of each neuron
-    for i in range(0, x_in.shape[0]-kernal.shape[0]+1, stride):
+    output_range_layer = [] 
+    
+    for i in range(layer.output_dim[0]):
+        output_range_layer_row = []
+        for j in range(layer.output_dim[1]):
+            output_range_layer_col = []
+            for k in range(layer.output_dim[2]):
+                objective_min = cp.Minimize(x_out[k][i,j])
+                prob_min = cp.Problem(objective_min, constraints)
+                prob_min.solve(solver=cp.GUROBI)
 
-        output_range_layer_i = []
+                if prob_min.status == 'optimal':
+                    neuron_min = prob_min.value
+                    #print('lower bound: ' + str(l_neuron))
+                    #for variable in prob_min.variables():
+                    #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
+                else:
+                    print('prob_min.status: ' + prob_min.status)
+                    print('Error: No result for lower bound!')
 
-        for j in range(0, x_in.shape[1]-kernal.shape[1]+1, stride):
-            objective_min = cp.Minimize(x_out[i,j])
-            prob_min = cp.Problem(objective_min, constraints)
-            prob_min.solve(solver=cp.GUROBI)
+                # define objective: smallest output
+                objective_max = cp.Maximize(x_out[k][i,j])
+                prob_max = cp.Problem(objective_max, constraints)
+                prob_max.solve(solver=cp.GUROBI)
 
-            if prob_min.status == 'optimal':
-                neuron_j_min = prob_min.value
-                #print('lower bound: ' + str(l_neuron))
-                #for variable in prob_min.variables():
-                #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
-            else:
-                print('prob_min.status: ' + prob_min.status)
-                print('Error: No result for lower bound!')
-
-            # define objective: smallest output
-            objective_max = cp.Maximize(x_in[i,j])
-            prob_max = cp.Problem(objective_max, constraints)
-            prob_max.solve(solver=cp.GUROBI)
-
-            if prob_max.status == 'optimal':
-                neuron_j_max = prob_max.value
-                #print('lower bound: ' + str(l_neuron))
-                #for variable in prob_min.variables():
-                #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
-            else:
-                print('prob_max.status: ' + prob_max.status)
-                print('Error: No result for upper bound!')
-            output_range_layer_i.append([neuron_j_min, neuron_j_max])
-
-        output_range_layer.append(output_range_layer_i)
+                if prob_max.status == 'optimal':
+                    neuron_max = prob_max.value
+                    #print('lower bound: ' + str(l_neuron))
+                    #for variable in prob_min.variables():
+                    #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
+                else:
+                    print('prob_max.status: ' + prob_max.status)
+                    print('Error: No result for upper bound!')
+                output_range_layer_col.append([neuron_min, neuron_max])
+            output_range_layer_row.append(output_range_layer_col)
+        output_range_layer.append(output_range_layer_row)
+        
     return output_range_layer
 
 # Pooling layer
-def output_range_pooling_layer_naive(input_range_layer, filter_size, pooling_type):
-    output_range_layer = []
+# input range and output range should be 4-dimesional
+def output_range_pooling_layer_naive(layer, input_range_layer, filter_size, pooling_type):
 
-    # define input variables of this layer, which are also output variables of the last layer
-    x_in = cp.Variable((input_range_layer.shape[0],input_range_layer.shape[1]))
+    # define input variables of this layer
+    x_in = {}
+    for s in range layer.input_dim[2]:
+        x_in[s] = cp.Variable((layer.input_dim[0],layer.input_dim[1]))
     # define out variables of the this layer
-    x_out = cp.Variable((round(x_in.shape[0]/filter_size[0]), round(x_in.shape[1]/filter_size[1])))
+    x_out = {}
+    for s in range layer.output_dim[2]:
+        x_out = cp.Variable((layer.output_dim[0], layer.output_dim[1]))
 
     # define constraints
     constraints = []
 
     # add constraints: input range of this layer
-    for i in range(x_in.shape[0]):
-        for j in range(x_in.shape[1]):
-            constraints += [x_in[i,j] >= input_range_layer[i][j][0], x_in[i,j] <= input_range_layer[i][j][1]]
+    for s in range layer.input_dim[2]:
+        for i in range(layer.input_dim[0]):
+            for j in range(layer.input_dim[1]):
+                constraints += [x_in[s][i,j] >= input_range_layer[i][j][s][0], x_in[i,j] <= input_range_layer[i][j][s][1]]
 
     # add constraints: convolutional operation
     if pooling_type == 'max':
-        for i in range(round(x_in.shape[0]/filter_size[0])):
-            for j in range(round(x_in.shape[1]/filter_size[1])):
-            constraints += [cp.max(x_in[i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1)]) == x_out[i,j]]
+        for s in range layer.output_dim[2]:
+            for i in range(round(x_in.shape[0]/filter_size[0])):
+                for j in range(round(x_in.shape[1]/filter_size[1])):
+                constraints += [cp.max(x_in[s][i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1)]) == x_out[s][i,j]]
     if pooling_type == 'average':
-        for i in range(round(x_in.shape[0]/filter_size[0])):
-            for j in range(round(x_in.shape[1]/filter_size[1])):
-            constraints += [cp.sum(x_in[i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1)])/(filter_size[0]*filter_size[1]) == x_out[i,j]]
+        for s in range layer.output_dim[2]:
+            for i in range(round(x_in.shape[0]/filter_size[0])):
+                for j in range(round(x_in.shape[1]/filter_size[1])):
+                constraints += [cp.sum(x_in[s][i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1)])/(filter_size[0]*filter_size[1]) == x_out[s][i,j]]
 
     # compute the range of each neuron
-    for i in range(round(x_in.shape[0]/filter_size[0])):
+    output_range_layer = [] 
+    
+    for i in range(layer.output_dim[0]):
+        output_range_layer_row = []
+        for j in range(layer.output_dim[1]):
+            output_range_layer_col = []
+            for k in range(layer.output_dim[2]):
+                objective_min = cp.Minimize(x_out[k][i,j])
+                prob_min = cp.Problem(objective_min, constraints)
+                prob_min.solve(solver=cp.GUROBI)
 
-        output_range_layer_i = []
+                if prob_min.status == 'optimal':
+                    neuron_min = prob_min.value
+                    #print('lower bound: ' + str(l_neuron))
+                    #for variable in prob_min.variables():
+                    #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
+                else:
+                    print('prob_min.status: ' + prob_min.status)
+                    print('Error: No result for lower bound!')
 
-        for j in range(round(x_in.shape[1]/filter_size[1])):
-            objective_min = cp.Minimize(x_out[i,j])
-            prob_min = cp.Problem(objective_min, constraints)
-            prob_min.solve(solver=cp.GUROBI)
+                # define objective: smallest output
+                objective_max = cp.Maximize(x_out[k][i,j])
+                prob_max = cp.Problem(objective_max, constraints)
+                prob_max.solve(solver=cp.GUROBI)
 
-            if prob_min.status == 'optimal':
-                neuron_j_min = prob_min.value
-                #print('lower bound: ' + str(l_neuron))
-                #for variable in prob_min.variables():
-                #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
-            else:
-                print('prob_min.status: ' + prob_min.status)
-                print('Error: No result for lower bound!')
-
-            # define objective: smallest output
-            objective_max = cp.Maximize(x_in[i,j])
-            prob_max = cp.Problem(objective_max, constraints)
-            prob_max.solve(solver=cp.GUROBI)
-
-            if prob_max.status == 'optimal':
-                neuron_j_max = prob_max.value
-                #print('lower bound: ' + str(l_neuron))
-                #for variable in prob_min.variables():
-                #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
-            else:
-                print('prob_max.status: ' + prob_max.status)
-                print('Error: No result for upper bound!')
-            output_range_layer_i.append([neuron_j_min, neuron_j_max])
-
-        output_range_layer.append(output_range_layer_i)
+                if prob_max.status == 'optimal':
+                    neuron_max = prob_max.value
+                    #print('lower bound: ' + str(l_neuron))
+                    #for variable in prob_min.variables():
+                    #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
+                else:
+                    print('prob_max.status: ' + prob_max.status)
+                    print('Error: No result for upper bound!')
+                output_range_layer_col.append([neuron_min, neuron_max])
+            output_range_layer_row.append(output_range_layer_col)
+        output_range_layer.append(output_range_layer_row)
     return output_range_layer
 
 # flatten layer: just flatten the output
-def output_range_flatten_layer_naive(input_range_layer):
+def output_range_flatten_layer_naive(layer, input_range_layer):
     output_range_layer = []
-    for i in range(input_range_layer.shape[0]):
-        # consider the i-th row
-        for j in range(input_range_layer.shape[1]):
-            # add the j-th neuron
-            output_range_layer.append(input_range_layer[i][j])
+    for s in range(input_range_layer.shape[2]): 
+        for i in range(input_range_layer.shape[0]):
+            # consider the i-th row
+            for j in range(input_range_layer.shape[1]):
+                # add the j-th neuron
+                output_range_layer.append(input_range_layer[i][j][s])
     return output_range_layer
 
 # general activation layer
-def output_range_activation_layer_naive(input_range_layer, activation):
+def output_range_activation_layer_naive(layer, input_range_layer, activation):
 
-    # compute the out range of each neuron by solving LPs
-    output_range_box = []
-    for i in range(input_range_layer.shape[0]):
-        output_range_box_i = []
-        for j in range(input_range_layer.shape[1]): # input_range_layer.shape[1]=1 for fully-connected layer, input_range_layer.shape[2]=2 for any activation layer
+    if len(layer.input_dim.shape) == 3:
+        # for convolutional layer
+        # compute the out range of each neuron by activation function
+        output_range_layer = []
+        for i in range(input_range_layer.shape[0]):
+            output_range_layer_row = []
+            for j in range(input_range_layer.shape[1]): # input_range_layer.shape[1]=1 for fully-connected layer, input_range_layer.shape[2]=2 for any activation layer
+                output_range_layer_col = []
+                for s in range(input_range_layer.shape[2]):
+                    # compute the minimal output
+                    neuron_min = activate(activation, input_range_layer[i][j][s][0])
+                    # compute the maximal output
+                    neuron_max = activate(activation, input_range_layer[i][j][s][1])
+                    output_range_box_col.append([neuron_min,neuron_max])
+                output_range_layer_row.append(output_range_layer_col)
+            output_range_layer.append(output_range_layer_row)
+    else:
+        # for fully connected layer
+        # compute the out range of each neuron by activation function
+        output_range_layer = []
+        for i in range(input_range_layer.shape[0]):
             # compute the minimal output
-            neuron_j_min = activate(activation, input_range_layer[i][j][0])
+            neuron_min = activate(activation, input_range_layer[i][0])
             # compute the maximal output
-            neuron_j_max = activate(activation, input_range_layer[i][j][1])
-            output_range_box_i.append([neuron_j_min,neuron_j_max])
-        output_range_box.append(output_range_box_i)
+            neuron_max = activate(activation, input_range_layer[i][1])
+            output_range_layer.append([neuron_min,neuron_max])
 
-    return output_range_box
+    return output_range_layer
 
 #############################################################################################
 ## Constraints of MILP relaxation for different layers
 # convolutional layer
+# x_in should be 3-dimensional, x_out should be 3-dimensional
 def relaxation_convolutional_layer(x_in, x_out, kernal, bias, stride):
     constraints = []
-    for i in range(0, x_in.shape[0]-kernal.shape[0]+1, stride):
-        for j in range(0, x_in.shape[1]-kernal.shape[1]+1, stride):
-            temp_in = cp.vec(x_in[i:i+kernal.shape[0],j:j+kernal.shape[1]])
-            temp_kernal = cp.vec(kernal)
-            constraints += [temp_kernal @ temp_in + bias == x_out[i,j]]
+    for k in range(len(kernal)):
+        # for each filter
+        for i in range(0, x_in.shape[0]-kernal.shape[0]+1, stride):
+            for j in range(0, x_in.shape[1]-kernal.shape[1]+1, stride):
+                sum_expr = 0
+                for s in range(x_in.shape[2]):
+                    temp_in = cp.vec(x_in[i:i+kernal.shape[0],j:j+kernal.shape[1],s])
+                    temp_kernal = cp.vec(kernal[:,:,k])
+                    sum_expr = sum_expr + temp_kernal @ temp_in + bias
+                constraints += [sum_expr == x_out[i,j,k]]
     return constraints
 
 
 # pooling layer
+# x_in should be 3-dimensional, x_out should be 3-dimensional
 def relaxation_pooling_layer(x_in, x_out, filter_size, pooling_type):
     constraints = []
     if pooling_type == 'max':
-        for i in range(round(x_in.shape[0]/filter_size[0])):
-            for j in range(round(x_in.shape[1]/filter_size[1])):
-            constraints += [cp.max(x_in[i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1)]) == x_out[i,j]]
+        for s in range(x_in.shape[2]):
+            for i in range(round(x_in.shape[0]/filter_size[0])):
+                for j in range(round(x_in.shape[1]/filter_size[1])):
+                    constraints += [cp.max(x_in[i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1), s]) == x_out[i,j,s]]
     if pooling_type == 'average':
-        for i in range(round(x_in.shape[0]/filter_size[0])):
-            for j in range(round(x_in.shape[1]/filter_size[1])):
-            constraints += [cp.sum(x_in[i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1)])/(filter_size[0]*filter_size[1]) == x_out[i,j]]
+        for s in range(x_in.shape[2]):
+            for i in range(round(x_in.shape[0]/filter_size[0])):
+                for j in range(round(x_in.shape[1]/filter_size[1])):
+                    constraints += [cp.sum(x_in[i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1)])/(filter_size[0]*filter_size[1], s) == x_out[i,j,s]]
     return constraints
 
 # flatten layer
+# x_in should be 3-dimensional, x_out should be 1-dimensional
 def relaxation_flatten_layer(x_in, x_out):
     constraints = []
-    for i in range(x_in.shape[0]):
-        for j in range(x_in.shape[1]):
-            constraints += [x_in[i,j] == x_out[i*x_in.shape[0]+j,0]]
+    k = 0
+    for s in range(x_in.shape[2]):
+        for i in range(x_in.shape[0]):
+            for j in range(x_in.shape[1]):
+                constraints += [x_in[i,j,s] == x_out[k]]
+                k = k + 1
     return constraints
 
 
 # Relu/tanh/sigmoid activation layer
-# input_range_layer is a matrix of two-element lists
+# Note the difference between the activation layer following the convolutional layer and the one in fully-connected layer
 def relaxation_activation_layer(x_in, x_out, z0, z1, input_range_layer, activation, refinement_degree_layer):
 
     constraints = []
 
-    for i in range(x_in.shape[0]):
-        for j in range(x_in.shape[1]):
-            low = input_range_layer[i][j][0][0]
-            upp = input_range_layer[i][j][1][0]
+    if len(x_in.shape) == 3:
+        # if x_in is three-dimensional, which means this is a convolutional layer
+        for s in range(x_in.shape[2]): 
+            for i in range(x_in.shape[0]):
+                for j in range(x_in.shape[1]):
+                    low = input_range_layer[i][j][s][0]
+                    upp = input_range_layer[i][j][s][1]
+                    # any neuron can only be within a region, thus sum of slack integers should be 1
+                    constraints += [cp.sum(z0[i][j][s])+cp.sum(z1[i][j][s])==1]
+                    if low < 0 and upp > 0:
+                        neg_seg = abs(low)/refinement_degree_layer[i][j][s]                
+                        for k in range(refinement_degree_layer[i][j][s]):
+                            seg_left = low + neg_seg * k
+                            seg_right = low + neg_seg * (k+1)
+                            constraints += segment_relaxation(x_in[i][j][s], x_out[i][j][s], z0[i][j][s][k], seg_left, seg_right, activation, 'convex')
+                        pos_seg = abs(upp)/refinement_degree_layer[i][j][s]
+                        for k in range(refinement_degree_layer[i][j][s]):
+                            seg_left = 0 + neg_seg * k
+                            seg_right = 0 + neg_seg * (k+1)
+                            constraints += segment_relaxation(x_in[i][j][s], x_out[i][j][s], z1[i][j][s][k], seg_left, seg_right, activation, 'concave')    
+                    elif upp <= 0:
+                        neg_seg = (upp-low)/refinement_degree_layer[i][j][s]
+                        for k in range(refinement_degree_layer[i][j][s]):
+                            seg_left = low + neg_seg * k
+                            seg_right = low + neg_seg * (k+1)
+                            constraints += segment_relaxation(x_in[i][j][s], x_out[i][j][s], z0[i][j][s][k], seg_left, seg_right, activation, 'convex')
+                    else:
+                        pos_seg = (upp-low)/refinement_degree_layer[i][j][s]
+                        for k in range(refinement_degree_layer[i][j][s]):
+                            seg_left = low + neg_seg * k
+                            seg_right = low + neg_seg * (k+1)
+                            constraints += segment_relaxation(x_in[i][j][s], x_out[i][j][s], z1[i][j][s][k], seg_left, seg_right, activation, 'concave')
+    else:
+        # if x_in is one-dimensional, which means this is a fc layer
+        for i in range(x_in.shape[0]):
+            low = input_range_layer[i][0]
+            upp = input_range_layer[i][1]
             # any neuron can only be within a region, thus sum of slack integers should be 1
-            constraints += [cp.sum(z0[i][j])+cp.sum(z1[i][j])==1]
+            constraints += [cp.sum(z0[i])+cp.sum(z1[i])==1]
             if low < 0 and upp > 0:
-                neg_seg = abs(low)/refinement_degree_layer[i][j]                
-                for k in range(refinement_degree_layer[i][j]):
+                neg_seg = abs(low)/refinement_degree_layer[i]              
+                for k in range(refinement_degree_layer[i]):
                     seg_left = low + neg_seg * k
                     seg_right = low + neg_seg * (k+1)
-                    constraints += segment_relaxation(x_in[i][j], x_out[i][j], z0[i][j][k], seg_left, seg_right, activation, 'convex')
-                pos_seg = abs(upp)/refinement_degree_layer[i][j]
-                for k in range(refinement_degree_layer[i][j]):
+                    constraints += segment_relaxation(x_in[i], x_out[i], z0[i][k], seg_left, seg_right, activation, 'convex')
+                pos_seg = abs(upp)/refinement_degree_layer[i]
+                for k in range(refinement_degree_layer[i]):
                     seg_left = 0 + neg_seg * k
                     seg_right = 0 + neg_seg * (k+1)
-                    constraints += segment_relaxation(x_in[i][j], x_out[i][j], z1[i][j][k], seg_left, seg_right, activation, 'concave')    
+                    constraints += segment_relaxation(x_in[i], x_out[i], z1[i][k], seg_left, seg_right, activation, 'concave')    
             elif upp <= 0:
-                neg_seg = (upp-low)/refinement_degree_layer[i][j]
-                for k in range(refinement_degree_layer[i][j]):
+                neg_seg = (upp-low)/refinement_degree_layer[i]
+                for k in range(refinement_degree_layer[i]):
                     seg_left = low + neg_seg * k
                     seg_right = low + neg_seg * (k+1)
-                    constraints += segment_relaxation(x_in[i][j], x_out[i][j], z0[i][j][k], seg_left, seg_right, activation, 'convex')
+                    constraints += segment_relaxation(x_in[i], x_out[i], z0[i][k], seg_left, seg_right, activation, 'convex')
             else:
-                pos_seg = (upp-low)/refinement_degree_layer[i][j]
-                for k in range(refinement_degree_layer[i][j]):
+                pos_seg = (upp-low)/refinement_degree_layer[i]
+                for k in range(refinement_degree_layer[i]):
                     seg_left = low + neg_seg * k
                     seg_right = low + neg_seg * (k+1)
-                    constraints += segment_relaxation(x_in[i][j], x_out[i][j], z1[i][j][k], seg_left, seg_right, activation, 'concave')
-            
+                    constraints += segment_relaxation(x_in[i], x_out[i], z1[i][k], seg_left, seg_right, activation, 'concave')
     return constraints
 
 
