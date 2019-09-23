@@ -397,13 +397,13 @@ def input_range_fc_layer_naive(weight, bias, output_range_last_layer):
     input_range_layer = []
 
     # define output variables of the last layer
-    x_out = cp.Variable(weight.shape[1])
+    x_out = cp.Variable(weight.shape[0])
     # define input variables of the this layer
-    x_in = cp.Variable(weight.shape[0])
+    x_in = cp.Variable(weight.shape[1])
 
 
     # define constraints: linear transformation by weight and bias
-    constraints = [weight @ x_out + b == x_in]
+    constraints = [weight.T @ x_out + bias == x_in]
 
     # define constraints: output range of the last layer
     for i in range(weight.shape[0]):
