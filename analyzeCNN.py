@@ -677,7 +677,7 @@ def output_range_flatten_layer_naive(layer, input_range_layer):
 # general activation layer
 def output_range_activation_layer_naive(layer, input_range_layer, activation):
 
-    if len(layer.input_dim.shape) == 3:
+    if len(layer.input_dim) == 3:
         # for convolutional layer
         # compute the out range of each neuron by activation function
         output_range_layer = []
@@ -690,7 +690,7 @@ def output_range_activation_layer_naive(layer, input_range_layer, activation):
                     neuron_min = activate(activation, input_range_layer[i][j][s][0])
                     # compute the maximal output
                     neuron_max = activate(activation, input_range_layer[i][j][s][1])
-                    output_range_box_col.append([neuron_min,neuron_max])
+                    output_range_layer_col.append([neuron_min,neuron_max])
                 output_range_layer_row.append(output_range_layer_col)
             output_range_layer.append(output_range_layer_row)
     else:
@@ -704,7 +704,7 @@ def output_range_activation_layer_naive(layer, input_range_layer, activation):
             neuron_max = activate(activation, input_range_layer[i][1])
             output_range_layer.append([neuron_min,neuron_max])
 
-    return output_range_layer
+    return np.array(output_range_layer)
 
 #############################################################################################
 ## Constraints of MILP relaxation for different layers
