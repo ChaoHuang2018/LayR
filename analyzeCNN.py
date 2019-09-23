@@ -476,7 +476,21 @@ def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, 
                 constraints = []
                 sum_expr = 0
                 for s in range(layer.input_dim[2]):
-                    constraints = [x_in[s] >= input_range_layer[i*stride[0]:i*stride[0]+kernal.shape[0],j*stride[1]:j*stride[1]+kernal.shape[1],s,0], x_in[s] <= input_range_layer[input_range_layer[i*stride[0]:i*stride[0]+kernal.shape[0],j*stride[1]:j*stride[1]+kernal.shape[1],s,1]]]
+                    constraints = [
+                        x_in[s] >=
+                        input_range_layer[
+                            i * stride[0] : i * stride[0] + kernal.shape[0],
+                            j * stride[1] : j * stride[1] + kernal.shape[1],
+                            s,
+                            0],
+                        x_in[s] <=
+                        input_range_layer[
+                            i * stride[0] : i * stride[0] + kernal.shape[0],
+                            j * stride[1] : j * stride[1] + kernal.shape[1],
+                            s,
+                            1
+                        ]
+                    ]
                     temp_in = cp.vec(x_in[s][0:kernal.shape[0],0:kernal.shape[1]])
                     temp_kernal = cp.vec(kernal[:,:,s,k])
                     sum_expr = sum_expr + temp_kernal @ temp_in + bias[k]
@@ -484,7 +498,7 @@ def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, 
 
                 objective_min = cp.Minimize(x_out)
                 prob_min = cp.Problem(objective_min, constraints)
-                prob_min.solve(solver=cp.GUROBI)
+                prob_min.solve(solver=cp.GUROBI, verbose=True)
 
                 if prob_min.status == 'optimal':
                     neuron_min = prob_min.value
@@ -601,7 +615,7 @@ def output_range_pooling_layer_naive_v1(layer, input_range_layer, filter_size, p
             for s in range(layer.output_dim[2]):
                 x_in = cp.Variable((filter_size[0],filter_size[1]))
                 x_out = cp.Variable()
-                constraints = [x_in >= input_range_layer[i*stride[0]:i*stride[0]+filter_size[0],j*stride[1]:j*stride[1]+filter_size[1],s,0], x_in <= input_range_layer[i*stride[0]:i*stride[0]+filter_size[0],j*stride[1]:j*stride[1]+filter_size[1],s,1]]]
+                constraints = [x_in >= input_range_layer[i*stride[0]:i*stride[0]+filter_size[0],j*stride[1]:j*stride[1]+filter_size[1],s,0], x_in <= input_range_layer[i*stride[0]:i*stride[0]+filter_size[0],j*stride[1]:j*stride[1]+filter_size[1],s,1]]
                 if pooling_type == 'max':
                     constraints += [cp.max(x_in) == x_out]
                 if pooling_type == 'average':
