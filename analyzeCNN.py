@@ -57,7 +57,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
             weight_i = NN.layers[i].weight
             bias_i = NN.layers[i].bias
 
-        print('iteration: {}'.format(i))
+        print('-------------layer: {}-------------'.format(i))
 
         if NN.layers[i].type == 'Convolutional':
             output_range_layer_i = output_range_convolutional_layer_naive_v1(NN.layers[i], input_range_layer_i, NN.layers[i].kernal, NN.layers[i].bias, NN.layers[i].stride)
