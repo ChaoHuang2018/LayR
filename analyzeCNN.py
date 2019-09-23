@@ -62,14 +62,14 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
         if NN.layers[i].type == 'Convolutional':
             output_range_layer_i = output_range_convolutional_layer_naive_v1(NN.layers[i], input_range_layer_i, NN.layers[i].kernal, NN.layers[i].bias, NN.layers[i].stride)
         if NN.layers[i].type == 'Activation':
-            output_range_layer_i = utput_range_activation_layer_naive(NN.layers[i], input_range_layer, NN.layers[i].activation)
+            output_range_layer_i = output_range_activation_layer_naive(NN.layers[i], input_range_layer_i, NN.layers[i].activation)
         if NN.layers[i].type == 'Pooling':
-            output_range_layer_i = output_range_pooling_layer_naive(NN.layers[i], input_range_layer, NN.layers[i].filter_size, NN.layers[i].activation)
+            output_range_layer_i = output_range_pooling_layer_naive(NN.layers[i], input_range_layer_i, NN.layers[i].filter_size, NN.layers[i].activation)
         if NN.layers[i].type == 'Flatten':
             output_range_layer_i = output_range_flatten_layer_naive(NN.layers[i], input_range_layer_i)
         if NN.layers[i].type == 'Fully_connected':
             input_range_layer_i = input_range_fc_layer_naive(weight_i, bias_i, output_range_layer_i_last)
-            output_range_layer_i = output_range_activation_layer_naive(NN.layers[i], input_range_layer, NN.layers[i].activation)
+            output_range_layer_i = output_range_activation_layer_naive(NN.layers[i], input_range_layer_i, NN.layers[i].activation)
 
 
         input_range_all.append(input_range_layer_i)
