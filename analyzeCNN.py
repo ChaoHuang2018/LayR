@@ -591,6 +591,55 @@ def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bia
     return output_range_layer
 
 # Pooling layer
+def output_range_pooling_layer_naive_v1(layer, input_range_layer, filter_size, pooling_type):
+    output_range_layer = []
+        
+    for i in range(round(x_in.shape[0]/filter_size[0])):
+        output_range_layer_row = []
+        for j in range(round(x_in.shape[1]/filter_size[1])):
+            output_range_layer_col = []
+            for s in range(layer.output_dim[2]):
+                x_in = cp.Variable((filter_size[0],filter_size[1]))
+                x_out = cp.Variable()
+                constraints = [x_in >= input_range_layer[i:i+filter_size[0],j:j+filter_size[1],s,0], x_in <= input_range_layer[i:i+filter_size[0],j:j+filter_size[1],s,0]]
+                if pooling_type == 'max':
+                    constraints += [cp.max(x_in) == x_out]
+                if pooling_type == 'average':
+                    constraints += [cp.sum(x_in)/(filter_size[0]*filter_size[1]) == x_out]
+
+                objective_min = cp.Minimize(x_out)
+                prob_min = cp.Problem(objective_min, constraints)
+                prob_min.solve(solver=cp.GUROBI)
+
+                if prob_min.status == 'optimal':
+                    neuron_min = prob_min.value
+                    #print('lower bound: ' + str(l_neuron))
+                    #for variable in prob_min.variables():
+                    #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
+                else:
+                    print('prob_min.status: ' + prob_min.status)
+                    print('Error: No result for lower bound!')
+
+                # define objective: smallest output
+                objective_max = cp.Maximize(x_out)
+                prob_max = cp.Problem(objective_max, constraints)
+                prob_max.solve(solver=cp.GUROBI)
+
+                if prob_max.status == 'optimal':
+                    neuron_max = prob_max.value
+                    #print('lower bound: ' + str(l_neuron))
+                    #for variable in prob_min.variables():
+                    #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
+                else:
+                    print('prob_max.status: ' + prob_max.status)
+                    print('Error: No result for upper bound!')
+                output_range_layer_col.append([neuron_min, neuron_max])
+            output_range_layer_row.append(output_range_layer_col)
+        output_range_layer.append(output_range_layer_row)
+
+    return np.array(output_range_layer)
+
+# Pooling layer
 # input range and output range should be 4-dimesional
 def output_range_pooling_layer_naive(layer, input_range_layer, filter_size, pooling_type):
 
