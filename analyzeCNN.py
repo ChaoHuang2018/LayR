@@ -409,7 +409,7 @@ def input_range_fc_layer_naive(weight, bias, output_range_last_layer):
     for i in range(weight.shape[0]):
         constraints += [x_out[i] >= output_range_last_layer[i][0], x_out[i] <= output_range_last_layer[i][1]]
 
-    for i in range(weight.shape[0]):
+    for i in range(weight.shape[1]):
         input_range_layer_i = []
 
         # define objective: smallest output of [layer_index, neuron_index]
@@ -443,7 +443,7 @@ def input_range_fc_layer_naive(weight, bias, output_range_last_layer):
             print('Error: No result for upper bound!')
 
         input_range_layer.append([neuron_i_min, neuron_i_max])
-    return input_range_layer
+    return np.array(input_range_layer)
 
 #
 def input_range_flatten_layer_naive(output_range_last_layer):
