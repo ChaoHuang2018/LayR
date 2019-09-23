@@ -26,7 +26,7 @@ fashion_mnist = keras.datasets.fashion_mnist
 data = x_test[0]
 data = data.reshape(data.shape[0], data.shape[1], 1)
 input_range = []
-input_data_dim = NN.layers[0].input_dim
+input_dim = NN.layers[0].input_dim
 for i in range(input_dim[0]):
     input_range_row = []
     for j in range(input_dim[1]):

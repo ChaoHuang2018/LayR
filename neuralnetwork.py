@@ -117,6 +117,7 @@ class NN(object):
                 layer_activation._type = 'Activation'
                 layer_activation._activation = layer_tmp.activation
                 layer_activation._input_dim, layer_activation._output_dim = (
+                    layer_tmp.output_dim,
                     layer_tmp.output_dim
                 )
                 self.layers.append(layer_activation)
@@ -286,6 +287,10 @@ class NN(object):
                 L *= 1/4
 
         return (L - self.offset) * self.scale_factor
+
+    @property
+    def num_of_hidden_layers(self):
+        return len(self.layers)
 
 
 class Layer(object):
