@@ -476,6 +476,12 @@ def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, 
                 constraints = []
                 sum_expr = 0
                 for s in range(layer.input_dim[2]):
+                    print(input_range_layer[
+                            i * stride[0] : i * stride[0] + kernal.shape[0],
+                            j * stride[1] : j * stride[1] + kernal.shape[1],
+                            s,
+                            :
+                            ])
                     constraints = [
                         x_in[s] >=
                         input_range_layer[
