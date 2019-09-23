@@ -58,16 +58,16 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
             bias_i = NN.layers[i].bias
 
         if NN.layers[i].type == 'Convolutional':
-            output_range_layer_i = output_range_convolutional_layer_naive(input_range_layer_i, NN.layers[i].kernal, NN.layers[i].bias, NN.layers[i].stride)
+            output_range_layer_i = output_range_convolutional_layer_naive(NN.layers[i], input_range_layer_i, NN.layers[i].kernal, NN.layers[i].bias, NN.layers[i].stride)
         if NN.layers[i].type == 'Activation':
-            output_range_layer_i = utput_range_activation_layer_naive(input_range_layer, NN.layers[i].activation)
+            output_range_layer_i = utput_range_activation_layer_naive(NN.layers[i], input_range_layer, NN.layers[i].activation)
         if NN.layers[i].type == 'Pooling':
-            output_range_layer_i = output_range_pooling_layer_naive(input_range_layer, NN.layers[i].filter_size, NN.layers[i].activation)
+            output_range_layer_i = output_range_pooling_layer_naive(NN.layers[i], input_range_layer, NN.layers[i].filter_size, NN.layers[i].activation)
         if NN.layers[i].type == 'Flatten':
-            output_range_layer_i = output_range_flatten_layer_naive(input_range_layer_i)
+            output_range_layer_i = output_range_flatten_layer_naive(NN.layers[i], input_range_layer_i)
         if NN.layers[i].type == 'Fully_connected':
             input_range_layer_i = input_range_fc_layer_naive(weight_i, bias_i, output_range_layer_i_last)
-            output_range_layer_i = output_range_activation_layer_naive(input_range_layer, NN.layers[i].activation)
+            output_range_layer_i = output_range_activation_layer_naive(NN.layers[i], input_range_layer, NN.layers[i].activation)
 
 
         input_range_all.append(input_range_layer_i)
@@ -464,13 +464,13 @@ def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bia
 
 
     # define input variables of this layer
-    x_in = {}
+    x_in = []
     for s in range(layer.input_dim[2]):
-        x_in[s] = cp.Variable((layer.input_dim[0],layer.input_dim[1]))
+        x_in.append(cp.Variable((layer.input_dim[0],layer.input_dim[1])))
     # define out variables of the this layer
-    x_out = {}
+    x_out = []
     for s in range(layer.output_dim[2]):
-        x_out = cp.Variable((layer.output_dim[0], layer.output_dim[1]))
+        x_out.append(cp.Variable((layer.output_dim[0], layer.output_dim[1])))
 
     # define constraints
     constraints = []
@@ -479,18 +479,32 @@ def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bia
     for s in range(layer.input_dim[2]):
         for i in range(layer.input_dim[0]):
             for j in range(layer.input_dim[1]):
-                constraints += [x_in[s][i,j] >= input_range_layer[i][j][s][0], x_in[i,j] <= input_range_layer[i][j][s][1]]
+                constraints += [x_in[s][i,j] >= input_range_layer[i][j][s][0], x_in[s][i,j] <= input_range_layer[i][j][s][1]]
 
     # add constraints: convolutional operation
     for k in range(layer.output_dim[2]):
-        for i in range(0, x_in.shape[0]-kernal.shape[0]+1, stride):
-            for j in range(0, x_in.shape[1]-kernal.shape[1]+1, stride):
-                sum_expr = 0
-                for s in range(layer.input_dim[2]):
+        expr_kernal = []
+        for s in range(layer.input_dim[2]):
+            expr_channel = []
+            for i in range(0, x_in.shape[0]-kernal.shape[0]+1, stride):
+                expr_row = []
+                for j in range(0, x_in.shape[1]-kernal.shape[1]+1, stride):
+                
+                
                     temp_in = cp.vec(x_in[i:i+kernal.shape[0],j:j+kernal.shape[1],s])
                     temp_kernal = cp.vec(kernal[:,:,k])
-                    sum_expr = sum_expr + temp_kernal @ temp_in + bias
-                constraints += [sum_expr == x_out[i,j,k]]
+                    expr_channel = temp_kernal @ temp_in + bias
+                    expr_row.append(expr_channel)
+
+                expr_channel.append(expr_row)
+            expr_kernal.append(expr_channel)
+            
+        for i in range(0, x_in.shape[0]-kernal.shape[0]+1, stride):
+            for j in range(0, x_in.shape[1]-kernal.shape[1]+1, stride):
+                expr_sum = 0
+                for s in range(layer.input_dim[2]):
+                    expr_sum = expr_sum + expr_kernal[s][i][j]
+                constraints += [expr_sum[0][i][j] == x_out[i,j,k]]
 
 
     # compute the range of each neuron
