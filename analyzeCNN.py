@@ -486,7 +486,7 @@ def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bia
         for i in range(0, x_in[0].shape[0]-kernal.shape[0]+1, stride):
             for j in range(0, x_in[0].shape[1]-kernal.shape[1]+1, stride):
                 sum_expr = 0
-                for s in range layer.input_dim[2]:
+                for s in range(layer.input_dim[2]):
                     temp_in = cp.vec(x_in[s][i:i+kernal.shape[0],j:j+kernal.shape[1]])
                     temp_kernal = cp.vec(kernal[:,:,k])
                     sum_expr = sum_expr + temp_kernal @ temp_in + bias
