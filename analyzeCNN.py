@@ -57,6 +57,8 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
             weight_i = NN.layers[i].weight
             bias_i = NN.layers[i].bias
 
+        print('iteration: {}'.format(i))
+
         if NN.layers[i].type == 'Convolutional':
             output_range_layer_i = output_range_convolutional_layer_naive(NN.layers[i], input_range_layer_i, NN.layers[i].kernal, NN.layers[i].bias, NN.layers[i].stride)
         if NN.layers[i].type == 'Activation':
@@ -503,7 +505,7 @@ def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bia
             for k in range(layer.output_dim[2]):
                 objective_min = cp.Minimize(x_out[k][i,j])
                 prob_min = cp.Problem(objective_min, constraints)
-                prob_min.solve(solver=cp.GUROBI)
+                prob_min.solve(solver=cp.GUROBI, verbose=True)
 
                 if prob_min.status == 'optimal':
                     neuron_min = prob_min.value
