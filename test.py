@@ -2,6 +2,12 @@
 #import outputCNN as oc
 import time
 import keras
+import os
+
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID";
+
+# The GPU id to use, usually either "0" or "1";
+os.environ["CUDA_VISIBLE_DEVICES"]="0";
 
 import numpy as np
 import sympy as sp

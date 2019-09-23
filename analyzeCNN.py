@@ -491,7 +491,7 @@ def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bia
                 for s in range(layer.input_dim[2]):
                     temp_in = cp.vec(x_in[s][i:i+kernal.shape[0],j:j+kernal.shape[1]])
                     temp_kernal = cp.vec(kernal[:,:,s,k])
-                    sum_expr = sum_expr + temp_kernal @ temp_in + bias
+                    sum_expr = sum_expr + temp_kernal @ temp_in + bias[k]
                 constraints += [sum_expr == x_out[k][i,j]]
 
 
