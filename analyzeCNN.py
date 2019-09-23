@@ -488,10 +488,9 @@ def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bia
                 sum_expr = 0
                 for s in range(layer.input_dim[2]):
                     temp_in = cp.vec(x_in[s][i:i+kernal.shape[0],j:j+kernal.shape[1]])
-                    temp_kernal = cp.vec(kernal[:,:,k])
+                    temp_kernal = cp.vec(kernal[:,:,s,k])
                     sum_expr = sum_expr + temp_kernal @ temp_in + bias
-                constraints += [sum_expr == x_out[i,j,k]]
-                constraints += [expr_sum[0][i][j] == x_out[k][i,j]]
+                constraints += [sum_expr == x_out[k][i,j]]
 
 
     # compute the range of each neuron
