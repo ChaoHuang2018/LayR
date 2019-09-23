@@ -461,6 +461,61 @@ def input_range_flatten_layer_naive(output_range_last_layer):
 ## Derive the output ranges of different layers
 
 # Convolutional layer
+def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, bias, stride):
+    output_range_layer = []
+    
+    for i in range(0, layer.input_dim[0]-kernal.shape[0]+1, stride):
+        output_range_layer_row = []
+        for j in range(0, layer.input_dim[1]-kernal.shape[1]+1, stride):
+            output_range_layer_col = []
+            for k in range(layer.output_dim[2]):
+                x_in = []
+                for s in range(layer.input_dim[2]):
+                    x_in.append(cp.Variable((kernal.shape[0],kernal.shape[1])))
+                x_out = cp.Variable()
+                constraints = []
+                sum_expr = 0
+                for s in range(layer.input_dim[2]):
+                    constraints = [x_in[s] >= input_range_layer[i:i+kernal.shape[0],j:j+kernal.shape[1],s,0], x_in[s] <= input_range_layer[i:i+kernal.shape[0],j:j+kernal.shape[1],s,0]]
+                    temp_in = cp.vec(x_in[s][i:i+kernal.shape[0],j:j+kernal.shape[1]])
+                    temp_kernal = cp.vec(kernal[:,:,s,k])
+                    sum_expr = sum_expr + temp_kernal @ temp_in + bias[k]
+                constraints += [sum_expr == x_out]
+                
+                objective_min = cp.Minimize(x_out)
+                prob_min = cp.Problem(objective_min, constraints)
+                prob_min.solve(solver=cp.GUROBI)
+
+                if prob_min.status == 'optimal':
+                    neuron_min = prob_min.value
+                    #print('lower bound: ' + str(l_neuron))
+                    #for variable in prob_min.variables():
+                    #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
+                else:
+                    print('prob_min.status: ' + prob_min.status)
+                    print('Error: No result for lower bound!')
+
+                # define objective: smallest output
+                objective_max = cp.Maximize(x_out)
+                prob_max = cp.Problem(objective_max, constraints)
+                prob_max.solve(solver=cp.GUROBI)
+
+                if prob_max.status == 'optimal':
+                    neuron_max = prob_max.value
+                    #print('lower bound: ' + str(l_neuron))
+                    #for variable in prob_min.variables():
+                    #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
+                else:
+                    print('prob_max.status: ' + prob_max.status)
+                    print('Error: No result for upper bound!')
+                output_range_layer_col.append([neuron_min, neuron_max])
+            output_range_layer_row.append(output_range_layer_col)
+        output_range_layer.append(output_range_layer_row)
+
+    return np.array(output_range_layer)
+                
+
+# Convolutional layer
 # input range and output range should be 4-dimesional
 def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bias, stride):
 
