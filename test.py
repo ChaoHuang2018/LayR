@@ -32,7 +32,7 @@ for i in range(input_dim[0]):
     for j in range(input_dim[1]):
         input_range_channel = []
         for k in range(input_dim[2]):
-            input_range_channel.append([data[i][j] - eps, data[i][j] + eps])
+            input_range_channel.append([data[i][j][k] - eps, data[i][j][k] + eps])
         input_range_row.append(input_range_channel)
     input_range.append(input_range_row)
 print(np.array(input_range).shape)
