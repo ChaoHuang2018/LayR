@@ -483,28 +483,15 @@ def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bia
 
     # add constraints: convolutional operation
     for k in range(layer.output_dim[2]):
-        expr_kernal = []
-        for s in range(layer.input_dim[2]):
-            expr_channel = []
-            for i in range(0, x_in.shape[0]-kernal.shape[0]+1, stride):
-                expr_row = []
-                for j in range(0, x_in.shape[1]-kernal.shape[1]+1, stride):
-                
-                
-                    temp_in = cp.vec(x_in[i:i+kernal.shape[0],j:j+kernal.shape[1],s])
+        for i in range(0, x_in[0].shape[0]-kernal.shape[0]+1, stride):
+            for j in range(0, x_in[0].shape[1]-kernal.shape[1]+1, stride):
+                sum_expr = 0
+                for s in range layer.input_dim[2]:
+                    temp_in = cp.vec(x_in[s][i:i+kernal.shape[0],j:j+kernal.shape[1]])
                     temp_kernal = cp.vec(kernal[:,:,k])
-                    expr_channel = temp_kernal @ temp_in + bias
-                    expr_row.append(expr_channel)
-
-                expr_channel.append(expr_row)
-            expr_kernal.append(expr_channel)
-            
-        for i in range(0, x_in.shape[0]-kernal.shape[0]+1, stride):
-            for j in range(0, x_in.shape[1]-kernal.shape[1]+1, stride):
-                expr_sum = 0
-                for s in range(layer.input_dim[2]):
-                    expr_sum = expr_sum + expr_kernal[s][i][j]
-                constraints += [expr_sum[0][i][j] == x_out[i,j,k]]
+                    sum_expr = sum_expr + temp_kernal @ temp_in + bias
+                constraints += [sum_expr == x_out[i,j,k]]
+                constraints += [expr_sum[0][i][j] == x_out[k][i,j]]
 
 
     # compute the range of each neuron
