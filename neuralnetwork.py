@@ -105,7 +105,7 @@ class NN(object):
                 layer_tmp._output_dim = layer.output_shape[1:]
                 layer_tmp._kernal = layer.get_weights()[0]
                 layer_tmp._bias = layer.get_weights()[1]
-                layer_tmp._stride = layer.strides[0]
+                layer_tmp._stride = layer.strides
                 layer_tmp._activation = self.activation_function(
                     layer_detail['activation']
                 )
@@ -137,7 +137,7 @@ class NN(object):
             elif layer_config['class_name'] == 'MaxPooling2D':
                 layer_tmp._type = 'Pooling'
                 layer_tmp._activation = 'max'
-                layer_tmp._stride = layer.strides[0]
+                layer_tmp._stride = layer.strides
                 layer_tmp._filter_size = layer.pool_size
                 layer_tmp._input_dim = layer.input_shape[1:]
                 layer_tmp._output_dim = layer.output_shape[1:]
