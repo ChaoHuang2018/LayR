@@ -64,7 +64,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
         if NN.layers[i].type == 'Activation':
             output_range_layer_i = output_range_activation_layer_naive(NN.layers[i], input_range_layer_i, NN.layers[i].activation)
         if NN.layers[i].type == 'Pooling':
-            output_range_layer_i = output_range_pooling_layer_naive(NN.layers[i], input_range_layer_i, NN.layers[i].filter_size, NN.layers[i].activation)
+            output_range_layer_i = output_range_pooling_layer_naive_v1(NN.layers[i], input_range_layer_i, NN.layers[i].filter_size, NN.layers[i].activation)
         if NN.layers[i].type == 'Flatten':
             output_range_layer_i = output_range_flatten_layer_naive(NN.layers[i], input_range_layer_i)
         if NN.layers[i].type == 'Fully_connected':
@@ -593,7 +593,7 @@ def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bia
 # Pooling layer
 def output_range_pooling_layer_naive_v1(layer, input_range_layer, filter_size, pooling_type):
     output_range_layer = []
-        
+
     for i in range(round(x_in.shape[0]/filter_size[0])):
         output_range_layer_row = []
         for j in range(round(x_in.shape[1]/filter_size[1])):
