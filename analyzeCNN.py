@@ -464,9 +464,9 @@ def input_range_flatten_layer_naive(output_range_last_layer):
 def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, bias, stride):
     output_range_layer = []
 
-    for i in range(0, layer.input_dim[0]-kernal.shape[0]+1, stride):
+    for i in range(0, layer.input_dim[0]-kernal.shape[0]+1, stride[0]):
         output_range_layer_row = []
-        for j in range(0, layer.input_dim[1]-kernal.shape[1]+1, stride):
+        for j in range(0, layer.input_dim[1]-kernal.shape[1]+1, stride[1]):
             output_range_layer_col = []
             for k in range(layer.output_dim[2]):
                 x_in = []
@@ -476,7 +476,7 @@ def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, 
                 constraints = []
                 sum_expr = 0
                 for s in range(layer.input_dim[2]):
-                    constraints = [x_in[s] >= input_range_layer[i:i+kernal.shape[0],j:j+kernal.shape[1],s,0], x_in[s] <= input_range_layer[i:i+kernal.shape[0],j:j+kernal.shape[1],s,0]]
+                    constraints = [x_in[s] >= input_range_layer[i*stride[0]:i*stride[0]+kernal.shape[0],j*stride[1]:j*stride[1]+kernal.shape[1],s,0], x_in[s] <= input_range_layer[input_range_layer[i*stride[0]:i*stride[0]+kernal.shape[0],j*stride[1]:j*stride[1]+kernal.shape[1],s,1]]]
                     temp_in = cp.vec(x_in[s][0:kernal.shape[0],0:kernal.shape[1]])
                     temp_kernal = cp.vec(kernal[:,:,s,k])
                     sum_expr = sum_expr + temp_kernal @ temp_in + bias[k]
@@ -591,17 +591,17 @@ def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bia
     return output_range_layer
 
 # Pooling layer
-def output_range_pooling_layer_naive_v1(layer, input_range_layer, filter_size, pooling_type):
+def output_range_pooling_layer_naive_v1(layer, input_range_layer, filter_size, pooling_type, stride):
     output_range_layer = []
 
-    for i in range(round(x_in.shape[0]/filter_size[0])):
+    for i in range(0, layer.input_dim[0]-filter_size[0]+1, stride[0]):
         output_range_layer_row = []
-        for j in range(round(x_in.shape[1]/filter_size[1])):
+        for j in range(0, layer.input_dim[1]-filter_size[1]+1, stride[1]):
             output_range_layer_col = []
             for s in range(layer.output_dim[2]):
                 x_in = cp.Variable((filter_size[0],filter_size[1]))
                 x_out = cp.Variable()
-                constraints = [x_in >= input_range_layer[i:i+filter_size[0],j:j+filter_size[1],s,0], x_in <= input_range_layer[i:i+filter_size[0],j:j+filter_size[1],s,0]]
+                constraints = [x_in >= input_range_layer[i*stride[0]:i*stride[0]+filter_size[0],j*stride[1]:j*stride[1]+filter_size[1],s,0], x_in <= input_range_layer[i*stride[0]:i*stride[0]+filter_size[0],j*stride[1]:j*stride[1]+filter_size[1],s,1]]]
                 if pooling_type == 'max':
                     constraints += [cp.max(x_in) == x_out]
                 if pooling_type == 'average':
