@@ -505,7 +505,7 @@ def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bia
             for k in range(layer.output_dim[2]):
                 objective_min = cp.Minimize(x_out[k][i,j])
                 prob_min = cp.Problem(objective_min, constraints)
-                prob_min.solve(solver=cp.GUROBI, verbose=True)
+                prob_min.solve(solver=cp.GUROBI)
 
                 if prob_min.status == 'optimal':
                     neuron_min = prob_min.value
