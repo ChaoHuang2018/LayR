@@ -62,7 +62,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
             NN.layers[i].type == 'Fully_connected'
         ):
             weight_i = np.reshape(NN.layers[i].weight[:, output_index], (-1, 1))
-            bias_i = NN.layers[i].bias[output_index]
+            bias_i = np.array([NN.layers[i].bias[output_index]])
         else:
             weight_i = NN.layers[i].weight
             bias_i = NN.layers[i].bias
@@ -84,7 +84,6 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 NN.layers[i].activation
             )
         if NN.layers[i].type == 'Pooling':
-            print('pooling')
             output_range_layer_i = output_range_pooling_layer_naive_v1(
                 NN.layers[i],
                 input_range_layer_i,
@@ -560,7 +559,6 @@ def input_range_flatten_layer_naive(output_range_last_layer):
             for j in range(output_range_last_layer.shape[1]):
                 # add the j-th neuron
                 input_range_layer.append(output_range_last_layer[i,j,s,:])
-    print(np.array(input_range_layer))
     return np.array(input_range_layer)
 
 
@@ -723,7 +721,22 @@ def output_range_pooling_layer_naive_v1(layer, input_range_layer, filter_size, p
             for s in range(layer.output_dim[2]):
                 x_in = cp.Variable((filter_size[0],filter_size[1]))
                 x_out = cp.Variable()
-                constraints = [x_in >= input_range_layer[i*stride[0]:i*stride[0]+filter_size[0],j*stride[1]:j*stride[1]+filter_size[1],s,0], x_in <= input_range_layer[i*stride[0]:i*stride[0]+filter_size[0],j*stride[1]:j*stride[1]+filter_size[1],s,1]]
+                constraints = [
+                    x_in >=
+                    input_range_layer[
+                        i * stride[0] : i * stride[0] + filter_size[0],
+                        j * stride[1] : j * stride[1] + filter_size[1],
+                        s,
+                        0
+                    ],
+                    x_in <=
+                    input_range_layer[
+                        i * stride[0] : i * stride[0] + filter_size[0],
+                        j * stride[1] : j * stride[1] + filter_size[1],
+                        s,
+                        1
+                    ]
+                ]
                 if pooling_type == 'max':
                     constraints += [cp.max(x_in) == x_out]
                 if pooling_type == 'average':
