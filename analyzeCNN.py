@@ -126,7 +126,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 refinement_degree_layer_channel = []
                 for i in range(NN.layers[k].input_dim[0]):
                     refinement_degree_layer_row = []
-                    for j in range(NN.layers[k].input_dim[1]):                    
+                    for j in range(NN.layers[k].input_dim[1]):
                         refinement_degree_layer_row.append(1)
                     refinement_degree_layer_channel.append(refinement_degree_layer_row)
                 refinement_degree_layer.append(refinement_degree_layer_channel)
@@ -209,7 +209,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
                 for i in range(NN.layers[k].input_dim[0]):
                     z0_row = []
                     z1_row = []
-                    for j in range(NN.layers[k].input_dim[1]):              
+                    for j in range(NN.layers[k].input_dim[1]):
                         z0_row.append(cp.Variable(refinement_degree_all[k][s][i][j],boolean=True))
                         z1_row.append(cp.Variable(refinement_degree_all[k][s][i][j],boolean=True))
                     z0_channel.append(z0_row)
@@ -239,7 +239,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
                     z_channel = []
                     for i in range(NN.layers[k].input_dim[0]):
                         z_row = []
-                        for j in range(NN.layer[k].input_dim[1]):              
+                        for j in range(NN.layer[k].input_dim[1]):
                             z_row.append(cp.Variable((NN.layers[k].filter_size[0],NN.layers[k].filter_size[1]),boolean=True))
                         z_channel.append(z_row)
                     z_layer.append(z_channel)
@@ -265,14 +265,14 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             x_out.append(x_out_layer)
             # define slack binary variables
             z0_layer = []
-            z1_layer = []           
+            z1_layer = []
             for i in range(NN.layers[k].input_dim[0]):
                 z0_layer.append(cp.Variable(refinement_degree_all[k][i],boolean=True))
-                z1_layer.append(cp.Variable(refinement_degree_all[k][i],boolean=True))   
+                z1_layer.append(cp.Variable(refinement_degree_all[k][i],boolean=True))
             z0.append(z0_layer)
             z1.append(z1_layer)
             z_pooling.append([])
-        
+
     # variables for the specific neuron
     x_in_neuron = cp.Variable()
 
@@ -281,12 +281,12 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     # add constraints for the input layer
     if NN.type == 'Convolutional':
         for s in range(NN.layers[0].input_dim[2]):
-            for i in range(NN.layers[0].imput_dim[0]):
-                for j in range(NN.layers[0].imput_dim[1]):
+            for i in range(NN.layers[0].input_dim[0]):
+                for j in range(NN.layers[0].input_dim[1]):
                     constraints += [network_in[s][i,j] >= network_input_box[i][j][s][0]]
                     constraints += [network_in[s][i,j] <= network_input_box[i][j][s][1]]
     else:
-        for i in range(NN.imput_dim[0]):
+        for i in range(NN.input_dim[0]):
             constraints += [network_in[i] >= network_input_box[i][0]]
             constraints += [network_in[i] <= network_input_box[i][1]]
 
@@ -382,7 +382,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
         input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] = [l_neuron, u_neuron]
     elif NN.layers[layer_index].type == 'Fully_connected':
         input_range_all[layer_index][neuron_index[0]] = [l_neuron, u_neuron]
-    
+
     return [l_neuron, u_neuron], input_range_all
 
 
@@ -1032,7 +1032,7 @@ def relaxation_pooling_layer(layer, x_in, x_out, z_pooling, filter_size, pooling
                     constraints += [cp.sum(z_pooling[s][i][j]) == 1]
                     for m in range(filter_size[0]):
                         for n in range(filter_size[1]):
-                            constraints += [x_out[s][i,j] - x_in[s][i*stride[0]+m, j*stride[1]+n] <= M * (1 - z_pooling[s][i][j][m,n])]                    
+                            constraints += [x_out[s][i,j] - x_in[s][i*stride[0]+m, j*stride[1]+n] <= M * (1 - z_pooling[s][i][j][m,n])]
     if pooling_type == 'average':
         for s in range(x_in.shape[2]):
             for i in range(round(x_in.shape[0]/filter_size[0])):
