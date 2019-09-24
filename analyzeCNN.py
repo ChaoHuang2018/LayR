@@ -113,20 +113,23 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
         input_range_layer_i = output_range_layer_i
         output_range_layer_i_last = output_range_layer_i
 
+    print('-------Naive range for each neuron is generated.----------')
+    print('-------MILP based range analysis begins.----------')
+
     # only invoke our approach once to obtain the output range
     # with the basic refinement degree
     refinement_degree_all = []
     for k in range(NN.num_of_hidden_layers):
         refinement_degree_layer = []
         if len(NN.layers[k].input_dim) == 3:
-            for i in range(NN.layers[k].input_dim[0]):
-                refinement_degree_layer_row = []
-                for j in range(NN.layers[k].input_dim[1]):
-                    refinement_degree_layer_col = []
-                    for s in range(NN.layers[k].input_dim[2]):
-                        refinement_degree_layer_col.append(1)
-                    refinement_degree_layer_row.append(refinement_degree_layer_col)
-                refinement_degree_layer.append(refinement_degree_layer_row)
+            for s in range(NN.layers[k].input_dim[2]):
+                refinement_degree_layer_channel = []
+                for i in range(NN.layers[k].input_dim[0]):
+                    refinement_degree_layer_row = []
+                    for j in range(NN.layers[k].input_dim[1]):                    
+                        refinement_degree_layer_row.append(1)
+                    refinement_degree_layer_channel.append(refinement_degree_layer_row)
+                refinement_degree_layer.append(refinement_degree_layer_channel)
             refinement_degree_all.append(refinement_degree_layer)
         if len(NN.layers[k].input_dim) == 1:
             for i in range(NN.layers[k].input_dim[0]):
@@ -159,87 +162,177 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
 
     layers = NN.layers
 
+
     # variables in the input layer
-    network_in = cp.Variable((NN.size_of_inputs[0],NN.size_of_inputs[1]))
+    if NN.type == 'Convolutional':
+        network_in = []
+        for s in range(NN.layers[0].input_dim[2]):
+            network_in.append(cp.Variable((NN.layers[0].input_dim[0],NN.layers[0].input_dim[1])))
+    else:
+        network_in = cp.Variable(NN.input_dim)
+
     # variables in previous layers
-    x_in = {}
-    x_out = {}
+    x_in = []
+    x_out = []
     z0 = []
     z1 = []
-    for i in range(layer_index):
-        x_in[i] = cp.Variable((NN.layeys.input_dim[i][0], NN.layers.input_dim[i][1]))
-        x_out[i] = cp.Variable((NN.layers.output_dim[i][0], NN.layers.output_dim[i][1]))
-        # define slack integer variables only for activation layers and fully-connected layers
-        if NN.layers[i].type == 'Fully_connected' or 'Activation':
+    z_pooling = []
+    for k in range(layer_index):
+        if NN.layers[k].type == 'Convolutional':
+            x_in_layer = []
+            for s in range(NN.layers[k].input_dim[2]):
+                x_in_layer.append(cp.Variable((NN.layers[k].input_dim[0],NN.layers[k].input_dim[1])))
+            x_in.append(x_in_layer)
+            x_out_layer = []
+            for s in range(NN.layers[k].output_dim[2]):
+                x_out_layer.append(cp.Variable((NN.layers[k].output_dim[0], NN.layers[k].output_dim[1])))
+            x_out.append(x_out_layer)
+            z0.append([])
+            z1.append([])
+            z_pooling.append([])
+        if NN.layers[k].type == 'Activation':
+            # define input and output variables
+            x_in_layer = []
+            for s in range(NN.layers[k].input_dim[2]):
+                x_in_layer.append(cp.Variable((NN.layers[k].input_dim[0],NN.layers[k].input_dim[1])))
+            x_in.append(x_in_layer)
+            x_out_layer = []
+            for s in range(NN.layers[k].output_dim[2]):
+                x_out_layer.append(cp.Variable((NN.layers[k].output_dim[0], NN.layers[k].output_dim[1])))
+            x_out.append(x_out_layer)
+            # define slack binary variables
             z0_layer = []
             z1_layer = []
-            for j in range(NN.layer[i].input_dim[0]):
-                z0_row = []
-                z1_row = []
-                for k in range(NN.layer[i].input_dim[1]):
-                    z0_row.append(refinement_degree_all[i][j][k],cp.Variable(boolean=True))
-                    z1_row.append(refinement_degree_all[i][j][k],cp.Variable(boolean=True))
-                z0_layer.append(z0_row)
-                z1_layer.append(z1_row)
+            for s in range(NN.layers[k].input_dim[2]):
+                z0_channel = []
+                z1_channel = []
+                for i in range(NN.layers[k].input_dim[0]):
+                    z0_row = []
+                    z1_row = []
+                    for j in range(NN.layers[k].input_dim[1]):              
+                        z0_row.append(cp.Variable(refinement_degree_all[k][s][i][j],boolean=True))
+                        z1_row.append(cp.Variable(refinement_degree_all[k][s][i][j],boolean=True))
+                    z0_channel.append(z0_row)
+                    z1_channel.append(z1_row)
+                z0_layer.append(z0_channel)
+                z0_layer.append(z1_channel)
             z0.append(z0_layer)
             z1.append(z1_layer)
-        else:
-            z0[i] = []
-            z1[i] = []
+            z_pooling.append([])
+        if NN.layers[k].type == 'Pooling':
+            # define input and output variables
+            x_in_layer = []
+            for s in range(NN.layers[k].input_dim[2]):
+                x_in_layer.append(cp.Variable((NN.layers[k].input_dim[0],NN.layers[k].input_dim[1])))
+            x_in.append(x_in_layer)
+            x_out_layer = []
+            for s in range(NN.layers[k].output_dim[2]):
+                x_out_layer.append(cp.Variable((NN.layers[k].output_dim[0], NN.layers[k].output_dim[1])))
+            x_out.append(x_out_layer)
+
+            z0.append([])
+            z1.append([])
+            # define slack binary variables for max operation
+            if NN.layers[k].activation == 'max':
+                z_layer = []
+                for s in range(NN.layers[k].input_dim[2]):
+                    z_channel = []
+                    for i in range(NN.layers[k].input_dim[0]):
+                        z_row = []
+                        for j in range(NN.layer[k].input_dim[1]):              
+                            z_row.append(cp.Variable((NN.layers[k].filter_size[0],NN.layers[k].filter_size[1]),boolean=True))
+                        z_channel.append(z_row)
+                    z_layer.append(z_channel)
+                z_pooling.append(z_layer)
+            else:
+                z_pooling.append([])
+        if NN.layers[k].type == 'Flatten':
+            # define input and output variables
+            x_in_layer = []
+            for s in range(NN.layers[k].input_dim[2]):
+                x_in_layer.append(cp.Variable((NN.layers[k].input_dim[0],NN.layers[k].input_dim[1])))
+            x_in.append(x_in_layer)
+            x_out_layer = cp.Variable(NN.layers[k].output_dim[0])
+            x_out.append(x_out_layer)
+
+            z0.append([])
+            z1.append([])
+            z_pooling.append([])
+        if NN.layers[k].type == 'Fully_connected':
+            x_in_layer = cp.Variable(NN.layers[k].input_dim[0])
+            x_in.append(x_in_layer)
+            x_out_layer = cp.Variable(NN.layers[k].output_dim[0])
+            x_out.append(x_out_layer)
+            # define slack binary variables
+            z0_layer = []
+            z1_layer = []           
+            for i in range(NN.layers[k].input_dim[0]):
+                z0_layer.append(cp.Variable(refinement_degree_all[k][i],boolean=True))
+                z1_layer.append(cp.Variable(refinement_degree_all[k][i],boolean=True))   
+            z0.append(z0_layer)
+            z1.append(z1_layer)
+            z_pooling.append([])
+        
     # variables for the specific neuron
     x_in_neuron = cp.Variable()
 
     constraints = []
 
     # add constraints for the input layer
-    for i in range(NN.size_of_inputs[0]):
-        for j in range(NN.size_of_inputs[1]):
-            constraints += [network_in[i,j] >= network_input_box[i][j][0]]
-            constraints += [network_in[i,j] <= network_input_box[i][j][1]]
+    if NN.type == 'Convolutional':
+        for s in range(NN.layers[0].input_dim[2]):
+            for i in range(NN.layers[0].imput_dim[0]):
+                for j in range(NN.layers[0].imput_dim[1]):
+                    constraints += [network_in[s][i,j] >= network_input_box[i][j][s][0]]
+                    constraints += [network_in[s][i,j] <= network_input_box[i][j][s][1]]
+    else:
+        for i in range(NN.imput_dim[0]):
+            constraints += [network_in[i] >= network_input_box[i][0]]
+            constraints += [network_in[i] <= network_input_box[i][1]]
 
 
     # add constraints for the layers before the neuron
     for i in range(layer_index):
 
         if NN.layers[i].type == 'Convolutional':
-            constraints += relaxation_convolutional_layer(x_in[i], x_out[i], NN.layers[i].kernal, NN.layers[i].bias, NN.layers[i].stride)
+            constraints += relaxation_convolutional_layer(NN.layers[i], x_in[i], x_out[i], NN.layers[i].kernal, NN.layers[i].bias, NN.layers[i].stride)
             if i == 0:
                 constraints += [network_in == x_in[i]]
             else:
                 constraints += [x_in[i] == x_out[i-1]]
         if NN.layers[i].type == 'Activation':
-            constraints += relaxation_activation_layer(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], NN.layers[i].activation, refinement_degree_all[i])
+            constraints += relaxation_activation_layer(NN.layers[i], x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], NN.layers[i].activation, refinement_degree_all[i])
             if i == 0:
                 constraints += [network_in == x_in[i]]
             else:
                 constraints += [x_in[i] == x_out[i-1]]
         if NN.layers[i].type == 'Pooling':
-            constraints += relaxation_pooling_layer(x_in[i], x_out[i], NN.layers[i].filter_size, NN.layers[i].activation)
+            constraints += relaxation_pooling_layer(NN.layers[i], x_in[i], x_out[i], z_pooling[i], NN.layers[i].filter_size, NN.layers[i].activation)
             if i == 0:
                 constraints += [network_in == x_in[i]]
             else:
                 constraints += [x_in[i] == x_out[i-1]]
         if NN.layers[i].type == 'Flatten':
-            constraints += relaxation_flatten_layer(x_in[i], x_out[i])
+            constraints += relaxation_flatten_layer(NN.layers[i], x_in[i], x_out[i])
             if i == 0:
                 constraints += [network_in == x_in[i]]
             else:
                 constraints += [x_in[i] == x_out[i-1]]
         if NN.layers[i].type == 'Fully_connected':
-            constraints += relaxation_activation_layer(x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], NN.layers[i].activation, refinement_degree_all[i])
+            constraints += relaxation_activation_layer(NN.layers[i], x_in[i], x_out[i], z0[i], z1[i], input_range_all[i], NN.layers[i].activation, refinement_degree_all[i])
             # add constraint for linear transformation between layers
             weight_i = NN.layers[i].weight
             bias_i = NN.layers[i].bias
             if i == 0:
-                constraints += [x_in[i] == weight_i @ network_in + bias_i]
+                constraints += [x_in[i] == weight_i.T @ network_in + bias_i]
             else:
-                constraints += [x_in[i] == weight_i @ x_in[i-1] + bias_i]
+                constraints += [x_in[i] == weight_i.T @ x_out[i-1] + bias_i]
 
 
     # add constraint for the last layer and the neuron
     # Notice that we only need to handle activation function layer. For other layers, update the input range of the neuron does not improve the result (which is equivalant in fact)
     if NN.layers[i].type == 'Activation':
-        constraints += [x_in_neuron == x_out[layer_index-1][neuron_index[0],neuron_index[1]]]
+        constraints += [x_in_neuron == x_out[layer_index-1][neuron_index[2]][neuron_index[0],neuron_index[1]]]
     elif NN.layers[layer_index].type == 'Fully_connected':
         weight_neuron = np.reshape(NN.layers[layer_index].weight[neuron_index[0]], (1, -1))
         bias_neuron = np.reshape(NN.layers[layer_index].bias[neuron_index[0]], (1, -1))
@@ -248,12 +341,12 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
         #print(x_out[0:len(bias_all_layer[layer_index-1]),layer_index-1:layer_index].shape)
         #print(bias_neuron.shape)
         if layer_index >= 1:
-            constraints += [x_in_neuron == weight_neuron @ x_out[layer_index-1] + bias_neuron]
+            constraints += [x_in_neuron == weight_neuron.T @ x_out[layer_index-1] + bias_neuron]
         else:
-            constraints += [x_in_neuron == weight_neuron @ network_in + bias_neuron]
+            constraints += [x_in_neuron == weight_neuron.T @ network_in + bias_neuron]
     else:
         print('No need to update the input range of this neuron')
-        return input_range_all[layer_index][neuron_index[0]][neuron_index[1]], input_range_all
+        return input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]], input_range_all
 
 
     # objective: smallest output of [layer_index, neuron_index]
@@ -285,7 +378,11 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
         print('prob_max.status: ' + prob_max.status)
         print('Error: No result for upper bound!')
 
-    input_range_all[layer_index][neuron_index[0]][neuron_index[1]] = [l_neuron, u_neuron]
+    if NN.layers[i].type == 'Activation':
+        input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] = [l_neuron, u_neuron]
+    elif NN.layers[layer_index].type == 'Fully_connected':
+        input_range_all[layer_index][neuron_index[0]] = [l_neuron, u_neuron]
+    
     return [l_neuron, u_neuron], input_range_all
 
 
@@ -908,30 +1005,34 @@ def output_range_activation_layer_naive(layer, input_range_layer, activation):
 ## Constraints of MILP relaxation for different layers
 # convolutional layer
 # x_in should be 3-dimensional, x_out should be 3-dimensional
-def relaxation_convolutional_layer(x_in, x_out, kernal, bias, stride):
+def relaxation_convolutional_layer(layer, x_in, x_out, kernal, bias, stride):
     constraints = []
-    for k in range(len(kernal)):
-        # for each filter
-        for i in range(0, x_in.shape[0]-kernal.shape[0]+1, stride):
-            for j in range(0, x_in.shape[1]-kernal.shape[1]+1, stride):
+    for i in range(layer.output_dim[0]):
+        for j in range(layer.output_dim[1]):
+            for k in range(layer.output_dim[2]):
                 sum_expr = 0
-                for s in range(x_in.shape[2]):
-                    temp_in = cp.vec(x_in[i:i+kernal.shape[0],j:j+kernal.shape[1],s])
-                    temp_kernal = cp.vec(kernal[:,:,k])
-                    sum_expr = sum_expr + temp_kernal @ temp_in + bias
-                constraints += [sum_expr == x_out[i,j,k]]
+                for s in range(layer.input_dim[2]):
+                    temp_in = cp.vec(x_in[s][i * stride[0] : i * stride[0] + kernal.shape[0],j * stride[1] : j * stride[1] + kernal.shape[1]])
+                    temp_kernal = cp.vec(kernal[:,:,s,k])
+                    sum_expr = sum_expr + temp_kernal @ temp_in + bias[k]
+                constraints += [sum_expr == x_out[k][i,j]]
     return constraints
 
 
 # pooling layer
 # x_in should be 3-dimensional, x_out should be 3-dimensional
-def relaxation_pooling_layer(x_in, x_out, filter_size, pooling_type):
+def relaxation_pooling_layer(layer, x_in, x_out, z_pooling, filter_size, pooling_type, stride):
     constraints = []
     if pooling_type == 'max':
         for s in range(x_in.shape[2]):
             for i in range(round(x_in.shape[0]/filter_size[0])):
                 for j in range(round(x_in.shape[1]/filter_size[1])):
-                    constraints += [cp.max(x_in[i*filter_size[0]:i*(filter_size[0]+1), j*filter_size[1]:j*(filter_size[1]+1), s]) == x_out[i,j,s]]
+                    # big-M relaxation for max operation
+                    constraints += [cp.max(x_in[s][i*stride[0]:i*stride[0]+filter_size[0], j*stride[1]:j*stride[1]+filter_size[1]]) <= x_out[s][i,j]]
+                    constraints += [cp.sum(z_pooling[s][i][j]) == 1]
+                    for m in range(filter_size[0]):
+                        for n in range(filter_size[1]):
+                            constraints += [x_out[s][i,j] - x_in[s][i*stride[0]+m, j*stride[1]+n] <= M * (1 - z_pooling[s][i][j][m,n])]                    
     if pooling_type == 'average':
         for s in range(x_in.shape[2]):
             for i in range(round(x_in.shape[0]/filter_size[0])):
@@ -941,7 +1042,7 @@ def relaxation_pooling_layer(x_in, x_out, filter_size, pooling_type):
 
 # flatten layer
 # x_in should be 3-dimensional, x_out should be 1-dimensional
-def relaxation_flatten_layer(x_in, x_out):
+def relaxation_flatten_layer(layer, x_in, x_out):
     constraints = []
     k = 0
     for s in range(x_in.shape[2]):
@@ -954,7 +1055,7 @@ def relaxation_flatten_layer(x_in, x_out):
 
 # Relu/tanh/sigmoid activation layer
 # Note the difference between the activation layer following the convolutional layer and the one in fully-connected layer
-def relaxation_activation_layer(x_in, x_out, z0, z1, input_range_layer, activation, refinement_degree_layer):
+def relaxation_activation_layer(layer, x_in, x_out, z0, z1, input_range_layer, activation, refinement_degree_layer):
 
     constraints = []
 
@@ -966,30 +1067,30 @@ def relaxation_activation_layer(x_in, x_out, z0, z1, input_range_layer, activati
                     low = input_range_layer[i][j][s][0]
                     upp = input_range_layer[i][j][s][1]
                     # any neuron can only be within a region, thus sum of slack integers should be 1
-                    constraints += [cp.sum(z0[i][j][s])+cp.sum(z1[i][j][s])==1]
+                    constraints += [cp.sum(z0[s][i][j])+cp.sum(z1[s][i][j])==1]
                     if low < 0 and upp > 0:
-                        neg_seg = abs(low)/refinement_degree_layer[i][j][s]
-                        for k in range(refinement_degree_layer[i][j][s]):
+                        neg_seg = abs(low)/refinement_degree_layer[s][i][j]
+                        for k in range(refinement_degree_layer[s][i][j]):
                             seg_left = low + neg_seg * k
                             seg_right = low + neg_seg * (k+1)
-                            constraints += segment_relaxation(x_in[i][j][s], x_out[i][j][s], z0[i][j][s][k], seg_left, seg_right, activation, 'convex')
-                        pos_seg = abs(upp)/refinement_degree_layer[i][j][s]
-                        for k in range(refinement_degree_layer[i][j][s]):
+                            constraints += segment_relaxation(x_in[s][i][j], x_out[s][i][j], z0[s][i][j][k], seg_left, seg_right, activation, 'convex')
+                        pos_seg = abs(upp)/refinement_degree_layer[s][i][j]
+                        for k in range(refinement_degree_layer[s][i][j]):
                             seg_left = 0 + neg_seg * k
                             seg_right = 0 + neg_seg * (k+1)
-                            constraints += segment_relaxation(x_in[i][j][s], x_out[i][j][s], z1[i][j][s][k], seg_left, seg_right, activation, 'concave')
+                            constraints += segment_relaxation(x_in[s][i][j], x_out[s][i][j], z1[s][i][j][k], seg_left, seg_right, activation, 'concave')
                     elif upp <= 0:
-                        neg_seg = (upp-low)/refinement_degree_layer[i][j][s]
-                        for k in range(refinement_degree_layer[i][j][s]):
+                        neg_seg = (upp-low)/refinement_degree_layer[s][i][j]
+                        for k in range(refinement_degree_layer[s][i][j]):
                             seg_left = low + neg_seg * k
                             seg_right = low + neg_seg * (k+1)
-                            constraints += segment_relaxation(x_in[i][j][s], x_out[i][j][s], z0[i][j][s][k], seg_left, seg_right, activation, 'convex')
+                            constraints += segment_relaxation(x_in[s][i][j], x_out[s][i][j], z0[s][i][j][k], seg_left, seg_right, activation, 'convex')
                     else:
-                        pos_seg = (upp-low)/refinement_degree_layer[i][j][s]
-                        for k in range(refinement_degree_layer[i][j][s]):
+                        pos_seg = (upp-low)/refinement_degree_layer[s][i][j]
+                        for k in range(refinement_degree_layer[s][i][j]):
                             seg_left = low + neg_seg * k
                             seg_right = low + neg_seg * (k+1)
-                            constraints += segment_relaxation(x_in[i][j][s], x_out[i][j][s], z1[i][j][s][k], seg_left, seg_right, activation, 'concave')
+                            constraints += segment_relaxation(x_in[s][i][j], x_out[s][i][j], z1[s][i][j][k], seg_left, seg_right, activation, 'concave')
     else:
         # if x_in is one-dimensional, which means this is a fc layer
         for i in range(x_in.shape[0]):
