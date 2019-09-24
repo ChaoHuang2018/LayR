@@ -96,7 +96,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 input_range_layer_i
             )
         if NN.layers[i].type == 'Fully_connected':
-            input_range_layer_i = input_range_fc_layer_naive(
+            input_range_layer_i = input_range_fc_layer_naive_v1(
                 weight_i,
                 bias_i,
                 output_range_layer_i_last
@@ -454,13 +454,13 @@ def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
         x_in = cp.Variable()
         x_out = cp.Variable(weight.shape[0])
 
-        weight_i = np.reshape(layer.weight[:, i], (-1, 1))
-        bias_i = layer.bias[i]
+        weight_i = np.reshape(weight[:, i], (-1, 1))
+        bias_i = bias[i]
 
         # define constraints: linear transformation by weight and bias
-        constraints = [weight_i @ x_out + bias_i == x_in]
+        constraints = [weight_i.T @ x_out + bias_i == x_in]
         # define constraints: output range of the last layer
-        constraints += [x_out >= output_range_last_layer[:,0], x_out <= output_range_last_layer[:,1]]
+        constraints += [x_out >= output_range_last_layer[:, 0], x_out <= output_range_last_layer[:, 1]]
 
         # define objective: smallest output of [layer_index, neuron_index]
         objective_min = cp.Minimize(x_in)
@@ -557,7 +557,7 @@ def input_range_flatten_layer_naive(output_range_last_layer):
         for j in range(output_range_last_layer.shape[1]):
             # add the j-th neuron
             input_range_layer.append(output_range_last_layer[i][j])
-    return input_range_layer
+    return np.array(input_range_layer)
 
 
 
