@@ -67,7 +67,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
             weight_i = NN.layers[i].weight
             bias_i = NN.layers[i].bias
 
-        print('-------------layer: {}-------------'.format(i))
+        print('-------------layer: {}---------------'.format(i))
 
         if NN.layers[i].type == 'Convolutional':
             output_range_layer_i = output_range_convolutional_layer_naive_v1(
@@ -141,8 +141,11 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
 
 # define large positive number M to enable Big M method
 M = 10e4
-# Compute the input range for a specific neuron and return the updated input_range_all
-# When layer_index = layers, this function outputs the output range of the neural network
+# Compute the input range for a specific neuron
+# and return the updated input_range_all
+
+# When layer_index = layers,
+# this function outputs the output range of the neural network
 def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, input_range_all, refinement_degree_all):
 
     layers = NN.layers
