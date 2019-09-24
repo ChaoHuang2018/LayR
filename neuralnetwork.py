@@ -153,7 +153,7 @@ class NN(object):
         if activation_type == 'relu':
             return 'ReLU'
         else:
-            activation_type
+            return activation_type
 
     def keras_model(self, x):
         if self.model is not None:
