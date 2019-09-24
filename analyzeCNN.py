@@ -84,11 +84,13 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 NN.layers[i].activation
             )
         if NN.layers[i].type == 'Pooling':
+            print('pooling')
             output_range_layer_i = output_range_pooling_layer_naive_v1(
                 NN.layers[i],
                 input_range_layer_i,
                 NN.layers[i].filter_size,
-                NN.layers[i].activation
+                NN.layers[i].activation,
+                NN.layers[i].stride
             )
         if NN.layers[i].type == 'Flatten':
             output_range_layer_i = output_range_flatten_layer_naive(
@@ -570,9 +572,9 @@ def input_range_flatten_layer_naive(output_range_last_layer):
 def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, bias, stride):
     output_range_layer = []
 
-    for i in range(0, layer.input_dim[0]-kernal.shape[0]+1, stride[0]):
+    for i in range(layer.output_dim[0]):
         output_range_layer_row = []
-        for j in range(0, layer.input_dim[1]-kernal.shape[1]+1, stride[1]):
+        for j in range(layer.output_dim[1]):
             output_range_layer_col = []
             for k in range(layer.output_dim[2]):
                 x_in = []
@@ -714,9 +716,9 @@ def output_range_convolutional_layer_naive(layer, input_range_layer, kernal, bia
 def output_range_pooling_layer_naive_v1(layer, input_range_layer, filter_size, pooling_type, stride):
     output_range_layer = []
 
-    for i in range(0, layer.input_dim[0]-filter_size[0]+1, stride[0]):
+    for i in range(layer.output_dim[0]):
         output_range_layer_row = []
-        for j in range(0, layer.input_dim[1]-filter_size[1]+1, stride[1]):
+        for j in range(layer.output_dim[1]):
             output_range_layer_col = []
             for s in range(layer.output_dim[2]):
                 x_in = cp.Variable((filter_size[0],filter_size[1]))
