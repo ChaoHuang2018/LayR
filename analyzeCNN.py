@@ -117,18 +117,18 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
     refinement_degree_all = []
     for k in range(NN.num_of_hidden_layers):
         refinement_degree_layer = []
-        if len(NN.layers[i].input_dim) == 3:
-            for i in range(NN.layers[i].input_dim[0]):
+        if len(NN.layers[k].input_dim) == 3:
+            for i in range(NN.layers[k].input_dim[0]):
                 refinement_degree_layer_row = []
-                for j in range(NN.layers[i].input_dim[1]):
+                for j in range(NN.layers[k].input_dim[1]):
                     refinement_degree_layer_col = []
-                    for s in range(NN.layers[i].input_dim[2]):
+                    for s in range(NN.layers[k].input_dim[2]):
                         refinement_degree_layer_col.append(1)
                     refinement_degree_layer_row.append(refinement_degree_layer_col)
                 refinement_degree_layer.append(refinement_degree_layer_row)
             refinement_degree_all.append(refinement_degree_layer)
-        if len(NN.layers[i].input_dim) == 1:
-            for i in range(NN.layers[i].input_dim[0]):
+        if len(NN.layers[k].input_dim) == 1:
+            for i in range(NN.layers[k].input_dim[0]):
                 refinement_degree_layer.append(1)
             refinement_degree_all.append(refinement_degree_layer)
 
@@ -446,6 +446,56 @@ def neuron_input_range_fc(NN, layer_index, neuron_index, network_input_box, inpu
 # Derive the input range of a fully-connected layer by
 # Only in fully-connect layer, the input of the layer is different of the output of the previous layer
 #
+def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
+    # compute the input range of each neuron by solving LPs
+    input_range_layer = []
+
+    for i in range(weight.shape[1]):
+        x_in = cp.Variable()
+        x_out = cp.Variable(weight.shape[0])
+
+        weight_i = np.reshape(layer.weight[:, i], (-1, 1))
+        bias_i = layer.bias[i]
+
+        # define constraints: linear transformation by weight and bias
+        constraints = [weight_i @ x_out + bias_i == x_in]
+        # define constraints: output range of the last layer
+        constraints += [x_out >= output_range_last_layer[:,0], x_out <= output_range_last_layer[:,1]]
+
+        # define objective: smallest output of [layer_index, neuron_index]
+        objective_min = cp.Minimize(x_in)
+
+        prob_min = cp.Problem(objective_min, constraints)
+        prob_min.solve(solver=cp.GUROBI)
+
+        if prob_min.status == 'optimal':
+            neuron_min = prob_min.value
+            #print('lower bound: ' + str(l_neuron))
+            #for variable in prob_min.variables():
+            #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
+        else:
+            print('prob_min.status: ' + prob_min.status)
+            print('Error: No result for lower bound!')
+
+        # define objective: smallest output of [layer_index, neuron_index]
+        objective_max = cp.Maximize(x_in)
+
+        prob_max = cp.Problem(objective_max, constraints)
+        prob_max.solve(solver=cp.GUROBI)
+
+        if prob_max.status == 'optimal':
+            neuron_max = prob_max.value
+            #print('lower bound: ' + str(l_neuron))
+            #for variable in prob_min.variables():
+            #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
+        else:
+            print('prob_max.status: ' + prob_max.status)
+            print('Error: No result for upper bound!')
+
+        input_range_layer.append([neuron_min, neuron_max])
+    return np.array(input_range_layer)
+
+
 def input_range_fc_layer_naive(weight, bias, output_range_last_layer):
     # compute the input range of each neuron by solving LPs
     input_range_layer = []
