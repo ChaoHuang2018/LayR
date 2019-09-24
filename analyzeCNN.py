@@ -549,7 +549,7 @@ def input_range_fc_layer_naive(weight, bias, output_range_last_layer):
         input_range_layer.append([neuron_i_min, neuron_i_max])
     return np.array(input_range_layer)
 
-#
+# abandon
 def input_range_flatten_layer_naive(output_range_last_layer):
     input_range_layer = []
     for s in range(output_range_last_layer.shape[2]):
@@ -558,6 +558,7 @@ def input_range_flatten_layer_naive(output_range_last_layer):
             for j in range(output_range_last_layer.shape[1]):
                 # add the j-th neuron
                 input_range_layer.append(output_range_last_layer[i,j,s,:])
+    print(np.array(input_range_layer))
     return np.array(input_range_layer)
 
 
@@ -839,8 +840,9 @@ def output_range_flatten_layer_naive(layer, input_range_layer):
             # consider the i-th row
             for j in range(input_range_layer.shape[1]):
                 # add the j-th neuron
-                output_range_layer.append(input_range_layer[i][j][s])
-    return output_range_layer
+                output_range_layer.append(input_range_layer[i,j,s,:])
+    print(np.array(output_range_layer))
+    return np.array(output_range_layer)
 
 # general activation layer
 def output_range_activation_layer_naive(layer, input_range_layer, activation):
