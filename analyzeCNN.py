@@ -552,12 +552,12 @@ def input_range_fc_layer_naive(weight, bias, output_range_last_layer):
 #
 def input_range_flatten_layer_naive(output_range_last_layer):
     input_range_layer = []
-    for s in range(output_range_last_layer.shape[2])
+    for s in range(output_range_last_layer.shape[2]):
         for i in range(output_range_last_layer.shape[0]):
             # consider the i-th row
             for j in range(output_range_last_layer.shape[1]):
                 # add the j-th neuron
-                input_range_layer.append(output_range_last_layer[i,j,s])
+                input_range_layer.append(output_range_last_layer[i,j,s,:])
     return np.array(input_range_layer)
 
 
