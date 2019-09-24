@@ -115,14 +115,22 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
     # only invoke our approach once to obtain the output range
     # with the basic refinement degree
     refinement_degree_all = []
-    for i in range(NN.num_of_hidden_layers):
+    for k in range(NN.num_of_hidden_layers):
         refinement_degree_layer = []
-        for j in range(NN.layers[i].input_dim[0]):
-            refinement_degree_layer_row = []
-            for k in range(NN.layers[i].input_dim[1]):
-                refinement_degree_layer_row.append(1)
-            refinement_degree_layer.append(refinement_degree_layer_row)
-        refinement_degree_all.append(refinement_degree_layer)
+        if len(NN.layers[i].input_dim) = 3:
+            for i in range(NN.layers[i].input_dim[0]):
+                refinement_degree_layer_row = []
+                for j in range(NN.layers[i].input_dim[1]):
+                    refinement_degree_layer_col = []
+                    for s in range(NN.layers[i].input_dim[2])
+                        refinement_degree_layer_col.append(1)
+                    refinement_degree_layer_row.append(refinement_degree_layer_col)
+                refinement_degree_layer.append(refinement_degree_layer_row)
+            refinement_degree_all.append(refinement_degree_layer)
+        if len(NN.layers[i].input_dim) = 1:
+            for i in range(NN.layers[i].input_dim[0]):
+                refinement_degree_layer.append(1)
+            refinement_degree_all.append(refinement_degree_layer)
 
     input_range_last_neuron, _ = neuron_input_range_cnn(
         NN,
