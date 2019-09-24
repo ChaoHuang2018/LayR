@@ -141,6 +141,13 @@ class NN(object):
                 layer_tmp._filter_size = layer.pool_size
                 layer_tmp._input_dim = layer.input_shape[1:]
                 layer_tmp._output_dim = layer.output_shape[1:]
+            elif layer_config['class_name'] == 'AveragePooling2D':
+                layer_tmp._type = 'Pooling'
+                layer_tmp._activation = 'average'
+                layer_tmp._stride = layer.strides
+                layer_tmp._filter_size = layer.pool_size
+                layer_tmp._input_dim = layer.input_shape[1:]
+                layer_tmp._output_dim = layer.output_shape[1:]
 
     def activation_function(self, activation_type):
         if activation_type == 'relu':

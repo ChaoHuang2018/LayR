@@ -21,22 +21,29 @@ import copy
 # Data structure of a neural network
 # NN.type = {'Convolutional', 'Fully_connected'}
 # NN.layers: list of layers
-## layer.type = {'Convolutional', 'Pooling', 'Fully_connected', 'Flatten', 'Activation'}
-## layer.weight = weight if type = 'Fully_connected', n*n indentical matrix otherwise, n is the dimension of the output of the previous layer
-## layer.bias = bias if type = 'Fully_connected' or 'Convolutional'
-## layer.kernal: only for type = 'Convolutional'
-## layer.stride: only for type = 'Convolutional'
-## layer.activation = {'ReLU', 'tanh', 'sigmoid'} if type = 'Fully_connected', 'Convolutional' if type = 'Convolutional', {'max', 'average'} if type = 'Pooling'
-## layer.filter_size: only for type = 'Pooling'
-## layer.input_dim = [m, n], n==1 for fully-connected layer
-## layer.output_dim = [m, n]
-# Keep the original properties:
-## size_of_inputs: matrix (n*1 matrix for FC network)
-## size_of_outputs: n*1 matrix
-## num_of_hidden_layers: integer
-## network_structure: matrix (n*1 matrix for FC network/layers) (change to layer.input/output_dim)
-## scale_factor: number
-## offset: number
+"""
+New properties:
+ layer.type = {'Convolutional', 'Pooling',
+               'Fully_connected', 'Flatten', 'Activation'}
+ layer.weight = weight if type = 'Fully_connected', None otherwise
+ layer.bias = bias if type = 'Fully_connected' or 'Convolutional'
+ layer.kernal: only for type = 'Convolutional'
+ layer.stride: only for type = 'Convolutional'
+ layer.activation = {'ReLU', 'tanh', 'sigmoid'} if type = 'Fully_connected',
+                     'Convolutional' if type = 'Convolutional',
+                    {'max', 'average'} if type = 'Pooling'
+ layer.filter_size: only for type = 'Pooling'
+ layer.input_dim = [m, n], n==1 for fully-connected layer
+ layer.output_dim = [m, n]
+
+Keep the original properties:
+ size_of_inputs: matrix (n*1 matrix for FC network)
+ size_of_outputs: n*1 matrix
+ num_of_hidden_layers: integer
+ scale_factor: number
+ offset: number
+"""
+
 
 ##############################################################
 # output range analysis by MILP relaxation for convolutional neural network
@@ -48,9 +55,12 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
     input_range_layer_i = network_input_box
     output_range_layer_i_last = network_input_box
     for i in range(NN.num_of_hidden_layers):
-
-        # in the output layer, only take the weight of bias of the 'output_index'-th neuron
-        if i == NN.num_of_hidden_layers - 1 and NN.layers[i].type == 'Fully_connected':
+        # in the output layer, only take the weight and
+        # bias of the 'output_index'-th neuron
+        if (
+            i == NN.num_of_hidden_layers - 1 and
+            NN.layers[i].type == 'Fully_connected'
+        ):
             weight_i = np.reshape(NN.layers.weight[i][output_index], (1, -1))
             bias_i = np.reshape(NN.layers.bias[i][output_index], (1, -1))
         else:
@@ -60,24 +70,50 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
         print('-------------layer: {}-------------'.format(i))
 
         if NN.layers[i].type == 'Convolutional':
-            output_range_layer_i = output_range_convolutional_layer_naive_v1(NN.layers[i], input_range_layer_i, NN.layers[i].kernal, NN.layers[i].bias, NN.layers[i].stride)
+            output_range_layer_i = output_range_convolutional_layer_naive_v1(
+                NN.layers[i],
+                input_range_layer_i,
+                NN.layers[i].kernal,
+                NN.layers[i].bias,
+                NN.layers[i].stride
+            )
         if NN.layers[i].type == 'Activation':
-            output_range_layer_i = output_range_activation_layer_naive(NN.layers[i], input_range_layer_i, NN.layers[i].activation)
+            output_range_layer_i = output_range_activation_layer_naive(
+                NN.layers[i],
+                input_range_layer_i,
+                NN.layers[i].activation
+            )
         if NN.layers[i].type == 'Pooling':
-            output_range_layer_i = output_range_pooling_layer_naive_v1(NN.layers[i], input_range_layer_i, NN.layers[i].filter_size, NN.layers[i].activation)
+            output_range_layer_i = output_range_pooling_layer_naive_v1(
+                NN.layers[i],
+                input_range_layer_i,
+                NN.layers[i].filter_size,
+                NN.layers[i].activation
+            )
         if NN.layers[i].type == 'Flatten':
-            output_range_layer_i = output_range_flatten_layer_naive(NN.layers[i], input_range_layer_i)
+            output_range_layer_i = output_range_flatten_layer_naive(
+                NN.layers[i],
+                input_range_layer_i
+            )
         if NN.layers[i].type == 'Fully_connected':
-            input_range_layer_i = input_range_fc_layer_naive(weight_i, bias_i, output_range_layer_i_last)
-            output_range_layer_i = output_range_activation_layer_naive(NN.layers[i], input_range_layer_i, NN.layers[i].activation)
-
+            input_range_layer_i = input_range_fc_layer_naive(
+                weight_i,
+                bias_i,
+                output_range_layer_i_last
+            )
+            output_range_layer_i = output_range_activation_layer_naive(
+                NN.layers[i],
+                input_range_layer_i,
+                NN.layers[i].activation
+            )
 
         input_range_all.append(input_range_layer_i)
 
         input_range_layer_i = output_range_layer_i
         output_range_layer_i_last = output_range_layer_i
 
-    # only invoke our approach once to obtain the output range with the basic refinement degree
+    # only invoke our approach once to obtain the output range
+    # with the basic refinement degree
     refinement_degree_all = []
     for i in range(NN.num_of_hidden_layers):
         refinement_degree_layer = []
@@ -88,10 +124,17 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
             refinement_degree_layer.append(refinement_degree_layer_row)
         refinement_degree_all.append(refinement_degree_layer)
 
-    input_range_last_neuron,_ = neuron_input_range_cnn(NN, num_of_hidden_layers-1, [0,0], network_input_box, input_range_all, refinement_degree_all)
+    input_range_last_neuron, _ = neuron_input_range_cnn(
+        NN,
+        NN.num_of_hidden_layers-1,
+        [0, 0],
+        network_input_box,
+        input_range_all,
+        refinement_degree_all
+    )
 
-    lower_bound = (activate(NN.layers[i].activation, input_range_last_neuron[0])-NN.offset)*NN.scale_factor
-    upper_bound = (activate(NN.layers[i].activation, input_range_last_neuron[1])-NN.offset)*NN.scale_factor
+    lower_bound = activate(NN.layers[i].activation, input_range_last_neuron[0])
+    upper_bound = activate(NN.layers[i].activation, input_range_last_neuron[1])
 
     return [lower_bound, upper_bound]
 
