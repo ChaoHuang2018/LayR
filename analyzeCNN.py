@@ -272,13 +272,8 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             x_out.append(x_out_layer)
             # define slack binary variables
             z0_layer = []
-<<<<<<< HEAD
-            z1_layer = []           
-            for i in range(NN.layers[k].output_dim[0]):
-=======
             z1_layer = []
-            for i in range(NN.layers[k].input_dim[0]):
->>>>>>> c0c0674178e2b4d5bbf4b222d927d7f542741ef8
+            for i in range(NN.layers[k].output_dim[0]):
                 z0_layer.append(cp.Variable(refinement_degree_all[k][i],boolean=True))
                 z1_layer.append(cp.Variable(refinement_degree_all[k][i],boolean=True))
             z0.append(z0_layer)
@@ -401,13 +396,10 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     if NN.layers[layer_index].type == 'Activation':
         input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] = [l_neuron, u_neuron]
     elif NN.layers[layer_index].type == 'Fully_connected':
-<<<<<<< HEAD
         input_range_all[layer_index][neuron_index] = [l_neuron, u_neuron]
-    
-=======
-        input_range_all[layer_index][neuron_index[0]] = [l_neuron, u_neuron]
 
->>>>>>> c0c0674178e2b4d5bbf4b222d927d7f542741ef8
+
+
     return [l_neuron, u_neuron], input_range_all
 
 
