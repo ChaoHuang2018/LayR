@@ -349,7 +349,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     if NN.layers[layer_index].type == 'Activation':
         constraints += [x_in_neuron == x_out[layer_index-1][neuron_index[2]][neuron_index[0],neuron_index[1]]]
     elif NN.layers[layer_index].type == 'Fully_connected':
-        weight_neuron = np.reshape(NN.layers[layer_index].weight[:, neuron_index], (1, -1))
+        weight_neuron = np.reshape(NN.layers[layer_index].weight[:, neuron_index], (-1, 1))
         bias_neuron = NN.layers[layer_index].bias[neuron_index]
         print(x_in_neuron.shape)
         print(weight_neuron.shape)
