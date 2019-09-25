@@ -171,7 +171,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
         for s in range(NN.layers[0].input_dim[2]):
             network_in.append(cp.Variable((NN.layers[0].input_dim[0],NN.layers[0].input_dim[1])))
     else:
-        network_in = cp.Variable(NN.input_dim)
+        network_in = cp.Variable(NN.layers[0].input_dim[0])
 
     # variables in previous layers
     x_in = []
@@ -293,7 +293,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
                     constraints += [network_in[s][i,j] >= network_input_box[i][j][s][0]]
                     constraints += [network_in[s][i,j] <= network_input_box[i][j][s][1]]
     else:
-        for i in range(NN.input_dim[0]):
+        for i in range(NN.layers[0].input_dim[0]):
             constraints += [network_in[i] >= network_input_box[i][0]]
             constraints += [network_in[i] <= network_input_box[i][1]]
 
