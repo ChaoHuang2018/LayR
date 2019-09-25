@@ -140,15 +140,15 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
 
     input_range_last_neuron, _ = neuron_input_range_cnn(
         NN,
-        NN.num_of_hidden_layers-1,
-        0,
+        3,
+        [0, 0, 0],
         network_input_box,
         input_range_all,
         refinement_degree_all
     )
 
-    lower_bound = activate(NN.layers[i].activation, input_range_last_neuron[0])
-    upper_bound = activate(NN.layers[i].activation, input_range_last_neuron[1])
+    lower_bound = activate(NN.layers[3].activation, input_range_last_neuron[0])
+    upper_bound = activate(NN.layers[3].activation, input_range_last_neuron[1])
 
     return [lower_bound, upper_bound]
 
@@ -368,7 +368,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     objective_min = cp.Minimize(x_in_neuron)
 
     prob_min = cp.Problem(objective_min, constraints)
-    prob_min.solve(solver=cp.GUROBI)
+    prob_min.solve(solver=cp.GUROBI, verbose=True, Threads=12)
 
     if prob_min.status == 'optimal':
         l_neuron = prob_min.value
@@ -382,7 +382,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     # objective: largest output of [layer_index, neuron_index]
     objective_max = cp.Maximize(x_in_neuron)
     prob_max = cp.Problem(objective_max, constraints)
-    prob_max.solve(solver=cp.GUROBI)
+    prob_max.solve(solver=cp.GUROBI, verbose=True, Threads=12)
 
     if prob_max.status == 'optimal':
         u_neuron = prob_max.value
