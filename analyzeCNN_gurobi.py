@@ -678,9 +678,9 @@ def relaxation_convolutional_layer(model, layer, x_in, x_out, kernal, bias, stri
                 for s in range(layer.input_dim[2]):
                     for p in range(kernal.shape[0]):
                         for q in range(kernal.shape[1]):
-                            sum_expr + x_in[s][i*stride[0]+p, j*stride[1]+q] * kernal[p,q,s,k]
+                            sum_expr = sum_expr + x_in[s][i*stride[0]+p, j*stride[1]+q] * kernal[p,q,s,k]
                     sum_expr = sum_expr + bias[k]
-                model.addConstr(sum_expr == x_out)
+                model.addConstr(sum_expr == x_out[k][i,j])
 
 # pooling layer
 # x_in should be 3-dimensional, x_out should be 3-dimensional
@@ -732,30 +732,30 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
                         segment_relaxation_basic(model, x_in[s][i][j], x_out[s][i][j], seg_left, seg_right, activation)
                     else:
                         # Stay inside one and only one region, thus sum of slack integers should be 1
-                        constraints += [z0[s][i][j].sum()+z1[s][i][j].sum()==1]
+                        model.addConstr(z0[s][i][j].sum()+z1[s][i][j].sum()==1)
                         if low < 0 and upp > 0:
                             neg_seg = abs(low)/refinement_degree_layer[s][i][j]
                             for k in range(refinement_degree_layer[s][i][j]):
                                 seg_left = low + neg_seg * k
                                 seg_right = low + neg_seg * (k+1)
-                                segment_relaxation(model, x_in[s][i][j], x_out[s][i][j], z0[s][i][j][k], seg_left, seg_right, activation, 'convex')
+                                segment_relaxation(model, x_in[s][i,j], x_out[s][i,j], z0[s][i][j][k], seg_left, seg_right, activation, 'convex')
                             pos_seg = abs(upp)/refinement_degree_layer[s][i][j]
                             for k in range(refinement_degree_layer[s][i][j]):
                                 seg_left = 0 + neg_seg * k
                                 seg_right = 0 + neg_seg * (k+1)
-                                segment_relaxation(model, x_in[s][i][j], x_out[s][i][j], z1[s][i][j][k], seg_left, seg_right, activation, 'concave')
+                                segment_relaxation(model, x_in[s][i,j], x_out[s][i,j], z1[s][i][j][k], seg_left, seg_right, activation, 'concave')
                         elif upp <= 0:
                             neg_seg = (upp-low)/refinement_degree_layer[s][i][j]
                             for k in range(refinement_degree_layer[s][i][j]):
                                 seg_left = low + neg_seg * k
                                 seg_right = low + neg_seg * (k+1)
-                                segment_relaxation(model, x_in[s][i][j], x_out[s][i][j], z0[s][i][j][k], seg_left, seg_right, activation, 'convex')
+                                segment_relaxation(model, x_in[s][i,j], x_out[s][i,j], z0[s][i][j][k], seg_left, seg_right, activation, 'convex')
                         else:
                             pos_seg = (upp-low)/refinement_degree_layer[s][i][j]
                             for k in range(refinement_degree_layer[s][i][j]):
                                 seg_left = low + neg_seg * k
                                 seg_right = low + neg_seg * (k+1)
-                                segment_relaxation(model, x_in[s][i][j], x_out[s][i][j], z1[s][i][j][k], seg_left, seg_right, activation, 'concave')
+                                segment_relaxation(model, x_in[s][i,j], x_out[s][i,j], z1[s][i][j][k], seg_left, seg_right, activation, 'concave')
     else:
         # if x_in is one-dimensional, which means this is a fc layer
         for i in range(layer.output_dim[0]):
