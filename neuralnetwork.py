@@ -124,7 +124,7 @@ class NN(object):
 
             elif layer_config['class_name'] == 'Dense':
                 layer_tmp._type = 'Fully_connected'
-                layer_tmp._input_dim = layer.input_shape[1:]
+                layer_tmp._input_dim = layer.output_shape[1:]
                 layer_tmp._output_dim = layer.output_shape[1:]
                 layer_tmp._activation = self.activation_function(
                     layer_detail['activation']
