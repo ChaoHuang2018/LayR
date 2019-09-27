@@ -269,7 +269,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
 
 
     # variables for the specific neuron
-    x_in_neuron = model.addVar()
+    x_in_neuron = model.addVar(lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
 
     # add constraints for the input layer
     if NN.type == 'Convolutional':
@@ -429,7 +429,7 @@ def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
 
     model_in_neuron = Model()
 
-    x_out = model_in_neuron.addVars(weight.shape[0], vtype=GRB.CONTINUOUS)
+    x_out = model_in_neuron.addVars(weight.shape[0], lb=-GRB.INFINITY, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
     # define constraints: output range of the last layer
     for j in range(output_range_last_layer.shape[0]):
         x_out[j].setAttr(GRB.Attr.LB, output_range_last_layer[j, 0])
@@ -505,7 +505,7 @@ def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, 
                 model_out_neuron = Model()
                 x_in = []
                 for s in range(layer.input_dim[2]):
-                    x_in.append(model_out_neuron.addVars(kernal.shape[0],kernal.shape[1], vtype=GRB.CONTINUOUS))
+                    x_in.append(model_out_neuron.addVars(kernal.shape[0],kernal.shape[1], lb=-GRB.INFINITY, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS))
                 x_out = model_out_neuron.addVar(lb=-GRB.INFINITY,ub=GRB.INFINITY)
                 constraints = []
                 sum_expr = 0
