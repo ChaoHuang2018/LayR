@@ -506,7 +506,7 @@ def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, 
                 x_in = []
                 for s in range(layer.input_dim[2]):
                     x_in.append(model_out_neuron.addVars(kernal.shape[0],kernal.shape[1], vtype=GRB.CONTINUOUS))
-                x_out = model_out_neuron.addVar()
+                x_out = model_out_neuron.addVar(lb=-GRB.INFINITY,ub=GRB.INFINITY)
                 constraints = []
                 sum_expr = 0
                 print('For neuron' + str([i * stride[0] ,j * stride[1] ,s]))
@@ -523,9 +523,6 @@ def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, 
                                                                     j * stride[1] + q,
                                                                     s,
                                                                     1])
-                            print('Bound for neuron' + str([i * stride[0] + p,j * stride[1] + q,s]))
-                            print(input_range_layer[i * stride[0] + p, j * stride[1] + q, s, 0])
-                            print(input_range_layer[i * stride[0] + p, j * stride[1] + q, s, 1])
                     sum_expr = sum_expr + x_in[s].prod(dict(np.ndenumerate(kernal[:,:,s,k]))) + bias[k]
                 model_out_neuron.addConstr(sum_expr == x_out)
 
@@ -541,8 +538,6 @@ def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, 
                     #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
                 else:
                     print('prob_min.status: ' + str(model_out_neuron.status))
-                    print(model_out_neuron.printStats())
-                    print(model_out_neuron.getConstrs()[0])
                     raise ValueError("Error: No result for lower bound for " + str([i,j,s,k]))
 
                 # define objective: biggest output
