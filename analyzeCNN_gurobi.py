@@ -140,15 +140,17 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
 
     input_range_last_neuron, _ = neuron_input_range_cnn(
         NN,
-        8,
-        0,
+        7,
+        output_index,
         network_input_box,
         input_range_all,
         refinement_degree_all
     )
 
-    lower_bound = activate(NN.layers[3].activation, input_range_last_neuron[0])
-    upper_bound = activate(NN.layers[3].activation, input_range_last_neuron[1])
+    print('output range: {}'.format(input_range_last_neuron))
+
+    lower_bound = activate(NN.layers[7].activation, input_range_last_neuron[0])
+    upper_bound = activate(NN.layers[7].activation, input_range_last_neuron[1])
 
     return [lower_bound, upper_bound]
 
@@ -406,7 +408,10 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
 
     if NN.layers[layer_index].type == 'Activation':
         input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] = [neuron_min, neuron_max]
-    elif NN.layers[layer_index].type == 'Fully_connected':
+    elif (
+        NN.layers[layer_index].type == 'Fully_connected' and
+        layer_index < NN.num_of_hidden_layers - 1
+    ):
         input_range_all[layer_index][neuron_index] = [neuron_min, neuron_max]
 
 

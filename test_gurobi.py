@@ -42,9 +42,9 @@ for i in range(input_dim[0]):
         input_range_row.append(input_range_channel)
     input_range.append(input_range_row)
 print(np.array(input_range).shape)
-output_l, output_u = output_range_MILP_CNN(NN, np.array(input_range), 0)
+output_l, output_u = output_range_MILP_CNN(NN, np.array(input_range), 127)
 print("lower bound: {}; upper bound: {}".format(output_l, output_u))
-
+print("actual output: {}".format(NN.keras_model_pre_softmax(data.reshape(1, data.shape[0], data.shape[1], 1))))
 
 # test cvxpy
 ##def c(x,y):

@@ -1,6 +1,7 @@
 import json
 import numpy as np
 from numpy import linalg as LA
+from keras import backend as K
 
 
 class NN(object):
@@ -122,7 +123,10 @@ class NN(object):
                 )
                 self.layers.append(layer_activation)
 
-            elif layer_config['class_name'] == 'Dense':
+            elif (
+                layer_config['class_name'] == 'Dense' and
+                layer_detail['activation'] != 'softmax'
+            ):
                 layer_tmp._type = 'Fully_connected'
                 layer_tmp._input_dim = layer.output_shape[1:]
                 layer_tmp._output_dim = layer.output_shape[1:]
@@ -162,6 +166,12 @@ class NN(object):
         if self.model is not None:
             y = self.model.predict(x)
             return y
+
+    def keras_model_pre_softmax(self, x):
+        get_output_pre_softmax = K.function([self.model.layers[0].input],
+                                            [self.model.layers[-2].output])
+        layer_output = get_output_pre_softmax([x])
+        return layer_output
 
     def activate(self, x):
         """
