@@ -129,13 +129,13 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 for i in range(NN.layers[k].input_dim[0]):
                     refinement_degree_layer_row = []
                     for j in range(NN.layers[k].input_dim[1]):
-                        refinement_degree_layer_row.append(1)
+                        refinement_degree_layer_row.append(0)
                     refinement_degree_layer_channel.append(refinement_degree_layer_row)
                 refinement_degree_layer.append(refinement_degree_layer_channel)
             refinement_degree_all.append(refinement_degree_layer)
         if len(NN.layers[k].input_dim) == 1:
             for i in range(NN.layers[k].output_dim[0]):
-                refinement_degree_layer.append(1)
+                refinement_degree_layer.append(0)
             refinement_degree_all.append(refinement_degree_layer)
 
     input_range_last_neuron, _ = neuron_input_range_cnn(
@@ -171,9 +171,9 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     if NN.type == 'Convolutional':
         network_in = []
         for s in range(NN.layers[0].input_dim[2]):
-            network_in.append(model.addVars(NN.layers[0].input_dim[0],NN.layers[0].input_dim[1], vtype=GRB.CONTINUOUS))
+            network_in.append(model.addVars(NN.layers[0].input_dim[0],NN.layers[0].input_dim[1], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS))
     else:
-        network_in = model.addVars(NN.layers[0].input_dim[0], vtype=GRB.CONTINUOUS)
+        network_in = model.addVars(NN.layers[0].input_dim[0], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
 
     # variables in previous layers
     x_in = []
@@ -185,11 +185,11 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
         if NN.layers[k].type == 'Convolutional':
             x_in_layer = []
             for s in range(NN.layers[k].input_dim[2]):
-                x_in_layer.append(model.addVars(NN.layers[k].input_dim[0],NN.layers[k].input_dim[1], vtype=GRB.CONTINUOUS))
+                x_in_layer.append(model.addVars(NN.layers[k].input_dim[0],NN.layers[k].input_dim[1], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS))
             x_in.append(x_in_layer)
             x_out_layer = []
             for s in range(NN.layers[k].output_dim[2]):
-                x_out_layer.append(model.addVars(NN.layers[k].output_dim[0],NN.layers[k].output_dim[1], vtype=GRB.CONTINUOUS))
+                x_out_layer.append(model.addVars(NN.layers[k].output_dim[0],NN.layers[k].output_dim[1], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS))
             x_out.append(x_out_layer)
             z0.append([])
             z1.append([])
@@ -198,11 +198,11 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             # define input and output variables
             x_in_layer = []
             for s in range(NN.layers[k].input_dim[2]):
-                x_in_layer.append(model.addVars(NN.layers[k].input_dim[0],NN.layers[k].input_dim[1], vtype=GRB.CONTINUOUS))
+                x_in_layer.append(model.addVars(NN.layers[k].input_dim[0],NN.layers[k].input_dim[1], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS))
             x_in.append(x_in_layer)
             x_out_layer = []
             for s in range(NN.layers[k].output_dim[2]):
-                x_out_layer.append(model.addVars(NN.layers[k].output_dim[0],NN.layers[k].output_dim[1], vtype=GRB.CONTINUOUS))
+                x_out_layer.append(model.addVars(NN.layers[k].output_dim[0],NN.layers[k].output_dim[1], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS))
             x_out.append(x_out_layer)
             # define slack binary variables
             z0_layer = []
@@ -230,11 +230,11 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             # define input and output variables
             x_in_layer = []
             for s in range(NN.layers[k].input_dim[2]):
-                x_in_layer.append(model.addVars(NN.layers[k].input_dim[0],NN.layers[k].input_dim[1], vtype=GRB.CONTINUOUS))
+                x_in_layer.append(model.addVars(NN.layers[k].input_dim[0],NN.layers[k].input_dim[1], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS))
             x_in.append(x_in_layer)
             x_out_layer = []
             for s in range(NN.layers[k].output_dim[2]):
-                x_out_layer.append(model.addVars(NN.layers[k].output_dim[0],NN.layers[k].output_dim[1], vtype=GRB.CONTINUOUS))
+                x_out_layer.append(model.addVars(NN.layers[k].output_dim[0],NN.layers[k].output_dim[1], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS))
             x_out.append(x_out_layer)
 
             z0.append([])
@@ -244,9 +244,9 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             # define input and output variables
             x_in_layer = []
             for s in range(NN.layers[k].input_dim[2]):
-                x_in_layer.append(model.addVars(NN.layers[k].output_dim[0],NN.layers[k].output_dim[1], vtype=GRB.CONTINUOUS))
+                x_in_layer.append(model.addVars(NN.layers[k].output_dim[0],NN.layers[k].output_dim[1], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS))
             x_in.append(x_in_layer)
-            x_out_layer = model.addVars(NN.layers[k].output_dim[0], vtype=GRB.CONTINUOUS)
+            x_out_layer = model.addVars(NN.layers[k].output_dim[0], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
             x_out.append(x_out_layer)
 
             z0.append([])
@@ -254,9 +254,9 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
 
         if NN.layers[k].type == 'Fully_connected':
             # Notice that here the dimension of x_in should be the same as the one of x_out, which is not the one of the output of the previous layer
-            x_in_layer = model.addVars(NN.layers[k].output_dim[0], vtype=GRB.CONTINUOUS)
+            x_in_layer = model.addVars(NN.layers[k].output_dim[0], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
             x_in.append(x_in_layer)
-            x_out_layer = model.addVars(NN.layers[k].output_dim[0], vtype=GRB.CONTINUOUS)
+            x_out_layer = model.addVars(NN.layers[k].output_dim[0], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
             x_out.append(x_out_layer)
             # define slack binary variables
             z0_layer = []
@@ -392,8 +392,8 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
         #for variable in prob_min.variables():
         #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
     else:
-        print('prob_min.status: ' + model.status)
-        print('Error: No result for lower bound!')
+        print('prob_min.status: ' + str(model.status))
+        raise ValueError('Error: No result for lower bound!')
 
     # define objective: biggest output of [layer_index, neuron_index]
     model.setObjective(x_in_neuron, GRB.MAXIMIZE)
@@ -405,8 +405,8 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
         #for variable in prob_min.variables():
         #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
     else:
-        print('prob_max.status: ' + model.status)
-        print('Error: No result for upper bound!')
+        print('prob_max.status: ' + str(model.status))
+        raise ValueError('Error: No result for upper bound!')
 
     if NN.layers[layer_index].type == 'Activation':
         input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] = [neuron_min, neuron_max]
@@ -470,7 +470,7 @@ def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
             #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
         else:
             print('prob_min.status: ' + str(model_in_neuron.status))
-            print('Error: No result for lower bound!')
+            raise ValueError('Error: No result for lower bound!')
 
         # define objective: biggest output of [layer_index, neuron_index]
         model_in_neuron.setObjective(x_in, GRB.MAXIMIZE)
@@ -483,7 +483,7 @@ def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
             #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
         else:
             print('prob_max.status: ' + model_in_neuron.status)
-            print('Error: No result for upper bound!')
+            raise ValueError('Error: No result for upper bound!')
 
         input_range_layer.append([neuron_min, neuron_max])
     return np.array(input_range_layer)
@@ -729,7 +729,7 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
                     if refinement_degree_layer[s][i][j] == 0:
                         seg_left = low
                         seg_right = upp
-                        segment_relaxation_basic(model, x_in[s][i][j], x_out[s][i][j], seg_left, seg_right, activation)
+                        segment_relaxation_basic(model, x_in[s][i,j], x_out[s][i,j], seg_left, seg_right, activation)
                     else:
                         # Stay inside one and only one region, thus sum of slack integers should be 1
                         model.addConstr(z0[s][i][j].sum()+z1[s][i][j].sum()==1)
@@ -791,10 +791,9 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
                         segment_relaxation(model, x_in[i], x_out[i], z1[i][k], seg_left, seg_right, activation, 'concave')
 
 def segment_relaxation_basic(model, x_in_neuron, x_out_neuron, seg_left, seg_right, activation):
+    x_in_neuron.setAttr(GRB.Attr.LB, seg_left)
+    x_in_neuron.setAttr(GRB.Attr.UB, seg_right)
     if seg_left < 0 and seg_right > 0:
-        model.addConstr(x_in_neuron.setAttr(GRB.Attr.LB, seg_left))
-        model.addConstr(x_in_neuron.setAttr(GRB.Attr.UB, seg_right))
-
         model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) <= 0)
 
         neg_out = activate_de_right(activation,seg_left)*(0-seg_left) + activate(activation,seg_left)
@@ -804,31 +803,25 @@ def segment_relaxation_basic(model, x_in_neuron, x_out_neuron, seg_left, seg_rig
         pos_out = activate_de_left(activation,seg_right)*(0-seg_right) + activate(activation,seg_right)
         model.addConstr(x_out_neuron - (activate(activation,seg_left)-neg_out)/(seg_left-0)*(x_in_neuron-0) - neg_out <= 0)
     elif seg_right <= 0:
-        model.addConstr(x_in_neuron.setAttr(GRB.Attr.LB, seg_left))
-        model.addConstr(x_in_neuron.setAttr(GRB.Attr.UB, seg_right))
         model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= 0)
         model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) <= 0)
         model.addConstr(x_out_neuron - (activate(activation,seg_left)-activate(activation,seg_right))/(seg_left-seg_right)*(x_in_neuron-seg_right) - activate(activation,seg_right) <= 0)
     else:
-        model.addConstr(x_in_neuron.setAttr(GRB.Attr.LB, seg_left))
-        model.addConstr(x_in_neuron.setAttr(GRB.Attr.UB, seg_right))
         model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) >= 0)
         model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) >= 0)
         model.addConstr(x_out_neuron - (activate(activation,seg_left)-activate(activation,seg_right))/(seg_left-seg_right)*(x_in_neuron-seg_right) - activate(activation,seg_right) >= 0)
 
 # generate constraints for a neruon over a simple segment
 def segment_relaxation(model, x_in_neuron, x_out_neuron, z_seg, seg_left, seg_right, activation, conv_type):
+    x_in_neuron.setAttr(GRB.Attr.LB, seg_left)
+    x_in_neuron.setAttr(GRB.Attr.UB, seg_right)
     if conv_type == 'convex':
         # The triangle constraints of seg_right<=0 for ReLU, sigmoid, tanh
-        model.addConstr((z_seg == 1) >> (x_in_neuron.setAttr(GRB.Attr.LB, seg_left)))
-        model.addConstr((z_seg == 1) >> (x_in_neuron.setAttr(GRB.Attr.UB, seg_right)))
         model.addConstr((z_seg == 1) >> (-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= 0))
         model.addConstr((z_seg == 1) >> (-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) <= 0))
         model.addConstr((z_seg == 1) >> (x_out_neuron - (activate(activation,seg_left)-activate(activation,seg_right))/(seg_left-seg_right)*(x_in_neuron-seg_right) - activate(activation,seg_right) <= 0))
     if conv_type == 'concave':
         # The triangle constraints of seg_left>=0 for ReLU, sigmoid, tanh
-        model.addConstr((z_seg == 1) >> (x_in_neuron.setAttr(GRB.Attr.LB, seg_left)))
-        model.addConstr((z_seg == 1) >> (x_in_neuron.setAttr(GRB.Attr.UB, seg_right)))
         model.addConstr((z_seg == 1) >> (-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) >= 0))
         model.addConstr((z_seg == 1) >> (-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) >= 0))
         model.addConstr((z_seg == 1) >> (x_out_neuron - (activate(activation,seg_left)-activate(activation,seg_right))/(seg_left-seg_right)*(x_in_neuron-seg_right) - activate(activation,seg_right) >= 0))
