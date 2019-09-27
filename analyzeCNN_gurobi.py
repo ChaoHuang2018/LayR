@@ -138,19 +138,21 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 refinement_degree_layer.append(0)
             refinement_degree_all.append(refinement_degree_layer)
 
+    naive_output = input_range_all[5][0]
     input_range_last_neuron, _ = neuron_input_range_cnn(
         NN,
-        7,
-        output_index,
+        5,
+        0,
         network_input_box,
         input_range_all,
         refinement_degree_all
     )
 
+    print('output range naive: {}'.format(naive_output))
     print('output range: {}'.format(input_range_last_neuron))
 
-    lower_bound = activate(NN.layers[7].activation, input_range_last_neuron[0])
-    upper_bound = activate(NN.layers[7].activation, input_range_last_neuron[1])
+    lower_bound = activate(NN.layers[1].activation, input_range_last_neuron[0])
+    upper_bound = activate(NN.layers[1].activation, input_range_last_neuron[1])
 
     return [lower_bound, upper_bound]
 
