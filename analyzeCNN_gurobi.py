@@ -189,7 +189,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             x_in.append(x_in_layer)
             x_out_layer = []
             for s in range(NN.layers[k].output_dim[2]):
-                x_out_layer.append(model.addVars(NN.layers[k].output_dim[0],NN.layers[k].output_dim[1], vtype=GRB.CONTINUOUS)))
+                x_out_layer.append(model.addVars(NN.layers[k].output_dim[0],NN.layers[k].output_dim[1], vtype=GRB.CONTINUOUS))
             x_out.append(x_out_layer)
             z0.append([])
             z1.append([])
@@ -202,7 +202,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             x_in.append(x_in_layer)
             x_out_layer = []
             for s in range(NN.layers[k].output_dim[2]):
-                x_out_layer.append(model.addVars(NN.layers[k].output_dim[0],NN.layers[k].output_dim[1], vtype=GRB.CONTINUOUS)))
+                x_out_layer.append(model.addVars(NN.layers[k].output_dim[0],NN.layers[k].output_dim[1], vtype=GRB.CONTINUOUS))
             x_out.append(x_out_layer)
             # define slack binary variables
             z0_layer = []
@@ -341,14 +341,14 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             weight_k = NN.layers[k].weight
             bias_k = NN.layers[k].bias
             if k == 0:
-                for i in range(NN.layers[k].output_dim[0])
+                for i in range(NN.layers[k].output_dim[0]):
                     weight_k_i = np.reshape(weight_k[:, i], (-1, 1))
                     weight_k_i_dic = {}
                     for j in range(weight_i.shape[0]):
                         weight_k_i_dic[j] = weight_k_i[j]
                     model.addConstr(network_in.prod(weight_k_i_dic) + bias_k[i] == x_in[k][i])
             else:
-                for i in range(NN.layers[k].output_dim[0])
+                for i in range(NN.layers[k].output_dim[0]):
                     weight_k_i = np.reshape(weight_k[:, i], (-1, 1))
                     weight_k_i_dic = {}
                     for j in range(weight_i.shape[0]):
@@ -509,27 +509,29 @@ def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, 
                 x_out = model_out_neuron.addVar()
                 constraints = []
                 sum_expr = 0
+                print('For neuron' + str([i * stride[0] ,j * stride[1] ,s]))
                 for s in range(layer.input_dim[2]):
-                    model_out_neuron.addConstrs((x_in[s][p,q].setAttr(GRB.Attr.LB, input_range_layer[
+                    for p in range(kernal.shape[0]):
+                        for q in range(kernal.shape[1]):      
+                            x_in[s][p,q].setAttr(GRB.Attr.LB, input_range_layer[
                                                                     i * stride[0] + p,
                                                                     j * stride[1] + q,
                                                                     s,
-                                                                    0])
-                                  for p in range(kernal.shape[0])
-                                  for q in range(kernal.shape[1])))
-                    model_out_neuron.addConstrs((x_in[s][p,q].setAttr(GRB.Attr.UB, input_range_layer[
+                                                                    0]) 
+                            x_in[s][p,q].setAttr(GRB.Attr.UB, input_range_layer[
                                                                     i * stride[0] + p,
                                                                     j * stride[1] + q,
                                                                     s,
                                                                     1])
-                                  for p in range(kernal.shape[0])
-                                  for q in range(kernal.shape[1])))
-
-                    sum_expr = sum_expr + x_in[s].prod(dict(np.ndenumerate(kernal[:,:,s,k]))) @ temp_in + bias[k]
+                            print('Bound for neuron' + str([i * stride[0] + p,j * stride[1] + q,s]))
+                            print(input_range_layer[i * stride[0] + p, j * stride[1] + q, s, 0])
+                            print(input_range_layer[i * stride[0] + p, j * stride[1] + q, s, 1])
+                    sum_expr = sum_expr + x_in[s].prod(dict(np.ndenumerate(kernal[:,:,s,k]))) + bias[k]
                 model_out_neuron.addConstr(sum_expr == x_out)
 
                 # define objective: smallest output
                 model_out_neuron.setObjective(x_out, GRB.MINIMIZE)
+                model_out_neuron.setParam('OutputFlag', 0)
                 model_out_neuron.optimize()
 
                 if model_out_neuron.status == GRB.OPTIMAL:
@@ -538,20 +540,23 @@ def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, 
                     #for variable in prob_min.variables():
                     #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
                 else:
-                    print('prob_min.status: ' + model_out_neuron.status)
-                    print('Error: No result for lower bound!')
+                    print('prob_min.status: ' + str(model_out_neuron.status))
+                    print(model_out_neuron.printStats())
+                    print(model_out_neuron.getConstrs()[0])
+                    raise ValueError("Error: No result for lower bound for " + str([i,j,s,k]))
 
                 # define objective: biggest output
                 model_out_neuron.setObjective(x_out, GRB.MAXIMIZE)
+                model_out_neuron.setParam('OutputFlag', 0)
                 model_out_neuron.optimize()
 
                 if model_out_neuron.status == GRB.OPTIMAL:
-                    neuron_ax = model_out_neuron.objVal
+                    neuron_max = model_out_neuron.objVal
                     #print('lower bound: ' + str(l_neuron))
                     #for variable in prob_min.variables():
                     #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
                 else:
-                    print('prob_max.status: ' + model_out_neuron.status)
+                    print('prob_max.status: ' + str(model_out_neuron.status))
                     print('Error: No result for upper bound!')
                 output_range_layer_col.append([neuron_min, neuron_max])
             output_range_layer_row.append(output_range_layer_col)
@@ -691,7 +696,7 @@ def relaxation_pooling_layer(model, layer, x_in, x_out, filter_size, pooling_typ
                     temp_list = []
                     for p in range(filter_size[0]):
                         for q in range(filter_size[1]):
-                            temp_list.append(x_in[s][i*stride[0]+p, j*stride[1]+q]))
+                            temp_list.append(x_in[s][i*stride[0]+p, j*stride[1]+q])
                     model.addConstr(max_(temp_list) == x_out[s][i,j])
     if pooling_type == 'average':
         for s in range(layer.input_dim[2]):
@@ -699,7 +704,7 @@ def relaxation_pooling_layer(model, layer, x_in, x_out, filter_size, pooling_typ
                 for j in range(round(layer.input_dim[1]/filter_size[1])):
                     for p in range(filter_size[0]):
                         for q in range(filter_size[1]):
-                            temp_list.append(x_in[s][i*stride[0]+p, j*stride[1]+q]))
+                            temp_list.append(x_in[s][i*stride[0]+p, j*stride[1]+q])
                     model.addConstr(quicksum(temp_list)/(filter_size[0]*filter_size[1]) == x_out[s][i,j])
 
 # flatten layer
