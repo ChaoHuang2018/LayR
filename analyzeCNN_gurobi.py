@@ -676,7 +676,10 @@ def relaxation_convolutional_layer(model, layer, x_in, x_out, kernal, bias, stri
             for k in range(layer.output_dim[2]):
                 sum_expr = 0
                 for s in range(layer.input_dim[2]):
-                    sum_expr = sum_expr + x_in[s][i*stride[0]:i*stride[0]+kernal.shape[0], j*stride[1]:j*stride[1]+kernal.shape[1]].prod(dict(np.ndenumerate(kernal[:,:,s,k]))) @ temp_in + bias[k]
+                    for p in range(kernal.shape[0]):
+                        for q in range(kernal.shape[1]):
+                            sum_expr + x_in[s][i*stride[0]+p, j*stride[1]+q] * kernal[p,q,s,k]
+                    sum_expr = sum_expr + bias[k]
                 model.addConstr(sum_expr == x_out)
 
 # pooling layer
