@@ -315,6 +315,7 @@ class Layer(object):
         filter_size
         input_dim
         output_dim
+        layer_idx
     """
     def __init__(self):
         self._type = None
@@ -326,6 +327,7 @@ class Layer(object):
         self._filter_size = None
         self._input_dim = None
         self._output_dim = None
+        self._layer_idx = None
 
     @property
     def type(self):

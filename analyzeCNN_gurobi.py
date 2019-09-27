@@ -140,8 +140,8 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
 
     input_range_last_neuron, _ = neuron_input_range_cnn(
         NN,
-        3,
-        [0, 0, 0],
+        8,
+        0,
         network_input_box,
         input_range_all,
         refinement_degree_all
@@ -244,9 +244,9 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             # define input and output variables
             x_in_layer = []
             for s in range(NN.layers[k].input_dim[2]):
-                x_in_layer.append(model.addVars(NN.layers[k].output_dim[0],NN.layers[k].output_dim[1], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS))
+                x_in_layer.append(model.addVars(NN.layers[k].output_dim[0].item(),NN.layers[k].input_dim[1], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS))
             x_in.append(x_in_layer)
-            x_out_layer = model.addVars(NN.layers[k].output_dim[0], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
+            x_out_layer = model.addVars(NN.layers[k].output_dim[0].item(), lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
             x_out.append(x_out_layer)
 
             z0.append([])
@@ -254,7 +254,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
 
         if NN.layers[k].type == 'Fully_connected':
             # Notice that here the dimension of x_in should be the same as the one of x_out, which is not the one of the output of the previous layer
-            x_in_layer = model.addVars(NN.layers[k].output_dim[0], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
+            x_in_layer = model.addVars(NN.layers[k].input_dim[0], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
             x_in.append(x_in_layer)
             x_out_layer = model.addVars(NN.layers[k].output_dim[0], lb=-GRB.INFINITY,ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
             x_out.append(x_out_layer)
@@ -312,7 +312,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
                         for j in range(NN.layers[k].input_dim[1]):
                             model.addConstr(x_out[k-1][s][i,j] == x_in[k][s][i,j])
         if NN.layers[k].type == 'Pooling':
-            relaxation_pooling_layer(model, NN.layers[k], x_in[k], x_out[k], z_pooling[k], NN.layers[k].filter_size, NN.layers[k].activation, NN.layers[k].stride)
+            relaxation_pooling_layer(model, NN.layers[k], x_in[k], x_out[k], NN.layers[k].filter_size, NN.layers[k].activation, NN.layers[k].stride)
             if k == 0:
                 for s in range(NN.layers[k].input_dim[2]):
                     for i in range(NN.layers[k].input_dim[0]):
@@ -344,15 +344,15 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
                 for i in range(NN.layers[k].output_dim[0]):
                     weight_k_i = np.reshape(weight_k[:, i], (-1, 1))
                     weight_k_i_dic = {}
-                    for j in range(weight_i.shape[0]):
-                        weight_k_i_dic[j] = weight_k_i[j]
+                    for j in range(weight_k_i.shape[0]):
+                        weight_k_i_dic[j] = weight_k_i[j][0]
                     model.addConstr(network_in.prod(weight_k_i_dic) + bias_k[i] == x_in[k][i])
             else:
                 for i in range(NN.layers[k].output_dim[0]):
                     weight_k_i = np.reshape(weight_k[:, i], (-1, 1))
                     weight_k_i_dic = {}
-                    for j in range(weight_i.shape[0]):
-                        weight_k_i_dic[j] = weight_k_i[j]
+                    for j in range(weight_k_i.shape[0]):
+                        weight_k_i_dic[j] = weight_k_i[j][0]
                     model.addConstr(x_out[k-1].prod(weight_k_i_dic) + bias_k[i] == x_in[k][i])
 
 
@@ -363,19 +363,15 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     elif NN.layers[layer_index].type == 'Fully_connected':
         weight_neuron = np.reshape(NN.layers[layer_index].weight[:, neuron_index], (-1, 1))
         bias_neuron = NN.layers[layer_index].bias[neuron_index]
-        print(x_in_neuron.shape)
-        print(weight_neuron.shape)
-        print(x_out[layer_index-1].shape)
-        print(bias_neuron.shape)
         if layer_index >= 1:
             weight_neuron_dic = {}
             for j in range(weight_neuron.shape[0]):
-                weight_neuron_dic[j] = weight_neuron_i[j]
+                weight_neuron_dic[j] = weight_neuron[j][0]
             model.addConstr(x_out[layer_index-1].prod(weight_neuron_dic) + bias_neuron == x_in_neuron)
         else:
             weight_neuron_dic = {}
             for j in range(weight_neuron.shape[0]):
-                weight_neuron_dic[j] = weight_neuron_i[j]
+                weight_neuron_dic[j] = weight_neuron[j][0]
             model.addConstr(network_in.prod(weight_neuron_dic) + bias_neuron == x_in_neuron)
     else:
         print('No need to update the input range of this neuron')
@@ -699,6 +695,8 @@ def relaxation_pooling_layer(model, layer, x_in, x_out, filter_size, pooling_typ
         for s in range(layer.input_dim[2]):
             for i in range(round(layer.input_dim[0]/filter_size[0])):
                 for j in range(round(layer.input_dim[1]/filter_size[1])):
+                    # big-M relaxation for max operation
+                    temp_list = []
                     for p in range(filter_size[0]):
                         for q in range(filter_size[1]):
                             temp_list.append(x_in[s][i*stride[0]+p, j*stride[1]+q])
@@ -761,7 +759,9 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
         for i in range(layer.output_dim[0]):
             low = input_range_layer[i][0]
             upp = input_range_layer[i][1]
-            if refinement_degree_layer[s][i][j] == 0:
+            if refinement_degree_layer[i] == 0:
+                seg_left = low
+                seg_right = upp
                 segment_relaxation_basic(model, x_in[i], x_out[i], seg_left, seg_right, activation)
             else:
                 # any neuron can only be within a region, thus sum of slack integers should be 1
@@ -797,7 +797,7 @@ def segment_relaxation_basic(model, x_in_neuron, x_out_neuron, seg_left, seg_rig
         if activation == 'ReLU':
             model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= 0)
             model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) <= 0)
-            model.addConstr(x_out_neuron - (activate(activation,seg_left)-activate(activation,seg_right))/(seg_left-seg_right)*(x_in_neuron-seg_right) - activate(activation,seg_right) <= 0)            
+            model.addConstr(x_out_neuron - (activate(activation,seg_left)-activate(activation,seg_right))/(seg_left-seg_right)*(x_in_neuron-seg_right) - activate(activation,seg_right) <= 0)
         else:
             model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) <= 0)
 
