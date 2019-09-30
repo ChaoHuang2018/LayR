@@ -141,12 +141,12 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 refinement_degree_layer.append(0)
             refinement_degree_all.append(refinement_degree_layer)
 
-    N = 8
-    naive_input = input_range_all[N][0]
+    N = 1
+    naive_input = input_range_all[N][0][0][0]
     input_range_last_neuron, _ = neuron_input_range_cnn(
         NN,
         N,
-        0,
+        [0,0,0],
         network_input_box,
         input_range_all,
         refinement_degree_all
