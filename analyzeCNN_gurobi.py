@@ -746,9 +746,13 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
                 for j in range(layer.input_dim[1]):
                     low = input_range_layer[i][j][s][0]
                     upp = input_range_layer[i][j][s][1]
-
+                    #print('lower: '+str(low))
+                    #print('upper: '+str(upp))
+                    #print('Activation: '+activation)
+                    #print('After activating: ' + str(activate(activation,upp)))
                     if upp - low <= 10e-6:
-                        model.addConstr(x_out == activate(activation,upp))
+                        temp = activate(activation,upp)
+                        model.addConstr(x_out[s][i,j] == temp)
                     elif refinement_degree_layer[s][i][j] == 0:
                         seg_left = low
                         seg_right = upp
@@ -785,7 +789,8 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
             low = input_range_layer[i][0]
             upp = input_range_layer[i][1]
             if upp - low <= 10e-6:
-                model.addConstr(x_out == activate(activation,upp))
+                temp = activate(activation,upp)
+                model.addConstr(x_out[s][i] == temp)
             elif refinement_degree_layer[i] == 0:
                 seg_left = low
                 seg_right = upp
