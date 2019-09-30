@@ -3,6 +3,7 @@ from sympy import *
 from numpy import linalg as LA
 from numpy import pi, tanh, array, dot
 from scipy.optimize import linprog
+from scipy.special import expit
 from multiprocessing import Pool
 from functools import partial
 from operator import itemgetter
@@ -153,7 +154,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
 
     print('input range naive: ' + str(naive_input))
     print('output range naive: ['+ str(activate(NN.layers[N].activation, naive_input[0])) + ',' + str(activate(NN.layers[N].activation, naive_input[1])) + ']')
-    
+
 
     lower_bound = activate(NN.layers[N].activation, input_range_last_neuron[0])
     upper_bound = activate(NN.layers[N].activation, input_range_last_neuron[1])
@@ -437,7 +438,7 @@ def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
 
     input_range_layer = []
 
-    
+
 
     for i in range(weight.shape[1]):
         model_in_neuron = Model()
@@ -447,7 +448,7 @@ def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
         for j in range(output_range_last_layer.shape[0]):
             x_out[j].setAttr(GRB.Attr.LB, output_range_last_layer[j, 0])
             x_out[j].setAttr(GRB.Attr.UB, output_range_last_layer[j, 1])
-        
+
         x_in = model_in_neuron.addVar(lb=-GRB.INFINITY,ub=GRB.INFINITY)
 
         weight_i = np.reshape(weight[:, i], (-1, 1))
@@ -914,11 +915,12 @@ def tanh_de_right(x):
 
 # define sigmoid activation function and its left/right derivative
 def sigmoid(x):
-    s = 1 / (1 + np.exp(-x))
+    # s = 1. / (1. + np.exp(-x))
+    s = expit(x)
     return s
 
 def sigmoid_de_left(x):
-    de_l = sigmoid(x)*(1-sigmoid(x))
+    de_l = sigmoid(x)*(1. - sigmoid(x))
     return de_l
 
 def sigmoid_de_right(x):
