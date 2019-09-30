@@ -165,7 +165,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
 
 
 # define large positive number M to enable Big M method
-M = 10e4
+M = 10e10
 # Compute the input range for a specific neuron
 # and return the updated input_range_all
 
@@ -745,7 +745,10 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
                 for j in range(layer.input_dim[1]):
                     low = input_range_layer[i][j][s][0]
                     upp = input_range_layer[i][j][s][1]
-                    if refinement_degree_layer[s][i][j] == 0:
+
+                    if upp - low <= 10e-6:
+                        model.addConstr(x_out == activate(activation,upp))
+                    elif refinement_degree_layer[s][i][j] == 0:
                         seg_left = low
                         seg_right = upp
                         segment_relaxation_basic(model, x_in[s][i,j], x_out[s][i,j], seg_left, seg_right, activation)
@@ -780,7 +783,9 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
         for i in range(layer.output_dim[0]):
             low = input_range_layer[i][0]
             upp = input_range_layer[i][1]
-            if refinement_degree_layer[i] == 0:
+            if upp - low <= 10e-6:
+                model.addConstr(x_out == activate(activation,upp))
+            elif refinement_degree_layer[i] == 0:
                 seg_left = low
                 seg_right = upp
                 segment_relaxation_basic(model, x_in[i], x_out[i], seg_left, seg_right, activation)
@@ -818,7 +823,7 @@ def segment_relaxation_basic(model, x_in_neuron, x_out_neuron, seg_left, seg_rig
         if activation == 'ReLU':
             model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= 0)
             model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) <= 0)
-            model.addConstr(x_out_neuron - (activate(activation,seg_left)-activate(activation,seg_right))/(seg_left-seg_right)*(x_in_neuron-seg_right) - activate(activation,seg_right) <= 0)
+            model.addConstr(x_out_neuron - (M*(activate(activation,seg_left)-activate(activation,seg_right)))/(M*(seg_left-seg_right))*(x_in_neuron-seg_right) - activate(activation,seg_right) <= 0)
         else:
             model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) <= 0)
 
@@ -831,11 +836,11 @@ def segment_relaxation_basic(model, x_in_neuron, x_out_neuron, seg_left, seg_rig
     elif seg_right <= 0:
         model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= 0)
         model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) <= 0)
-        model.addConstr(x_out_neuron - (activate(activation,seg_left)-activate(activation,seg_right))/(seg_left-seg_right)*(x_in_neuron-seg_right) - activate(activation,seg_right) <= 0)
+        model.addConstr(x_out_neuron - (M*(activate(activation,seg_left)-activate(activation,seg_right)))/(M*(seg_left-seg_right))*(x_in_neuron-seg_right) - activate(activation,seg_right) <= 0)
     else:
         model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) >= 0)
         model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) >= 0)
-        model.addConstr(x_out_neuron - (activate(activation,seg_left)-activate(activation,seg_right))/(seg_left-seg_right)*(x_in_neuron-seg_right) - activate(activation,seg_right) >= 0)
+        model.addConstr(x_out_neuron - (M*(activate(activation,seg_left)-activate(activation,seg_right)))/(M*(seg_left-seg_right))*(x_in_neuron-seg_right) - activate(activation,seg_right) >= 0)
 
 # generate constraints for a neruon over a simple segment
 def segment_relaxation(model, x_in_neuron, x_out_neuron, z_seg, seg_left, seg_right, activation, conv_type):
