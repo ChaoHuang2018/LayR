@@ -850,8 +850,8 @@ def segment_relaxation_basic(model, x_in_neuron, x_out_neuron, seg_left, seg_rig
         model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) <= 0)
         temp_x_diff = M*(seg_left-seg_right)
         temp_y_diff = M*(activate(activation,seg_left)-activate(activation,seg_right))
-        print('temp_x_diff: ' + str(temp_x_diff))
-        print('temp_y_diff: ' + str(temp_y_diff))
+        #print('temp_x_diff: ' + str(temp_x_diff))
+        #print('temp_y_diff: ' + str(temp_y_diff))
         model.addConstr(x_out_neuron - temp_y_diff/temp_x_diff*(x_in_neuron-seg_right) - activate(activation,seg_right) <= 0)
         # polytope relaxation
         # model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= 0)
@@ -863,13 +863,13 @@ def segment_relaxation_basic(model, x_in_neuron, x_out_neuron, seg_left, seg_rig
         model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) >= 0)
         temp_x_diff = M*(seg_left-seg_right)
         temp_y_diff = M*(activate(activation,seg_left)-activate(activation,seg_right))
-        print('temp_x_diff: ' + str(temp_x_diff))
-        print('temp_y_diff: ' + str(temp_y_diff))      
+        #print('temp_x_diff: ' + str(temp_x_diff))
+        #print('temp_y_diff: ' + str(temp_y_diff))      
         model.addConstr(x_out_neuron - temp_y_diff/temp_x_diff*(x_in_neuron-seg_right) - activate(activation,seg_right) >= 0)
 
         # polytope relaxation
-        model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= 0)
-        model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_left) + activate(activation,seg_left) >= 0)
+        #model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= 0)
+        #model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_left) + activate(activation,seg_left) >= 0)
 
 # generate constraints for a neruon over a simple segment
 def segment_relaxation(model, x_in_neuron, x_out_neuron, z_seg, seg_left, seg_right, activation, conv_type):
