@@ -705,8 +705,8 @@ def relaxation_convolutional_layer(model, layer, x_in, x_out, kernal, bias, stri
 def relaxation_pooling_layer(model, layer, x_in, x_out, filter_size, pooling_type, stride):
     if pooling_type == 'max':
         for s in range(layer.input_dim[2]):
-            for i in range(round(layer.input_dim[0]/filter_size[0])):
-                for j in range(round(layer.input_dim[1]/filter_size[1])):
+            for i in range(layer.output_dim[0]):
+                for j in range(layer.output_dim[1]):
                     # big-M relaxation for max operation
                     temp_list = []
                     for p in range(filter_size[0]):
@@ -715,8 +715,8 @@ def relaxation_pooling_layer(model, layer, x_in, x_out, filter_size, pooling_typ
                     model.addConstr(max_(temp_list) == x_out[s][i,j])
     if pooling_type == 'average':
         for s in range(layer.input_dim[2]):
-            for i in range(round(layer.input_dim[0]/filter_size[0])):
-                for j in range(round(layer.input_dim[1]/filter_size[1])):
+            for i in range(layer.output_dim[0]):
+                for j in range(layer.output_dim[1]):
                     # big-M relaxation for max operation
                     temp_list = []
                     for p in range(filter_size[0]):
