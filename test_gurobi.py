@@ -25,7 +25,7 @@ from analyzeCNN_gurobi import output_range_MILP_CNN
 
 # test new approach for estimating sigmoid network's output range
 eps = 0.1
-NN = nn_controller_details('model_CNN_avgpool_simple',keras=True)
+NN = nn_controller_details('model_CNN_avgpool_sigmoid',keras=True)
 # the data, split between train and test sets
 fashion_mnist = keras.datasets.fashion_mnist
 (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
