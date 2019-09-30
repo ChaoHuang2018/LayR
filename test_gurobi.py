@@ -25,7 +25,7 @@ from analyzeCNN_gurobi import output_range_MILP_CNN
 
 # test new approach for estimating sigmoid network's output range
 eps = 0.1
-NN = nn_controller_details('model_CNN_avgpool_sigmoid',keras=True)
+NN = nn_controller_details('model_CNN_avgpool_simple',keras=True)
 # the data, split between train and test sets
 fashion_mnist = keras.datasets.fashion_mnist
 (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
@@ -42,7 +42,7 @@ for i in range(input_dim[0]):
         input_range_row.append(input_range_channel)
     input_range.append(input_range_row)
 print(np.array(input_range).shape)
-output_l, output_u = output_range_MILP_CNN(NN, np.array(input_range), 5)
+output_l, output_u = output_range_MILP_CNN(NN, np.array(input_range), 0)
 print("lower bound: {}; upper bound: {}".format(output_l, output_u))
 print("actual output of NN: {}".format(NN.keras_model(data.reshape(1, data.shape[0], data.shape[1], 1))))
 print("actual output: {}".format(NN.keras_model_pre_softmax(data.reshape(1, data.shape[0], data.shape[1], 1))))

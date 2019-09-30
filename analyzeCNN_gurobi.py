@@ -141,12 +141,12 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 refinement_degree_layer.append(0)
             refinement_degree_all.append(refinement_degree_layer)
 
-    N = 8
-    naive_input = input_range_all[N][0]
+    N = 6
+    naive_input = input_range_all[6][0]
     input_range_last_neuron, _ = neuron_input_range_cnn(
         NN,
         N,
-        5,
+        [0,0,0],
         network_input_box,
         input_range_all,
         refinement_degree_all
@@ -379,12 +379,12 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             weight_neuron_dic = {}
             for j in range(weight_neuron.shape[0]):
                 weight_neuron_dic[j] = weight_neuron[j][0]
-            model.addConstr(x_out[layer_index-1].prod(weight_neuron_dic) + bias_neuron == x_in_neuron)
+            model.addConstr(x_out[layer_index-1].prod(weight_neuron_dic) + bias_neuron[0] == x_in_neuron)
         else:
             weight_neuron_dic = {}
             for j in range(weight_neuron.shape[0]):
                 weight_neuron_dic[j] = weight_neuron[j][0]
-            model.addConstr(network_in.prod(weight_neuron_dic) + bias_neuron == x_in_neuron)
+            model.addConstr(network_in.prod(weight_neuron_dic) + bias_neuron[0] == x_in_neuron)
     else:
         print('No need to update the input range of this neuron')
         return input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]], input_range_all
