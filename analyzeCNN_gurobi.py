@@ -141,7 +141,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 refinement_degree_layer.append(0)
             refinement_degree_all.append(refinement_degree_layer)
 
-    N = 1
+    N = 4
     naive_input = input_range_all[N][0][0][0]
     input_range_last_neuron, _ = neuron_input_range_cnn(
         NN,
@@ -370,7 +370,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     # add constraint for the last layer and the neuron
     # Notice that we only need to handle activation function layer. For other layers, update the input range of the neuron does not improve the result (which is equivalant in fact)
     print(NN.layers[layer_index].type)
-    if NN.layers[layer_index].type == 'Activation' or NN.layers[layer_index].type == 'Flatten':
+    if NN.layers[layer_index].type == 'Activation' or NN.layers[layer_index].type == 'Flatten' or NN.layers[layer_index].type == 'Pooling':
         model.addConstr(x_in_neuron == x_out[layer_index-1][neuron_index[2]][neuron_index[0],neuron_index[1]])
     elif NN.layers[layer_index].type == 'Fully_connected':
         weight_neuron = np.reshape(NN.layers[layer_index].weight[:, neuron_index], (-1, 1))
