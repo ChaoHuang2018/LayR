@@ -169,7 +169,7 @@ class NN(object):
 
     def keras_model_pre_softmax(self, x):
         get_output_pre_softmax = K.function([self.model.layers[0].input],
-                                            [self.model.layers[3].output])
+                                            [self.model.layers[7].output])
         layer_output = get_output_pre_softmax([x])[0]
         return layer_output
 

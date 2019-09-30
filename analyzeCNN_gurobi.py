@@ -68,6 +68,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
             bias_i = NN.layers[i].bias
 
         print('-------------layer: {}---------------'.format(i))
+        print(NN.layers[i].type)
 
         if NN.layers[i].type == 'Convolutional':
             output_range_layer_i = output_range_convolutional_layer_naive_v1(
@@ -78,6 +79,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 NN.layers[i].stride
             )
         if NN.layers[i].type == 'Activation':
+            print(NN.layers[i].activation)
             output_range_layer_i = output_range_activation_layer_naive(
                 NN.layers[i],
                 input_range_layer_i,
@@ -138,21 +140,25 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 refinement_degree_layer.append(0)
             refinement_degree_all.append(refinement_degree_layer)
 
-    naive_output = input_range_all[5][0]
+    naive_input = input_range_all[7][0]
     input_range_last_neuron, _ = neuron_input_range_cnn(
         NN,
-        5,
-        0,
+        7,
+        [0],
         network_input_box,
         input_range_all,
         refinement_degree_all
     )
 
-    print('output range naive: {}'.format(naive_output))
-    print('output range: {}'.format(input_range_last_neuron))
+    print('input range naive: ' + str(naive_input))
+    print('output range naive: ['+ str(activate(NN.layers[7].activation, naive_input[0])) + ',' + str(activate(NN.layers[7].activation, naive_input[1])) + ']')
+    
 
-    lower_bound = activate(NN.layers[1].activation, input_range_last_neuron[0])
-    upper_bound = activate(NN.layers[1].activation, input_range_last_neuron[1])
+    lower_bound = activate(NN.layers[7].activation, input_range_last_neuron[0])
+    upper_bound = activate(NN.layers[7].activation, input_range_last_neuron[1])
+
+    print('input range naive: ' + str(input_range_last_neuron))
+    print('output range: ['+ str(lower_bound) + ',' + str(upper_bound) + ']')
 
     return [lower_bound, upper_bound]
 
@@ -165,7 +171,6 @@ M = 10e4
 # When layer_index = layers,
 # this function outputs the output range of the neural network
 def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, input_range_all, refinement_degree_all):
-
     layers = NN.layers
 
     model = Model('Neuron_Range_Update')
@@ -362,7 +367,8 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
 
     # add constraint for the last layer and the neuron
     # Notice that we only need to handle activation function layer. For other layers, update the input range of the neuron does not improve the result (which is equivalant in fact)
-    if NN.layers[layer_index].type == 'Activation':
+    print(NN.layers[layer_index].type)
+    if NN.layers[layer_index].type == 'Activation' or NN.layers[layer_index].type == 'Flatten':
         model.addConstr(x_in_neuron == x_out[layer_index-1][neuron_index[2]][neuron_index[0],neuron_index[1]])
     elif NN.layers[layer_index].type == 'Fully_connected':
         weight_neuron = np.reshape(NN.layers[layer_index].weight[:, neuron_index], (-1, 1))
@@ -430,15 +436,17 @@ def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
 
     input_range_layer = []
 
-    model_in_neuron = Model()
-
-    x_out = model_in_neuron.addVars(weight.shape[0], lb=-GRB.INFINITY, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
-    # define constraints: output range of the last layer
-    for j in range(output_range_last_layer.shape[0]):
-        x_out[j].setAttr(GRB.Attr.LB, output_range_last_layer[j, 0])
-        x_out[j].setAttr(GRB.Attr.UB, output_range_last_layer[j, 1])
+    
 
     for i in range(weight.shape[1]):
+        model_in_neuron = Model()
+
+        x_out = model_in_neuron.addVars(weight.shape[0], lb=-GRB.INFINITY, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
+        # define constraints: output range of the last layer
+        for j in range(output_range_last_layer.shape[0]):
+            x_out[j].setAttr(GRB.Attr.LB, output_range_last_layer[j, 0])
+            x_out[j].setAttr(GRB.Attr.UB, output_range_last_layer[j, 1])
+        
         x_in = model_in_neuron.addVar(lb=-GRB.INFINITY,ub=GRB.INFINITY)
 
         weight_i = np.reshape(weight[:, i], (-1, 1))
@@ -451,12 +459,14 @@ def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
         for j in range(weight_i.shape[0]):
             weight_i_dic[j] = weight_i[j][0]
 
-        try:
-            lt_index = model_in_neuron.getConstrByName('lt')
-            model_in_neuron.remove(lt_index)
-            model_in_neuron.addConstr(x_out.prod(weight_i_dic) + bias_i == x_in, 'lt')
-        except gurobipy.GurobiError:
-            model_in_neuron.addConstr(x_out.prod(weight_i_dic) + bias_i == x_in, 'lt')
+##        try:
+##            lt_index = model_in_neuron.getConstrByName('lt')
+##            model_in_neuron.remove(lt_index)
+##            model_in_neuron.addConstr(x_out.prod(weight_i_dic) + bias_i == x_in, 'lt')
+##        except gurobipy.GurobiError:
+##            model_in_neuron.addConstr(x_out.prod(weight_i_dic) + bias_i == x_in, 'lt')
+
+        model_in_neuron.addConstr(x_out.prod(weight_i_dic) + bias_i == x_in, 'lt')
 
 
 
@@ -464,6 +474,7 @@ def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
         # define objective: smallest output of [layer_index, neuron_index]
         # Set objective
         model_in_neuron.setObjective(x_in, GRB.MINIMIZE)
+        model_in_neuron.setParam('OutputFlag', 0)
         model_in_neuron.optimize()
 
         if model_in_neuron.status == GRB.OPTIMAL:
@@ -477,6 +488,7 @@ def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
 
         # define objective: biggest output of [layer_index, neuron_index]
         model_in_neuron.setObjective(x_in, GRB.MAXIMIZE)
+        model_in_neuron.setParam('OutputFlag', 0)
         model_in_neuron.optimize()
 
         if model_in_neuron.status == GRB.OPTIMAL:
@@ -499,6 +511,7 @@ def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
 # Convolutional layer
 def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, bias, stride):
     output_range_layer = []
+    print('The size of bias is: ' + str(bias.shape))
 
     for i in range(layer.output_dim[0]):
         output_range_layer_row = []

@@ -44,6 +44,7 @@ for i in range(input_dim[0]):
 print(np.array(input_range).shape)
 output_l, output_u = output_range_MILP_CNN(NN, np.array(input_range), 1)
 print("lower bound: {}; upper bound: {}".format(output_l, output_u))
+print("actual output of NN: {}".format(NN.keras_model(data.reshape(1, data.shape[0], data.shape[1], 1))))
 print("actual output: {}".format(NN.keras_model_pre_softmax(data.reshape(1, data.shape[0], data.shape[1], 1))))
 
 # test cvxpy
