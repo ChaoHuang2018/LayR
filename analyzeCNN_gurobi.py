@@ -141,11 +141,13 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 refinement_degree_layer.append(0)
             refinement_degree_all.append(refinement_degree_layer)
 
-    layer_index = 4    
+    layer_index = 3
+##    print(NN.layers[layer_index].input_dim)
 ##    for s in range(NN.layers[layer_index].input_dim[2]):
 ##        for i in range(NN.layers[layer_index].input_dim[0]):
 ##            for j in range(NN.layers[layer_index].input_dim[1]):
 ##                neuron_index = [i,j,s]
+##                print(neuron_index)
 ##                input_range_last_neuron, _ = neuron_input_range_cnn(
 ##                    NN,
 ##                    layer_index,
@@ -154,8 +156,8 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
 ##                    input_range_all,
 ##                    refinement_degree_all
 ##                )
-    neuron_index = [10,3,1]
-    naive_input = input_range_all[layer_index][10][3][1]
+    neuron_index = [8,17,0]
+    naive_input = input_range_all[layer_index][neuron_index]
     input_range_last_neuron, _ = neuron_input_range_cnn(
         NN,
         layer_index,
@@ -408,11 +410,12 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
             model.addConstr(network_in.prod(weight_neuron_dic) + bias_neuron == x_in_neuron)
     else:
         print('No need to update the input range of this neuron')
-        return input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]], input_range_all
+        return input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]], input_range_all
 
 
     # objective: smallest output of [layer_index, neuron_index]
     model.setObjective(x_in_neuron, GRB.MINIMIZE)
+    model.setParam('OutputFlag', 0)
     #model.setParam('DualReductions', 0)
     #model.setParam('NumericFocus', 3)
     #model.setParam('ScaleFlag', 2)
@@ -429,7 +432,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     if model.status == GRB.OPTIMAL:
         neuron_min = model.objVal
         print(model.printQuality())
-        model.write("model.lp")
+        #model.write("model.lp")
         #print('lower bound: ' + str(l_neuron))
         #for variable in prob_min.variables():
         #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
@@ -457,8 +460,16 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
         print('prob_max.status: ' + str(model.status))
         raise ValueError('Error: No result for upper bound!')
 
+    
+
     if NN.layers[layer_index].type == 'Activation':
-        input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] = [neuron_min, neuron_max]
+        print(neuron_index)
+        print(input_range_all[layer_index].shape)
+        if input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]][0]>neuron_max or input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]][1]<neuron_min:
+            print(input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]])
+            print([neuron_min, neuron_max])
+            raise ValueError('Error: Wrong input bound!')
+        input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]] = [neuron_min, neuron_max]
     elif (
         NN.layers[layer_index].type == 'Fully_connected' and
         layer_index < NN.num_of_hidden_layers - 1
@@ -581,7 +592,8 @@ def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, 
                                                                     j * stride[1] + q,
                                                                     s,
                                                                     1])
-                    sum_expr = sum_expr + x_in[s].prod(dict(np.ndenumerate(kernal[:,:,s,k]))) + bias[k]
+                            sum_expr = sum_expr + x_in[s][p, q] * kernal[p,q,s,k]
+                    sum_expr = sum_expr + bias[k]
                 model_out_neuron.addConstr(sum_expr == x_out)
 
                 # define objective: smallest output
@@ -879,14 +891,16 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
                         segment_relaxation(model, x_in[i], x_out[i], z1[i][k], seg_left, seg_right, activation, 'concave')
 
 def segment_relaxation_basic(model, x_in_neuron, x_out_neuron, seg_left, seg_right, activation, index):
-    #x_in_neuron.setAttr(GRB.Attr.LB, seg_left)
-    #x_in_neuron.setAttr(GRB.Attr.UB, seg_right)
+    x_in_neuron.setAttr(GRB.Attr.LB, seg_left)
+    x_in_neuron.setAttr(GRB.Attr.UB, seg_right)
     if seg_left < 0 and seg_right > 0:
         if activation == 'ReLU':
             model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= 0)
             model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) <= 0)
             model.addConstr(x_out_neuron - (M*(activate(activation,seg_left)-activate(activation,seg_right)))/(M*(seg_left-seg_right))*(x_in_neuron-seg_right) - activate(activation,seg_right) <= 0)
         else:
+
+            # our relaxation
             model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) <= 0, str(index)+'_relaxation_A1')
 
             neg_out = activate_de_right(activation,seg_left)*(0-seg_left) + activate(activation,seg_left)
@@ -895,6 +909,11 @@ def segment_relaxation_basic(model, x_in_neuron, x_out_neuron, seg_left, seg_rig
             model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) >= 0, str(index)+'_relaxation_A3')
             pos_out = activate_de_left(activation,seg_right)*(0-seg_right) + activate(activation,seg_right)
             model.addConstr(x_out_neuron - (activate(activation,seg_left)-pos_out)/(seg_left-0)*(x_in_neuron-0) - pos_out <= 0, str(index)+'_relaxation_A4')
+
+            # simple relaxation
+##            model.addConstr(x_out_neuron - activate(activation,seg_right) <= 0, str(index)+'_relaxation_AA1')
+##            model.addConstr(x_out_neuron - activate(activation,seg_left) >= 0, str(index)+'_relaxation_AA2')
+            
     elif seg_right <= 0:
         # triangle relaxation
         model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= 0, str(index)+'_relaxation_B1')

@@ -70882,7 +70882,7 @@ Subject To
  R10601: out_layer_1_channel_1[25,23] - in_layer_2_channel_1[25,23] = 0
  R10602: out_layer_1_channel_1[25,24] - in_layer_2_channel_1[25,24] = 0
  R10603: out_layer_1_channel_1[25,25] - in_layer_2_channel_1[25,25] = 0
- R10604: - out_layer_2_channel_1[10,3] + output_neuron = 0
+ R10604: - out_layer_2_channel_0[6,0] + output_neuron = 0
 Bounds
  -0.1 <= inputs[0,0] <= 0.1
  -0.1 <= inputs[0,1] <= 0.1
@@ -73804,227 +73804,227 @@ Bounds
  out_layer_0_channel_1[25,23] free
  out_layer_0_channel_1[25,24] free
  out_layer_0_channel_1[25,25] free
- in_layer_1_channel_0[0,0] free
- in_layer_1_channel_0[0,1] free
- in_layer_1_channel_0[0,2] free
- in_layer_1_channel_0[0,3] free
- in_layer_1_channel_0[0,4] free
- in_layer_1_channel_0[0,5] free
- in_layer_1_channel_0[0,6] free
- in_layer_1_channel_0[0,7] free
- in_layer_1_channel_0[0,8] free
- in_layer_1_channel_0[0,9] free
- in_layer_1_channel_0[0,10] free
- in_layer_1_channel_0[0,11] free
- in_layer_1_channel_0[0,12] free
- in_layer_1_channel_0[0,13] free
- in_layer_1_channel_0[0,14] free
- in_layer_1_channel_0[0,15] free
- in_layer_1_channel_0[0,16] free
- in_layer_1_channel_0[0,17] free
- in_layer_1_channel_0[0,18] free
- in_layer_1_channel_0[0,19] free
- in_layer_1_channel_0[0,20] free
- in_layer_1_channel_0[0,21] free
- in_layer_1_channel_0[0,22] free
- in_layer_1_channel_0[0,23] free
- in_layer_1_channel_0[0,24] free
- in_layer_1_channel_0[0,25] free
- in_layer_1_channel_0[1,0] free
- in_layer_1_channel_0[1,1] free
- in_layer_1_channel_0[1,2] free
- in_layer_1_channel_0[1,3] free
- in_layer_1_channel_0[1,4] free
- in_layer_1_channel_0[1,5] free
- in_layer_1_channel_0[1,6] free
- in_layer_1_channel_0[1,7] free
- in_layer_1_channel_0[1,8] free
- in_layer_1_channel_0[1,9] free
- in_layer_1_channel_0[1,10] free
- in_layer_1_channel_0[1,11] free
- in_layer_1_channel_0[1,12] free
- in_layer_1_channel_0[1,13] free
- in_layer_1_channel_0[1,14] free
- in_layer_1_channel_0[1,15] free
- in_layer_1_channel_0[1,16] free
- in_layer_1_channel_0[1,17] free
- in_layer_1_channel_0[1,18] free
- in_layer_1_channel_0[1,19] free
- in_layer_1_channel_0[1,20] free
- in_layer_1_channel_0[1,21] free
- in_layer_1_channel_0[1,22] free
- in_layer_1_channel_0[1,23] free
- in_layer_1_channel_0[1,24] free
- in_layer_1_channel_0[1,25] free
- in_layer_1_channel_0[2,0] free
- in_layer_1_channel_0[2,1] free
- in_layer_1_channel_0[2,2] free
- in_layer_1_channel_0[2,3] free
- in_layer_1_channel_0[2,4] free
- in_layer_1_channel_0[2,5] free
- in_layer_1_channel_0[2,6] free
- in_layer_1_channel_0[2,7] free
- in_layer_1_channel_0[2,8] free
- in_layer_1_channel_0[2,9] free
- in_layer_1_channel_0[2,10] free
- in_layer_1_channel_0[2,11] free
- in_layer_1_channel_0[2,12] free
- in_layer_1_channel_0[2,13] free
- in_layer_1_channel_0[2,14] free
- in_layer_1_channel_0[2,15] free
- in_layer_1_channel_0[2,16] free
- in_layer_1_channel_0[2,17] free
- in_layer_1_channel_0[2,18] free
- in_layer_1_channel_0[2,19] free
- in_layer_1_channel_0[2,20] free
- in_layer_1_channel_0[2,21] free
- in_layer_1_channel_0[2,22] free
- in_layer_1_channel_0[2,23] free
- in_layer_1_channel_0[2,24] free
- in_layer_1_channel_0[2,25] free
- in_layer_1_channel_0[3,0] free
- in_layer_1_channel_0[3,1] free
- in_layer_1_channel_0[3,2] free
- in_layer_1_channel_0[3,3] free
- in_layer_1_channel_0[3,4] free
- in_layer_1_channel_0[3,5] free
- in_layer_1_channel_0[3,6] free
- in_layer_1_channel_0[3,7] free
- in_layer_1_channel_0[3,8] free
- in_layer_1_channel_0[3,9] free
- in_layer_1_channel_0[3,10] free
- in_layer_1_channel_0[3,11] free
- in_layer_1_channel_0[3,12] free
- in_layer_1_channel_0[3,13] free
- in_layer_1_channel_0[3,14] free
- in_layer_1_channel_0[3,15] free
- in_layer_1_channel_0[3,16] free
- in_layer_1_channel_0[3,17] free
- in_layer_1_channel_0[3,18] free
- in_layer_1_channel_0[3,19] free
- in_layer_1_channel_0[3,20] free
- in_layer_1_channel_0[3,21] free
- in_layer_1_channel_0[3,22] free
- in_layer_1_channel_0[3,23] free
- in_layer_1_channel_0[3,24] free
- in_layer_1_channel_0[3,25] free
- in_layer_1_channel_0[4,0] free
- in_layer_1_channel_0[4,1] free
- in_layer_1_channel_0[4,2] free
- in_layer_1_channel_0[4,3] free
- in_layer_1_channel_0[4,4] free
- in_layer_1_channel_0[4,5] free
- in_layer_1_channel_0[4,6] free
- in_layer_1_channel_0[4,7] free
- in_layer_1_channel_0[4,8] free
- in_layer_1_channel_0[4,9] free
- in_layer_1_channel_0[4,10] free
- in_layer_1_channel_0[4,11] free
- in_layer_1_channel_0[4,12] free
- in_layer_1_channel_0[4,13] free
- in_layer_1_channel_0[4,14] free
- in_layer_1_channel_0[4,15] free
- in_layer_1_channel_0[4,16] free
- in_layer_1_channel_0[4,17] free
- in_layer_1_channel_0[4,18] free
- in_layer_1_channel_0[4,19] free
- in_layer_1_channel_0[4,20] free
- in_layer_1_channel_0[4,21] free
- in_layer_1_channel_0[4,22] free
- in_layer_1_channel_0[4,23] free
- in_layer_1_channel_0[4,24] free
- in_layer_1_channel_0[4,25] free
- in_layer_1_channel_0[5,0] free
- in_layer_1_channel_0[5,1] free
- in_layer_1_channel_0[5,2] free
- in_layer_1_channel_0[5,3] free
- in_layer_1_channel_0[5,4] free
- in_layer_1_channel_0[5,5] free
- in_layer_1_channel_0[5,6] free
- in_layer_1_channel_0[5,7] free
- in_layer_1_channel_0[5,8] free
- in_layer_1_channel_0[5,9] free
- in_layer_1_channel_0[5,10] free
- in_layer_1_channel_0[5,11] free
- in_layer_1_channel_0[5,12] free
- in_layer_1_channel_0[5,13] free
- in_layer_1_channel_0[5,14] free
- in_layer_1_channel_0[5,15] free
- in_layer_1_channel_0[5,16] free
- in_layer_1_channel_0[5,17] free
- in_layer_1_channel_0[5,18] free
- in_layer_1_channel_0[5,19] free
- in_layer_1_channel_0[5,20] free
- in_layer_1_channel_0[5,21] free
- in_layer_1_channel_0[5,22] free
+ -0.2121297478675841 <= in_layer_1_channel_0[0,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,9] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,10] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,11] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,12] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,13] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,14] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,15] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,16] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,17] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,18] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,19] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,20] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,21] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,22] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,23] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,24] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[0,25] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,9] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,10] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,11] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,12] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,13] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,14] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,15] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,16] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,17] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,18] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,19] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,20] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,21] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,22] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,23] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,24] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[1,25] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,9] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,10] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,11] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,12] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,13] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,14] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,15] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,16] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,17] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,18] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,19] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,20] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,21] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,22] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,23] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,24] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[2,25] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,9] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,10] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,11] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,12] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,13] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,14] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,15] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,16] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,17] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,18] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,19] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,20] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,21] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,22] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,23] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,24] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[3,25] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,9] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,10] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,11] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,12] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,13] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,14] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,15] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,16] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,17] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,18] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,19] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,20] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,21] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,22] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,23] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,24] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[4,25] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,9] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,10] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,11] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,12] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,13] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,14] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,15] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[5,16] <= 1.910271561145782
+ -3.281800305843353 <= in_layer_1_channel_0[5,17] <= -1.159398996829986
+ -4.225448763370514 <= in_layer_1_channel_0[5,18] <= -2.103047454357148
+ 3.249652230739593 <= in_layer_1_channel_0[5,19] <= 5.37205353975296
+ 1.274030411243439 <= in_layer_1_channel_0[5,20] <= 3.396431720256806
+ -7.374694383144377 <= in_layer_1_channel_0[5,21] <= -5.252293074131012
+ -7.189019238948822 <= in_layer_1_channel_0[5,22] <= -5.066617929935456
  -27.66827884912491 <= in_layer_1_channel_0[5,23] <= -25.54587754011154
  -37.08997420072556 <= in_layer_1_channel_0[5,24] <= -34.96757289171219
  54.77579613924026 <= in_layer_1_channel_0[5,25] <= 56.89819744825363
- in_layer_1_channel_0[6,0] free
- in_layer_1_channel_0[6,1] free
- in_layer_1_channel_0[6,2] free
- in_layer_1_channel_0[6,3] free
- in_layer_1_channel_0[6,4] free
- in_layer_1_channel_0[6,5] free
- in_layer_1_channel_0[6,6] free
- in_layer_1_channel_0[6,7] free
- in_layer_1_channel_0[6,8] free
- in_layer_1_channel_0[6,9] free
- in_layer_1_channel_0[6,10] free
- in_layer_1_channel_0[6,11] free
- in_layer_1_channel_0[6,12] free
- in_layer_1_channel_0[6,13] free
+ -0.2121297478675841 <= in_layer_1_channel_0[6,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[6,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[6,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[6,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[6,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[6,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[6,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[6,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[6,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[6,9] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[6,10] <= 1.910271561145782
+ -1.235353267192841 <= in_layer_1_channel_0[6,11] <= 0.887048041820526
+ -3.255275285243988 <= in_layer_1_channel_0[6,12] <= -1.132873976230621
+ -0.7193665862083434 <= in_layer_1_channel_0[6,13] <= 1.403034722805023
  -24.86684445142746 <= in_layer_1_channel_0[6,14] <= -22.74444314241409
  -113.0737648367882 <= in_layer_1_channel_0[6,15] <= -110.9513635277748
  -55.06393805742263 <= in_layer_1_channel_0[6,16] <= -52.94153674840928
  108.8079594016075 <= in_layer_1_channel_0[6,17] <= 110.9303607106209
  11.24568840265274 <= in_layer_1_channel_0[6,18] <= 13.36808971166611
- in_layer_1_channel_0[6,19] free
- in_layer_1_channel_0[6,20] free
+ 2.265573108196258 <= in_layer_1_channel_0[6,19] <= 4.387974417209625
+ 0.9773323178291322 <= in_layer_1_channel_0[6,20] <= 3.099733626842499
  -11.53738478422165 <= in_layer_1_channel_0[6,21] <= -9.414983475208283
- in_layer_1_channel_0[6,22] free
+ -7.846913135051727 <= in_layer_1_channel_0[6,22] <= -5.724511826038361
  -173.5115564227104 <= in_layer_1_channel_0[6,23] <= -171.3891551136971
  -159.1745347142219 <= in_layer_1_channel_0[6,24] <= -157.0521334052086
  220.6510256171227 <= in_layer_1_channel_0[6,25] <= 222.773426926136
- in_layer_1_channel_0[7,0] free
- in_layer_1_channel_0[7,1] free
- in_layer_1_channel_0[7,2] free
- in_layer_1_channel_0[7,3] free
- in_layer_1_channel_0[7,4] free
- in_layer_1_channel_0[7,5] free
- in_layer_1_channel_0[7,6] free
- in_layer_1_channel_0[7,7] free
- in_layer_1_channel_0[7,8] free
- in_layer_1_channel_0[7,9] free
- in_layer_1_channel_0[7,10] free
- in_layer_1_channel_0[7,11] free
- in_layer_1_channel_0[7,12] free
- in_layer_1_channel_0[7,13] free
+ -0.2121297478675841 <= in_layer_1_channel_0[7,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[7,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[7,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[7,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[7,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[7,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[7,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[7,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[7,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[7,9] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[7,10] <= 1.910271561145782
+ -2.85324684381485 <= in_layer_1_channel_0[7,11] <= -0.7308455348014834
+ -5.535298740863801 <= in_layer_1_channel_0[7,12] <= -3.412897431850433
+ 0.2821257948875429 <= in_layer_1_channel_0[7,13] <= 2.40452710390091
  -131.560001885891 <= in_layer_1_channel_0[7,14] <= -129.4376005768776
  -399.5940715432167 <= in_layer_1_channel_0[7,15] <= -397.4716702342033
  -201.8112624049187 <= in_layer_1_channel_0[7,16] <= -199.6888610959053
  188.0910232901574 <= in_layer_1_channel_0[7,17] <= 190.2134245991706
  170.6804059386253 <= in_layer_1_channel_0[7,18] <= 172.8028072476387
- in_layer_1_channel_0[7,19] free
- in_layer_1_channel_0[7,20] free
+ 0.4647450089454648 <= in_layer_1_channel_0[7,19] <= 2.587146317958832
+ 0.5508759856224061 <= in_layer_1_channel_0[7,20] <= 2.673277294635773
  -28.55220762491226 <= in_layer_1_channel_0[7,21] <= -26.42980631589889
  -128.5842811226845 <= in_layer_1_channel_0[7,22] <= -126.4618798136711
  -386.6708318352699 <= in_layer_1_channel_0[7,23] <= -384.5484305262566
  -157.0898638129234 <= in_layer_1_channel_0[7,24] <= -154.9674625039101
  327.0980450749398 <= in_layer_1_channel_0[7,25] <= 329.2204463839531
- in_layer_1_channel_0[8,0] free
- in_layer_1_channel_0[8,1] free
- in_layer_1_channel_0[8,2] free
- in_layer_1_channel_0[8,3] free
- in_layer_1_channel_0[8,4] free
- in_layer_1_channel_0[8,5] free
- in_layer_1_channel_0[8,6] free
- in_layer_1_channel_0[8,7] free
- in_layer_1_channel_0[8,8] free
- in_layer_1_channel_0[8,9] free
- in_layer_1_channel_0[8,10] free
- in_layer_1_channel_0[8,11] free
- in_layer_1_channel_0[8,12] free
+ -0.2121297478675841 <= in_layer_1_channel_0[8,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[8,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[8,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[8,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[8,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[8,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[8,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[8,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[8,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[8,9] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[8,10] <= 1.910271561145782
+ -6.755654609203338 <= in_layer_1_channel_0[8,11] <= -4.633253300189972
+ -8.567223942279815 <= in_layer_1_channel_0[8,12] <= -6.444822633266448
  -49.77015272378922 <= in_layer_1_channel_0[8,13] <= -47.64775141477585
  -348.3655120491982 <= in_layer_1_channel_0[8,14] <= -346.2431107401848
  -613.6232568383216 <= in_layer_1_channel_0[8,15] <= -611.5008555293084
@@ -74038,17 +74038,17 @@ Bounds
  -427.897937810421 <= in_layer_1_channel_0[8,23] <= -425.7755365014077
  -86.91242567300792 <= in_layer_1_channel_0[8,24] <= -84.79002436399465
  424.7309537768364 <= in_layer_1_channel_0[8,25] <= 426.8533550858497
- in_layer_1_channel_0[9,0] free
- in_layer_1_channel_0[9,1] free
- in_layer_1_channel_0[9,2] free
- in_layer_1_channel_0[9,3] free
- in_layer_1_channel_0[9,4] free
- in_layer_1_channel_0[9,5] free
- in_layer_1_channel_0[9,6] free
- in_layer_1_channel_0[9,7] free
- in_layer_1_channel_0[9,8] free
- in_layer_1_channel_0[9,9] free
- in_layer_1_channel_0[9,10] free
+ -0.2121297478675841 <= in_layer_1_channel_0[9,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[9,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[9,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[9,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[9,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[9,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[9,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[9,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[9,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[9,9] <= 1.910271561145782
+ -2.258576786518097 <= in_layer_1_channel_0[9,10] <= -0.1361754775047301
  -9.509838259220121 <= in_layer_1_channel_0[9,11] <= -7.387436950206756
  -14.4701439499855 <= in_layer_1_channel_0[9,12] <= -12.34774264097214
  -231.5849409461021 <= in_layer_1_channel_0[9,13] <= -229.4625396370888
@@ -74064,18 +74064,18 @@ Bounds
  -524.5959351420402 <= in_layer_1_channel_0[9,23] <= -522.473533833027
  27.87986394166952 <= in_layer_1_channel_0[9,24] <= 30.00226525068278
  461.198230111599 <= in_layer_1_channel_0[9,25] <= 463.3206314206123
- in_layer_1_channel_0[10,0] free
- in_layer_1_channel_0[10,1] free
- in_layer_1_channel_0[10,2] free
- in_layer_1_channel_0[10,3] free
- in_layer_1_channel_0[10,4] free
- in_layer_1_channel_0[10,5] free
- in_layer_1_channel_0[10,6] free
- in_layer_1_channel_0[10,7] free
- in_layer_1_channel_0[10,8] free
- in_layer_1_channel_0[10,9] free
- in_layer_1_channel_0[10,10] free
- in_layer_1_channel_0[10,11] free
+ -0.2121297478675841 <= in_layer_1_channel_0[10,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[10,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[10,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[10,3] <= 1.910271561145782
+ -1.235353267192841 <= in_layer_1_channel_0[10,4] <= 0.887048041820526
+ -1.208828246593475 <= in_layer_1_channel_0[10,5] <= 0.9135730624198912
+ -0.7724166274070741 <= in_layer_1_channel_0[10,6] <= 1.349984681606293
+ -3.228750264644623 <= in_layer_1_channel_0[10,7] <= -1.106348955631256
+ 1.763492071628571 <= in_layer_1_channel_0[10,8] <= 3.885893380641937
+ -1.79564014673233 <= in_layer_1_channel_0[10,9] <= 0.3267611622810365
+ -6.438012397289277 <= in_layer_1_channel_0[10,10] <= -4.315611088275909
+ -1.265964782238006 <= in_layer_1_channel_0[10,11] <= 0.8564365267753609
  -139.7493094563484 <= in_layer_1_channel_0[10,12] <= -137.6269081473351
  -506.2119241118431 <= in_layer_1_channel_0[10,13] <= -504.0895228028298
  -590.9213825821876 <= in_layer_1_channel_0[10,14] <= -588.7989812731744
@@ -74090,17 +74090,17 @@ Bounds
  -596.2024757027625 <= in_layer_1_channel_0[10,23] <= -594.0800743937493
  -10.5834143519401 <= in_layer_1_channel_0[10,24] <= -8.46101304292684
  501.7408320546151 <= in_layer_1_channel_0[10,25] <= 503.8632333636284
- in_layer_1_channel_0[11,0] free
- in_layer_1_channel_0[11,1] free
- in_layer_1_channel_0[11,2] free
- in_layer_1_channel_0[11,3] free
- in_layer_1_channel_0[11,4] free
- in_layer_1_channel_0[11,5] free
- in_layer_1_channel_0[11,6] free
- in_layer_1_channel_0[11,7] free
- in_layer_1_channel_0[11,8] free
- in_layer_1_channel_0[11,9] free
- in_layer_1_channel_0[11,10] free
+ -0.2121297478675841 <= in_layer_1_channel_0[11,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[11,1] <= 1.910271561145782
+ -1.235353267192841 <= in_layer_1_channel_0[11,2] <= 0.887048041820526
+ -1.208828246593475 <= in_layer_1_channel_0[11,3] <= 0.9135730624198912
+ -0.3438631653785706 <= in_layer_1_channel_0[11,4] <= 1.778538143634796
+ -1.30281308889389 <= in_layer_1_channel_0[11,5] <= 0.8195882201194762
+ -2.258454835414887 <= in_layer_1_channel_0[11,6] <= -0.1360535264015199
+ -4.011390006542205 <= in_layer_1_channel_0[11,7] <= -1.888988697528839
+ -1.993559515476227 <= in_layer_1_channel_0[11,8] <= 0.12884179353714
+ -6.86644390821457 <= in_layer_1_channel_0[11,9] <= -4.744042599201202
+ -0.6911737084388732 <= in_layer_1_channel_0[11,10] <= 1.431227600574494
  -90.93492165803909 <= in_layer_1_channel_0[11,11] <= -88.81252034902573
  -424.8382244467735 <= in_layer_1_channel_0[11,12] <= -422.7158231377602
  -540.2620998978614 <= in_layer_1_channel_0[11,13] <= -538.1396985888482
@@ -74116,16 +74116,16 @@ Bounds
  -625.5222698807715 <= in_layer_1_channel_0[11,23] <= -623.3998685717584
  -101.783338701725 <= in_layer_1_channel_0[11,24] <= -99.66093739271167
  488.917724454403 <= in_layer_1_channel_0[11,25] <= 491.0401257634163
- in_layer_1_channel_0[12,0] free
- in_layer_1_channel_0[12,1] free
- in_layer_1_channel_0[12,2] free
- in_layer_1_channel_0[12,3] free
- in_layer_1_channel_0[12,4] free
- in_layer_1_channel_0[12,5] free
- in_layer_1_channel_0[12,6] free
- in_layer_1_channel_0[12,7] free
- in_layer_1_channel_0[12,8] free
- in_layer_1_channel_0[12,9] free
+ -0.2121297478675841 <= in_layer_1_channel_0[12,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[12,1] <= 1.910271561145782
+ -1.830023324489594 <= in_layer_1_channel_0[12,2] <= 0.2923779845237731
+ -1.30281308889389 <= in_layer_1_channel_0[12,3] <= 0.8195882201194762
+ -1.9018519282341 <= in_layer_1_channel_0[12,4] <= 0.2205493807792664
+ -7.910563266277313 <= in_layer_1_channel_0[12,5] <= -5.788161957263947
+ -3.152295625209808 <= in_layer_1_channel_0[12,6] <= -1.029894316196441
+ 0.6787902951240532 <= in_layer_1_channel_0[12,7] <= 2.801191604137421
+ -3.665781295299531 <= in_layer_1_channel_0[12,8] <= -1.543379986286163
+ -5.219385659694671 <= in_layer_1_channel_0[12,9] <= -3.096984350681304
  -101.7560757756233 <= in_layer_1_channel_0[12,10] <= -99.63367446660996
  -378.7504923701287 <= in_layer_1_channel_0[12,11] <= -376.6280910611152
  -520.3968204617499 <= in_layer_1_channel_0[12,12] <= -518.2744191527368
@@ -74142,14 +74142,14 @@ Bounds
  -668.9268172144889 <= in_layer_1_channel_0[12,23] <= -666.8044159054757
  -272.5510927796363 <= in_layer_1_channel_0[12,24] <= -270.4286914706231
  383.829443538189 <= in_layer_1_channel_0[12,25] <= 385.9518448472023
- in_layer_1_channel_0[13,0] free
- in_layer_1_channel_0[13,1] free
- in_layer_1_channel_0[13,2] free
- in_layer_1_channel_0[13,3] free
- in_layer_1_channel_0[13,4] free
- in_layer_1_channel_0[13,5] free
- in_layer_1_channel_0[13,6] free
- in_layer_1_channel_0[13,7] free
+ -2.258576786518097 <= in_layer_1_channel_0[13,0] <= -0.1361754775047301
+ -4.251973783969879 <= in_layer_1_channel_0[13,1] <= -2.129572474956512
+ -1.089167153835297 <= in_layer_1_channel_0[13,2] <= 1.03323415517807
+ -1.895097410678864 <= in_layer_1_channel_0[13,3] <= 0.2273038983345033
+ -3.192148005962372 <= in_layer_1_channel_0[13,4] <= -1.069746696949005
+ -5.892750418186187 <= in_layer_1_channel_0[13,5] <= -3.770349109172821
+ -3.813832557201386 <= in_layer_1_channel_0[13,6] <= -1.691431248188019
+ 3.455035173892975 <= in_layer_1_channel_0[13,7] <= 5.57743648290634
  -28.12469080686569 <= in_layer_1_channel_0[13,8] <= -26.00228949785232
  -141.4708581328392 <= in_layer_1_channel_0[13,9] <= -139.3484568238258
  -345.1971085429192 <= in_layer_1_channel_0[13,10] <= -343.0747072339058
@@ -74168,11 +74168,11 @@ Bounds
  -659.2239572167396 <= in_layer_1_channel_0[13,23] <= -657.1015559077264
  -499.3906997799873 <= in_layer_1_channel_0[13,24] <= -497.268298470974
  177.0094254851342 <= in_layer_1_channel_0[13,25] <= 179.1318267941474
- in_layer_1_channel_0[14,0] free
- in_layer_1_channel_0[14,1] free
- in_layer_1_channel_0[14,2] free
- in_layer_1_channel_0[14,3] free
- in_layer_1_channel_0[14,4] free
+ 1.010563576221466 <= in_layer_1_channel_0[14,0] <= 3.132964885234833
+ -5.629283583164215 <= in_layer_1_channel_0[14,1] <= -3.506882274150848
+ -1.632465875148773 <= in_layer_1_channel_0[14,2] <= 0.4899354338645933
+ -2.159676110744476 <= in_layer_1_channel_0[14,3] <= -0.0372748017311098
+ -2.86950877904892 <= in_layer_1_channel_0[14,4] <= -0.7471074700355527
  -25.87613323926926 <= in_layer_1_channel_0[14,5] <= -23.75373193025588
  -81.12894026041032 <= in_layer_1_channel_0[14,6] <= -79.00653895139693
  -114.5244701266289 <= in_layer_1_channel_0[14,7] <= -112.4020688176155
@@ -74350,7 +74350,7 @@ Bounds
  -614.2610847115517 <= in_layer_1_channel_0[20,23] <= -612.1386834025383
  -561.9019592165947 <= in_layer_1_channel_0[20,24] <= -559.7795579075813
  -199.8113423943519 <= in_layer_1_channel_0[20,25] <= -197.6889410853387
- in_layer_1_channel_0[21,0] free
+ -0.2121297478675841 <= in_layer_1_channel_0[21,0] <= 1.910271561145782
  -10.20497623682022 <= in_layer_1_channel_0[21,1] <= -8.082574927806856
  -75.35123196840286 <= in_layer_1_channel_0[21,2] <= -73.2288306593895
  -187.3397486567497 <= in_layer_1_channel_0[21,3] <= -185.2173473477364
@@ -74366,8 +74366,8 @@ Bounds
  -165.3468579411506 <= in_layer_1_channel_0[21,13] <= -163.2244566321374
  -24.61884776353834 <= in_layer_1_channel_0[21,14] <= -22.49644645452502
  49.45720084905624 <= in_layer_1_channel_0[21,15] <= 51.57960215806961
- in_layer_1_channel_0[21,16] free
- in_layer_1_channel_0[21,17] free
+ 5.891916120052338 <= in_layer_1_channel_0[21,16] <= 8.014317429065704
+ -0.2121297478675841 <= in_layer_1_channel_0[21,17] <= 1.910271561145782
  -148.4393526673317 <= in_layer_1_channel_0[21,18] <= -146.3169513583184
  -460.3828238606453 <= in_layer_1_channel_0[21,19] <= -458.260422551632
  -356.2773324608802 <= in_layer_1_channel_0[21,20] <= -354.1549311518669
@@ -74376,332 +74376,332 @@ Bounds
  -259.4256810307502 <= in_layer_1_channel_0[21,23] <= -257.3032797217369
  -257.0670253396034 <= in_layer_1_channel_0[21,24] <= -254.9446240305901
  -132.2508421301841 <= in_layer_1_channel_0[21,25] <= -130.1284408211709
- in_layer_1_channel_0[22,0] free
- in_layer_1_channel_0[22,1] free
- in_layer_1_channel_0[22,2] free
- in_layer_1_channel_0[22,3] free
- in_layer_1_channel_0[22,4] free
- in_layer_1_channel_0[22,5] free
- in_layer_1_channel_0[22,6] free
- in_layer_1_channel_0[22,7] free
- in_layer_1_channel_0[22,8] free
- in_layer_1_channel_0[22,9] free
- in_layer_1_channel_0[22,10] free
- in_layer_1_channel_0[22,11] free
- in_layer_1_channel_0[22,12] free
- in_layer_1_channel_0[22,13] free
- in_layer_1_channel_0[22,14] free
- in_layer_1_channel_0[22,15] free
- in_layer_1_channel_0[22,16] free
- in_layer_1_channel_0[22,17] free
- in_layer_1_channel_0[22,18] free
- in_layer_1_channel_0[22,19] free
- in_layer_1_channel_0[22,20] free
- in_layer_1_channel_0[22,21] free
- in_layer_1_channel_0[22,22] free
- in_layer_1_channel_0[22,23] free
- in_layer_1_channel_0[22,24] free
- in_layer_1_channel_0[22,25] free
- in_layer_1_channel_0[23,0] free
- in_layer_1_channel_0[23,1] free
- in_layer_1_channel_0[23,2] free
- in_layer_1_channel_0[23,3] free
- in_layer_1_channel_0[23,4] free
- in_layer_1_channel_0[23,5] free
- in_layer_1_channel_0[23,6] free
- in_layer_1_channel_0[23,7] free
- in_layer_1_channel_0[23,8] free
- in_layer_1_channel_0[23,9] free
- in_layer_1_channel_0[23,10] free
- in_layer_1_channel_0[23,11] free
- in_layer_1_channel_0[23,12] free
- in_layer_1_channel_0[23,13] free
- in_layer_1_channel_0[23,14] free
- in_layer_1_channel_0[23,15] free
- in_layer_1_channel_0[23,16] free
- in_layer_1_channel_0[23,17] free
- in_layer_1_channel_0[23,18] free
- in_layer_1_channel_0[23,19] free
- in_layer_1_channel_0[23,20] free
- in_layer_1_channel_0[23,21] free
- in_layer_1_channel_0[23,22] free
- in_layer_1_channel_0[23,23] free
- in_layer_1_channel_0[23,24] free
- in_layer_1_channel_0[23,25] free
- in_layer_1_channel_0[24,0] free
- in_layer_1_channel_0[24,1] free
- in_layer_1_channel_0[24,2] free
- in_layer_1_channel_0[24,3] free
- in_layer_1_channel_0[24,4] free
- in_layer_1_channel_0[24,5] free
- in_layer_1_channel_0[24,6] free
- in_layer_1_channel_0[24,7] free
- in_layer_1_channel_0[24,8] free
- in_layer_1_channel_0[24,9] free
- in_layer_1_channel_0[24,10] free
- in_layer_1_channel_0[24,11] free
- in_layer_1_channel_0[24,12] free
- in_layer_1_channel_0[24,13] free
- in_layer_1_channel_0[24,14] free
- in_layer_1_channel_0[24,15] free
- in_layer_1_channel_0[24,16] free
- in_layer_1_channel_0[24,17] free
- in_layer_1_channel_0[24,18] free
- in_layer_1_channel_0[24,19] free
- in_layer_1_channel_0[24,20] free
- in_layer_1_channel_0[24,21] free
- in_layer_1_channel_0[24,22] free
- in_layer_1_channel_0[24,23] free
- in_layer_1_channel_0[24,24] free
- in_layer_1_channel_0[24,25] free
- in_layer_1_channel_0[25,0] free
- in_layer_1_channel_0[25,1] free
- in_layer_1_channel_0[25,2] free
- in_layer_1_channel_0[25,3] free
- in_layer_1_channel_0[25,4] free
- in_layer_1_channel_0[25,5] free
- in_layer_1_channel_0[25,6] free
- in_layer_1_channel_0[25,7] free
- in_layer_1_channel_0[25,8] free
- in_layer_1_channel_0[25,9] free
- in_layer_1_channel_0[25,10] free
- in_layer_1_channel_0[25,11] free
- in_layer_1_channel_0[25,12] free
- in_layer_1_channel_0[25,13] free
- in_layer_1_channel_0[25,14] free
- in_layer_1_channel_0[25,15] free
- in_layer_1_channel_0[25,16] free
- in_layer_1_channel_0[25,17] free
- in_layer_1_channel_0[25,18] free
- in_layer_1_channel_0[25,19] free
- in_layer_1_channel_0[25,20] free
- in_layer_1_channel_0[25,21] free
- in_layer_1_channel_0[25,22] free
- in_layer_1_channel_0[25,23] free
- in_layer_1_channel_0[25,24] free
- in_layer_1_channel_0[25,25] free
- in_layer_1_channel_1[0,0] free
- in_layer_1_channel_1[0,1] free
- in_layer_1_channel_1[0,2] free
- in_layer_1_channel_1[0,3] free
- in_layer_1_channel_1[0,4] free
- in_layer_1_channel_1[0,5] free
- in_layer_1_channel_1[0,6] free
- in_layer_1_channel_1[0,7] free
- in_layer_1_channel_1[0,8] free
- in_layer_1_channel_1[0,9] free
- in_layer_1_channel_1[0,10] free
- in_layer_1_channel_1[0,11] free
- in_layer_1_channel_1[0,12] free
- in_layer_1_channel_1[0,13] free
- in_layer_1_channel_1[0,14] free
- in_layer_1_channel_1[0,15] free
- in_layer_1_channel_1[0,16] free
- in_layer_1_channel_1[0,17] free
- in_layer_1_channel_1[0,18] free
- in_layer_1_channel_1[0,19] free
- in_layer_1_channel_1[0,20] free
- in_layer_1_channel_1[0,21] free
- in_layer_1_channel_1[0,22] free
- in_layer_1_channel_1[0,23] free
- in_layer_1_channel_1[0,24] free
- in_layer_1_channel_1[0,25] free
- in_layer_1_channel_1[1,0] free
- in_layer_1_channel_1[1,1] free
- in_layer_1_channel_1[1,2] free
- in_layer_1_channel_1[1,3] free
- in_layer_1_channel_1[1,4] free
- in_layer_1_channel_1[1,5] free
- in_layer_1_channel_1[1,6] free
- in_layer_1_channel_1[1,7] free
- in_layer_1_channel_1[1,8] free
- in_layer_1_channel_1[1,9] free
- in_layer_1_channel_1[1,10] free
- in_layer_1_channel_1[1,11] free
- in_layer_1_channel_1[1,12] free
- in_layer_1_channel_1[1,13] free
- in_layer_1_channel_1[1,14] free
- in_layer_1_channel_1[1,15] free
- in_layer_1_channel_1[1,16] free
- in_layer_1_channel_1[1,17] free
- in_layer_1_channel_1[1,18] free
- in_layer_1_channel_1[1,19] free
- in_layer_1_channel_1[1,20] free
- in_layer_1_channel_1[1,21] free
- in_layer_1_channel_1[1,22] free
- in_layer_1_channel_1[1,23] free
- in_layer_1_channel_1[1,24] free
- in_layer_1_channel_1[1,25] free
- in_layer_1_channel_1[2,0] free
- in_layer_1_channel_1[2,1] free
- in_layer_1_channel_1[2,2] free
- in_layer_1_channel_1[2,3] free
- in_layer_1_channel_1[2,4] free
- in_layer_1_channel_1[2,5] free
- in_layer_1_channel_1[2,6] free
- in_layer_1_channel_1[2,7] free
- in_layer_1_channel_1[2,8] free
- in_layer_1_channel_1[2,9] free
- in_layer_1_channel_1[2,10] free
- in_layer_1_channel_1[2,11] free
- in_layer_1_channel_1[2,12] free
- in_layer_1_channel_1[2,13] free
- in_layer_1_channel_1[2,14] free
- in_layer_1_channel_1[2,15] free
- in_layer_1_channel_1[2,16] free
- in_layer_1_channel_1[2,17] free
- in_layer_1_channel_1[2,18] free
- in_layer_1_channel_1[2,19] free
- in_layer_1_channel_1[2,20] free
- in_layer_1_channel_1[2,21] free
- in_layer_1_channel_1[2,22] free
- in_layer_1_channel_1[2,23] free
- in_layer_1_channel_1[2,24] free
- in_layer_1_channel_1[2,25] free
- in_layer_1_channel_1[3,0] free
- in_layer_1_channel_1[3,1] free
- in_layer_1_channel_1[3,2] free
- in_layer_1_channel_1[3,3] free
- in_layer_1_channel_1[3,4] free
- in_layer_1_channel_1[3,5] free
- in_layer_1_channel_1[3,6] free
- in_layer_1_channel_1[3,7] free
- in_layer_1_channel_1[3,8] free
- in_layer_1_channel_1[3,9] free
- in_layer_1_channel_1[3,10] free
- in_layer_1_channel_1[3,11] free
- in_layer_1_channel_1[3,12] free
- in_layer_1_channel_1[3,13] free
- in_layer_1_channel_1[3,14] free
- in_layer_1_channel_1[3,15] free
- in_layer_1_channel_1[3,16] free
- in_layer_1_channel_1[3,17] free
- in_layer_1_channel_1[3,18] free
- in_layer_1_channel_1[3,19] free
- in_layer_1_channel_1[3,20] free
- in_layer_1_channel_1[3,21] free
- in_layer_1_channel_1[3,22] free
- in_layer_1_channel_1[3,23] free
- in_layer_1_channel_1[3,24] free
- in_layer_1_channel_1[3,25] free
- in_layer_1_channel_1[4,0] free
- in_layer_1_channel_1[4,1] free
- in_layer_1_channel_1[4,2] free
- in_layer_1_channel_1[4,3] free
- in_layer_1_channel_1[4,4] free
- in_layer_1_channel_1[4,5] free
- in_layer_1_channel_1[4,6] free
- in_layer_1_channel_1[4,7] free
- in_layer_1_channel_1[4,8] free
- in_layer_1_channel_1[4,9] free
- in_layer_1_channel_1[4,10] free
- in_layer_1_channel_1[4,11] free
- in_layer_1_channel_1[4,12] free
- in_layer_1_channel_1[4,13] free
- in_layer_1_channel_1[4,14] free
- in_layer_1_channel_1[4,15] free
- in_layer_1_channel_1[4,16] free
- in_layer_1_channel_1[4,17] free
- in_layer_1_channel_1[4,18] free
- in_layer_1_channel_1[4,19] free
- in_layer_1_channel_1[4,20] free
- in_layer_1_channel_1[4,21] free
- in_layer_1_channel_1[4,22] free
- in_layer_1_channel_1[4,23] free
- in_layer_1_channel_1[4,24] free
- in_layer_1_channel_1[4,25] free
- in_layer_1_channel_1[5,0] free
- in_layer_1_channel_1[5,1] free
- in_layer_1_channel_1[5,2] free
- in_layer_1_channel_1[5,3] free
- in_layer_1_channel_1[5,4] free
- in_layer_1_channel_1[5,5] free
- in_layer_1_channel_1[5,6] free
- in_layer_1_channel_1[5,7] free
- in_layer_1_channel_1[5,8] free
- in_layer_1_channel_1[5,9] free
- in_layer_1_channel_1[5,10] free
- in_layer_1_channel_1[5,11] free
- in_layer_1_channel_1[5,12] free
- in_layer_1_channel_1[5,13] free
- in_layer_1_channel_1[5,14] free
- in_layer_1_channel_1[5,15] free
- in_layer_1_channel_1[5,16] free
- in_layer_1_channel_1[5,17] free
- in_layer_1_channel_1[5,18] free
- in_layer_1_channel_1[5,19] free
- in_layer_1_channel_1[5,20] free
- in_layer_1_channel_1[5,21] free
- in_layer_1_channel_1[5,22] free
- in_layer_1_channel_1[5,23] free
- in_layer_1_channel_1[5,24] free
+ -0.2121297478675841 <= in_layer_1_channel_0[22,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,9] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,10] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,11] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,12] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,13] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,14] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,15] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,16] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,17] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,18] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,19] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,20] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,21] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,22] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,23] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,24] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[22,25] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,9] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,10] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,11] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,12] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,13] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,14] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,15] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,16] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,17] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,18] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,19] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,20] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,21] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,22] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,23] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,24] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[23,25] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,9] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,10] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,11] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,12] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,13] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,14] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,15] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,16] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,17] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,18] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,19] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,20] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,21] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,22] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,23] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,24] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[24,25] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,0] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,1] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,2] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,3] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,4] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,5] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,6] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,7] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,8] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,9] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,10] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,11] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,12] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,13] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,14] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,15] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,16] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,17] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,18] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,19] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,20] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,21] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,22] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,23] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,24] <= 1.910271561145782
+ -0.2121297478675841 <= in_layer_1_channel_0[25,25] <= 1.910271561145782
+ -2.208317844383418 <= in_layer_1_channel_1[0,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,9] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,10] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,11] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,12] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,13] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,14] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,15] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,16] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,17] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,18] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,19] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,20] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,21] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,22] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,23] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,24] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[0,25] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,9] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,10] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,11] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,12] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,13] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,14] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,15] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,16] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,17] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,18] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,19] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,20] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,21] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,22] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,23] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,24] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[1,25] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,9] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,10] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,11] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,12] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,13] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,14] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,15] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,16] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,17] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,18] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,19] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,20] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,21] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,22] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,23] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,24] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[2,25] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,9] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,10] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,11] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,12] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,13] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,14] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,15] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,16] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,17] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,18] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,19] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,20] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,21] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,22] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,23] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,24] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[3,25] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,9] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,10] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,11] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,12] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,13] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,14] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,15] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,16] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,17] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,18] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,19] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,20] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,21] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,22] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,23] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,24] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[4,25] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,9] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,10] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,11] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,12] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,13] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,14] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,15] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[5,16] <= 0.742214052192867
+ -2.300746225006878 <= in_layer_1_channel_1[5,17] <= 0.6497856715694071
+ -1.772253018058836 <= in_layer_1_channel_1[5,18] <= 1.178278878517449
+ -2.803874595277011 <= in_layer_1_channel_1[5,19] <= 0.1466573012992741
+ -2.458711682073772 <= in_layer_1_channel_1[5,20] <= 0.4918202145025136
+ -2.423984065838158 <= in_layer_1_channel_1[5,21] <= 0.5265478307381274
+ -1.118944509141147 <= in_layer_1_channel_1[5,22] <= 1.831587387435138
+ -5.10102473590523 <= in_layer_1_channel_1[5,23] <= -2.150492839328945
+ 3.549798356182873 <= in_layer_1_channel_1[5,24] <= 6.500330252759159
  -11.47288983892649 <= in_layer_1_channel_1[5,25] <= -8.522357942350208
- in_layer_1_channel_1[6,0] free
- in_layer_1_channel_1[6,1] free
- in_layer_1_channel_1[6,2] free
- in_layer_1_channel_1[6,3] free
- in_layer_1_channel_1[6,4] free
- in_layer_1_channel_1[6,5] free
- in_layer_1_channel_1[6,6] free
- in_layer_1_channel_1[6,7] free
- in_layer_1_channel_1[6,8] free
- in_layer_1_channel_1[6,9] free
- in_layer_1_channel_1[6,10] free
- in_layer_1_channel_1[6,11] free
- in_layer_1_channel_1[6,12] free
- in_layer_1_channel_1[6,13] free
- in_layer_1_channel_1[6,14] free
- in_layer_1_channel_1[6,15] free
- in_layer_1_channel_1[6,16] free
+ -2.208317844383418 <= in_layer_1_channel_1[6,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[6,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[6,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[6,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[6,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[6,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[6,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[6,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[6,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[6,9] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[6,10] <= 0.742214052192867
+ -2.239127304591238 <= in_layer_1_channel_1[6,11] <= 0.711404591985047
+ -2.114312002621591 <= in_layer_1_channel_1[6,12] <= 0.8362198939546944
+ -2.147462157718837 <= in_layer_1_channel_1[6,13] <= 0.8030697388574483
+ -3.540960945375264 <= in_layer_1_channel_1[6,14] <= -0.5904290487989782
+ -0.5944439230486753 <= in_layer_1_channel_1[6,15] <= 2.356087973527611
+ 3.764624498598279 <= in_layer_1_channel_1[6,16] <= 6.715156395174562
  -17.2419616414234 <= in_layer_1_channel_1[6,17] <= -14.29142974484712
  7.752647639997301 <= in_layer_1_channel_1[6,18] <= 10.70317953657359
- in_layer_1_channel_1[6,19] free
- in_layer_1_channel_1[6,20] free
+ 6.282272370345889 <= in_layer_1_channel_1[6,19] <= 9.232804266922178
+ -0.6321332139894369 <= in_layer_1_channel_1[6,20] <= 2.318398682586849
  7.796003253944217 <= in_layer_1_channel_1[6,21] <= 10.7465351505205
  24.12593642044813 <= in_layer_1_channel_1[6,22] <= 27.0764683170244
  58.03863175194711 <= in_layer_1_channel_1[6,23] <= 60.98916364852341
  155.5063728259876 <= in_layer_1_channel_1[6,24] <= 158.4569047225639
  26.31364679504186 <= in_layer_1_channel_1[6,25] <= 29.26417869161814
- in_layer_1_channel_1[7,0] free
- in_layer_1_channel_1[7,1] free
- in_layer_1_channel_1[7,2] free
- in_layer_1_channel_1[7,3] free
- in_layer_1_channel_1[7,4] free
- in_layer_1_channel_1[7,5] free
- in_layer_1_channel_1[7,6] free
- in_layer_1_channel_1[7,7] free
- in_layer_1_channel_1[7,8] free
- in_layer_1_channel_1[7,9] free
- in_layer_1_channel_1[7,10] free
- in_layer_1_channel_1[7,11] free
- in_layer_1_channel_1[7,12] free
- in_layer_1_channel_1[7,13] free
+ -2.208317844383418 <= in_layer_1_channel_1[7,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[7,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[7,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[7,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[7,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[7,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[7,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[7,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[7,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[7,9] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[7,10] <= 0.742214052192867
+ -0.8099385762587193 <= in_layer_1_channel_1[7,11] <= 2.140593320317566
+ 4.56772069800645 <= in_layer_1_channel_1[7,12] <= 7.518252594582739
+ 6.641545595414935 <= in_layer_1_channel_1[7,13] <= 9.592077491991224
  36.82091458309442 <= in_layer_1_channel_1[7,14] <= 39.7714464796707
  228.7077423332259 <= in_layer_1_channel_1[7,15] <= 231.6582742298022
  368.911437017657 <= in_layer_1_channel_1[7,16] <= 371.861968914233
  160.1035383658484 <= in_layer_1_channel_1[7,17] <= 163.0540702624247
- in_layer_1_channel_1[7,18] free
- in_layer_1_channel_1[7,19] free
- in_layer_1_channel_1[7,20] free
+ 0.2542464451864326 <= in_layer_1_channel_1[7,18] <= 3.204778341762725
+ 6.378066094405948 <= in_layer_1_channel_1[7,19] <= 9.328597990982237
+ -0.4864129705354573 <= in_layer_1_channel_1[7,20] <= 2.464118926040828
  13.95480687711388 <= in_layer_1_channel_1[7,21] <= 16.90533877369016
  22.294832344912 <= in_layer_1_channel_1[7,22] <= 25.24536424148828
  274.6334699446336 <= in_layer_1_channel_1[7,23] <= 277.5840018412097
  565.2483672814445 <= in_layer_1_channel_1[7,24] <= 568.1988991780205
  222.5263867096975 <= in_layer_1_channel_1[7,25] <= 225.4769186062738
- in_layer_1_channel_1[8,0] free
- in_layer_1_channel_1[8,1] free
- in_layer_1_channel_1[8,2] free
- in_layer_1_channel_1[8,3] free
- in_layer_1_channel_1[8,4] free
- in_layer_1_channel_1[8,5] free
- in_layer_1_channel_1[8,6] free
- in_layer_1_channel_1[8,7] free
- in_layer_1_channel_1[8,8] free
- in_layer_1_channel_1[8,9] free
- in_layer_1_channel_1[8,10] free
- in_layer_1_channel_1[8,11] free
+ -2.208317844383418 <= in_layer_1_channel_1[8,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[8,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[8,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[8,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[8,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[8,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[8,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[8,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[8,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[8,9] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[8,10] <= 0.742214052192867
+ 1.503480592556298 <= in_layer_1_channel_1[8,11] <= 4.454012489132585
  10.40858194399625 <= in_layer_1_channel_1[8,12] <= 13.35911384057254
- in_layer_1_channel_1[8,13] free
+ 5.296633552573621 <= in_layer_1_channel_1[8,13] <= 8.247165449149909
  196.2356758600101 <= in_layer_1_channel_1[8,14] <= 199.1862077565864
  830.7817181961613 <= in_layer_1_channel_1[8,15] <= 833.7322500927372
  1173.815037049167 <= in_layer_1_channel_1[8,16] <= 1176.765568945743
@@ -74709,23 +74709,23 @@ Bounds
  175.7022990992293 <= in_layer_1_channel_1[8,18] <= 178.6528309958056
  -26.708522172831 <= in_layer_1_channel_1[8,19] <= -23.75799027625472
  -19.84571696836501 <= in_layer_1_channel_1[8,20] <= -16.89518507178873
- in_layer_1_channel_1[8,21] free
+ 3.933143144287171 <= in_layer_1_channel_1[8,21] <= 6.883675040863452
  198.4580889808014 <= in_layer_1_channel_1[8,22] <= 201.4086208773777
  803.3979703130202 <= in_layer_1_channel_1[8,23] <= 806.3485022095962
  929.9336538033562 <= in_layer_1_channel_1[8,24] <= 932.8841856999321
  334.7187956886366 <= in_layer_1_channel_1[8,25] <= 337.6693275852129
- in_layer_1_channel_1[9,0] free
- in_layer_1_channel_1[9,1] free
- in_layer_1_channel_1[9,2] free
- in_layer_1_channel_1[9,3] free
- in_layer_1_channel_1[9,4] free
- in_layer_1_channel_1[9,5] free
- in_layer_1_channel_1[9,6] free
- in_layer_1_channel_1[9,7] free
- in_layer_1_channel_1[9,8] free
- in_layer_1_channel_1[9,9] free
- in_layer_1_channel_1[9,10] free
- in_layer_1_channel_1[9,11] free
+ -2.208317844383418 <= in_layer_1_channel_1[9,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[9,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[9,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[9,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[9,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[9,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[9,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[9,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[9,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[9,9] <= 0.742214052192867
+ -2.269936764799058 <= in_layer_1_channel_1[9,10] <= 0.6805951317772271
+ 6.22553414274007 <= in_layer_1_channel_1[9,11] <= 9.176066039316357
  15.42080502938479 <= in_layer_1_channel_1[9,12] <= 18.37133692596107
  79.0563044881448 <= in_layer_1_channel_1[9,13] <= 82.00683638472111
  607.8205679858105 <= in_layer_1_channel_1[9,14] <= 610.7710998823865
@@ -74740,17 +74740,17 @@ Bounds
  1665.410728530772 <= in_layer_1_channel_1[9,23] <= 1668.361260427348
  1296.60438251663 <= in_layer_1_channel_1[9,24] <= 1299.554914413206
  364.9227344112471 <= in_layer_1_channel_1[9,25] <= 367.8732663078234
- in_layer_1_channel_1[10,0] free
- in_layer_1_channel_1[10,1] free
- in_layer_1_channel_1[10,2] free
- in_layer_1_channel_1[10,3] free
- in_layer_1_channel_1[10,4] free
- in_layer_1_channel_1[10,5] free
- in_layer_1_channel_1[10,6] free
- in_layer_1_channel_1[10,7] free
- in_layer_1_channel_1[10,8] free
- in_layer_1_channel_1[10,9] free
- in_layer_1_channel_1[10,10] free
+ -2.208317844383418 <= in_layer_1_channel_1[10,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[10,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[10,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[10,3] <= 0.742214052192867
+ -2.239127304591238 <= in_layer_1_channel_1[10,4] <= 0.711404591985047
+ -2.052693082205951 <= in_layer_1_channel_1[10,5] <= 0.8978388143703343
+ -2.520330602489412 <= in_layer_1_channel_1[10,6] <= 0.4302012940868737
+ -1.927877780236304 <= in_layer_1_channel_1[10,7] <= 1.022654116339982
+ -2.553480757586658 <= in_layer_1_channel_1[10,8] <= 0.3970511389896275
+ -2.551140062697232 <= in_layer_1_channel_1[10,9] <= 0.3993918338790537
+ 1.116933898814022 <= in_layer_1_channel_1[10,10] <= 4.067465795390309
  14.18796348739415 <= in_layer_1_channel_1[10,11] <= 17.13849538397044
  26.8047167731449 <= in_layer_1_channel_1[10,12] <= 29.75524866972118
  383.7550462985412 <= in_layer_1_channel_1[10,13] <= 386.7055781951174
@@ -74766,18 +74766,18 @@ Bounds
  2166.937180770375 <= in_layer_1_channel_1[10,23] <= 2169.887712666951
  1530.640491001122 <= in_layer_1_channel_1[10,24] <= 1533.591022897698
  427.9785972999409 <= in_layer_1_channel_1[10,25] <= 430.9291291965172
- in_layer_1_channel_1[11,0] free
- in_layer_1_channel_1[11,1] free
- in_layer_1_channel_1[11,2] free
- in_layer_1_channel_1[11,3] free
- in_layer_1_channel_1[11,4] free
- in_layer_1_channel_1[11,5] free
- in_layer_1_channel_1[11,6] free
- in_layer_1_channel_1[11,7] free
- in_layer_1_channel_1[11,8] free
- in_layer_1_channel_1[11,9] free
+ -2.208317844383418 <= in_layer_1_channel_1[11,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[11,1] <= 0.742214052192867
+ -2.239127304591238 <= in_layer_1_channel_1[11,2] <= 0.711404591985047
+ -2.052693082205951 <= in_layer_1_channel_1[11,3] <= 0.8978388143703343
+ -1.029522953741253 <= in_layer_1_channel_1[11,4] <= 1.921008942835033
+ 1.553718479163945 <= in_layer_1_channel_1[11,5] <= 4.504250375740232
+ 2.226244242675602 <= in_layer_1_channel_1[11,6] <= 5.176776139251889
+ 6.744943531043826 <= in_layer_1_channel_1[11,7] <= 9.695475427620115
+ 4.613659359328447 <= in_layer_1_channel_1[11,8] <= 7.564191255904736
+ 4.122307257540523 <= in_layer_1_channel_1[11,9] <= 7.07283915411681
  13.13830471206456 <= in_layer_1_channel_1[11,10] <= 16.08883660864085
- in_layer_1_channel_1[11,11] free
+ 6.619532722793517 <= in_layer_1_channel_1[11,11] <= 9.570064619369807
  201.6246075702831 <= in_layer_1_channel_1[11,12] <= 204.5751394668594
  957.1557901257651 <= in_layer_1_channel_1[11,13] <= 960.106322022341
  1536.057288138009 <= in_layer_1_channel_1[11,14] <= 1539.007820034586
@@ -74792,14 +74792,14 @@ Bounds
  2142.89576602336 <= in_layer_1_channel_1[11,23] <= 2145.846297919937
  1592.968612419255 <= in_layer_1_channel_1[11,24] <= 1595.919144315832
  501.3189851658419 <= in_layer_1_channel_1[11,25] <= 504.2695170624181
- in_layer_1_channel_1[12,0] free
- in_layer_1_channel_1[12,1] free
- in_layer_1_channel_1[12,2] free
- in_layer_1_channel_1[12,3] free
- in_layer_1_channel_1[12,4] free
- in_layer_1_channel_1[12,5] free
- in_layer_1_channel_1[12,6] free
- in_layer_1_channel_1[12,7] free
+ -2.208317844383418 <= in_layer_1_channel_1[12,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[12,1] <= 0.742214052192867
+ -0.7791291160508994 <= in_layer_1_channel_1[12,2] <= 2.171402780525386
+ 1.553718479163945 <= in_layer_1_channel_1[12,3] <= 4.504250375740232
+ 1.7120954150334 <= in_layer_1_channel_1[12,4] <= 4.662627311609686
+ 1.40036315638572 <= in_layer_1_channel_1[12,5] <= 4.350895052962007
+ 4.416184041462839 <= in_layer_1_channel_1[12,6] <= 7.366715938039125
+ 6.192917750962078 <= in_layer_1_channel_1[12,7] <= 9.143449647538366
  8.693333567865192 <= in_layer_1_channel_1[12,8] <= 11.64386546444148
  18.01723864842207 <= in_layer_1_channel_1[12,9] <= 20.96777054499834
  9.762916898168621 <= in_layer_1_channel_1[12,10] <= 12.71344879474491
@@ -74818,15 +74818,15 @@ Bounds
  2209.609348434768 <= in_layer_1_channel_1[12,23] <= 2212.559880331345
  1773.13140907865 <= in_layer_1_channel_1[12,24] <= 1776.081940975226
  730.6357489096001 <= in_layer_1_channel_1[12,25] <= 733.5862808061763
- in_layer_1_channel_1[13,0] free
- in_layer_1_channel_1[13,1] free
- in_layer_1_channel_1[13,2] free
- in_layer_1_channel_1[13,3] free
- in_layer_1_channel_1[13,4] free
+ -2.269936764799058 <= in_layer_1_channel_1[13,0] <= 0.6805951317772271
+ -1.958687240444124 <= in_layer_1_channel_1[13,1] <= 0.9918446561321618
+ -0.0228179061785341 <= in_layer_1_channel_1[13,2] <= 2.927713990397751
+ 0.8055696392431856 <= in_layer_1_channel_1[13,3] <= 3.756101535819471
+ 2.432820172794163 <= in_layer_1_channel_1[13,4] <= 5.38335206937045
  10.53172204066068 <= in_layer_1_channel_1[13,5] <= 13.48225393723697
  17.42138543892652 <= in_layer_1_channel_1[13,6] <= 20.3719173355028
  7.858457000739871 <= in_layer_1_channel_1[13,7] <= 10.80898889731616
- in_layer_1_channel_1[13,8] free
+ 5.784363468922674 <= in_layer_1_channel_1[13,8] <= 8.734895365498963
  8.772512221522627 <= in_layer_1_channel_1[13,9] <= 11.72304411809892
  149.7104198446497 <= in_layer_1_channel_1[13,10] <= 152.660951741226
  763.0767669601368 <= in_layer_1_channel_1[13,11] <= 766.0272988567127
@@ -74844,7 +74844,7 @@ Bounds
  2240.16899053175 <= in_layer_1_channel_1[13,23] <= 2243.119522428326
  2002.02860788051 <= in_layer_1_channel_1[13,24] <= 2004.979139777087
  1155.683027090318 <= in_layer_1_channel_1[13,25] <= 1158.633558986895
- in_layer_1_channel_1[14,0] free
+ -0.1011219007894402 <= in_layer_1_channel_1[14,0] <= 2.849409995786846
  8.174132259376345 <= in_layer_1_channel_1[14,1] <= 11.12466415595263
  9.897312791831789 <= in_layer_1_channel_1[14,2] <= 12.84784468840808
  7.564465196616945 <= in_layer_1_channel_1[14,3] <= 10.51499709319324
@@ -74870,11 +74870,11 @@ Bounds
  2172.063265396096 <= in_layer_1_channel_1[14,23] <= 2175.013797292672
  2190.919829796813 <= in_layer_1_channel_1[14,24] <= 2193.87036169339
  1598.174725837819 <= in_layer_1_channel_1[14,25] <= 1601.125257734396
- in_layer_1_channel_1[15,0] free
+ 6.623313560895621 <= in_layer_1_channel_1[15,0] <= 9.573845457471908
  11.36037456784397 <= in_layer_1_channel_1[15,1] <= 14.31090646442026
  11.12474206443876 <= in_layer_1_channel_1[15,2] <= 14.07527396101505
- in_layer_1_channel_1[15,3] free
- in_layer_1_channel_1[15,4] free
+ 3.720679649896921 <= in_layer_1_channel_1[15,3] <= 6.671211546473206
+ -0.7119959780946359 <= in_layer_1_channel_1[15,4] <= 2.238535918481646
  21.81111201439053 <= in_layer_1_channel_1[15,5] <= 24.76164391096681
  145.6780823783949 <= in_layer_1_channel_1[15,6] <= 148.6286142749712
  348.3487806541846 <= in_layer_1_channel_1[15,7] <= 351.2993125507608
@@ -75026,7 +75026,7 @@ Bounds
  2915.275601537712 <= in_layer_1_channel_1[20,23] <= 2918.226133434288
  2736.805178196914 <= in_layer_1_channel_1[20,24] <= 2739.755710093491
  2031.980896146781 <= in_layer_1_channel_1[20,25] <= 2034.931428043358
- in_layer_1_channel_1[21,0] free
+ -2.208317844383418 <= in_layer_1_channel_1[21,0] <= 0.742214052192867
  26.6618527488783 <= in_layer_1_channel_1[21,1] <= 29.61238464545458
  200.0314997749403 <= in_layer_1_channel_1[21,2] <= 202.9820316715166
  502.6592251377181 <= in_layer_1_channel_1[21,3] <= 505.6097570342942
@@ -75043,7 +75043,7 @@ Bounds
  555.8190776424484 <= in_layer_1_channel_1[21,14] <= 558.7696095390244
  166.3532363491132 <= in_layer_1_channel_1[21,15] <= 169.3037682456896
  11.56692114640027 <= in_layer_1_channel_1[21,16] <= 14.51745304297656
- in_layer_1_channel_1[21,17] free
+ -2.208317844383418 <= in_layer_1_channel_1[21,17] <= 0.742214052192867
  426.0325459556655 <= in_layer_1_channel_1[21,18] <= 428.9830778522416
  1107.087110908516 <= in_layer_1_channel_1[21,19] <= 1110.037642805092
  1468.089306982048 <= in_layer_1_channel_1[21,20] <= 1471.039838878624
@@ -75052,110 +75052,110 @@ Bounds
  1233.397377284057 <= in_layer_1_channel_1[21,23] <= 1236.347909180634
  1180.489003808983 <= in_layer_1_channel_1[21,24] <= 1183.439535705559
  812.8380421714859 <= in_layer_1_channel_1[21,25] <= 815.7885740680618
- in_layer_1_channel_1[22,0] free
- in_layer_1_channel_1[22,1] free
- in_layer_1_channel_1[22,2] free
- in_layer_1_channel_1[22,3] free
- in_layer_1_channel_1[22,4] free
- in_layer_1_channel_1[22,5] free
- in_layer_1_channel_1[22,6] free
- in_layer_1_channel_1[22,7] free
- in_layer_1_channel_1[22,8] free
- in_layer_1_channel_1[22,9] free
- in_layer_1_channel_1[22,10] free
- in_layer_1_channel_1[22,11] free
- in_layer_1_channel_1[22,12] free
- in_layer_1_channel_1[22,13] free
- in_layer_1_channel_1[22,14] free
- in_layer_1_channel_1[22,15] free
- in_layer_1_channel_1[22,16] free
- in_layer_1_channel_1[22,17] free
- in_layer_1_channel_1[22,18] free
- in_layer_1_channel_1[22,19] free
- in_layer_1_channel_1[22,20] free
- in_layer_1_channel_1[22,21] free
- in_layer_1_channel_1[22,22] free
- in_layer_1_channel_1[22,23] free
- in_layer_1_channel_1[22,24] free
- in_layer_1_channel_1[22,25] free
- in_layer_1_channel_1[23,0] free
- in_layer_1_channel_1[23,1] free
- in_layer_1_channel_1[23,2] free
- in_layer_1_channel_1[23,3] free
- in_layer_1_channel_1[23,4] free
- in_layer_1_channel_1[23,5] free
- in_layer_1_channel_1[23,6] free
- in_layer_1_channel_1[23,7] free
- in_layer_1_channel_1[23,8] free
- in_layer_1_channel_1[23,9] free
- in_layer_1_channel_1[23,10] free
- in_layer_1_channel_1[23,11] free
- in_layer_1_channel_1[23,12] free
- in_layer_1_channel_1[23,13] free
- in_layer_1_channel_1[23,14] free
- in_layer_1_channel_1[23,15] free
- in_layer_1_channel_1[23,16] free
- in_layer_1_channel_1[23,17] free
- in_layer_1_channel_1[23,18] free
- in_layer_1_channel_1[23,19] free
- in_layer_1_channel_1[23,20] free
- in_layer_1_channel_1[23,21] free
- in_layer_1_channel_1[23,22] free
- in_layer_1_channel_1[23,23] free
- in_layer_1_channel_1[23,24] free
- in_layer_1_channel_1[23,25] free
- in_layer_1_channel_1[24,0] free
- in_layer_1_channel_1[24,1] free
- in_layer_1_channel_1[24,2] free
- in_layer_1_channel_1[24,3] free
- in_layer_1_channel_1[24,4] free
- in_layer_1_channel_1[24,5] free
- in_layer_1_channel_1[24,6] free
- in_layer_1_channel_1[24,7] free
- in_layer_1_channel_1[24,8] free
- in_layer_1_channel_1[24,9] free
- in_layer_1_channel_1[24,10] free
- in_layer_1_channel_1[24,11] free
- in_layer_1_channel_1[24,12] free
- in_layer_1_channel_1[24,13] free
- in_layer_1_channel_1[24,14] free
- in_layer_1_channel_1[24,15] free
- in_layer_1_channel_1[24,16] free
- in_layer_1_channel_1[24,17] free
- in_layer_1_channel_1[24,18] free
- in_layer_1_channel_1[24,19] free
- in_layer_1_channel_1[24,20] free
- in_layer_1_channel_1[24,21] free
- in_layer_1_channel_1[24,22] free
- in_layer_1_channel_1[24,23] free
- in_layer_1_channel_1[24,24] free
- in_layer_1_channel_1[24,25] free
- in_layer_1_channel_1[25,0] free
- in_layer_1_channel_1[25,1] free
- in_layer_1_channel_1[25,2] free
- in_layer_1_channel_1[25,3] free
- in_layer_1_channel_1[25,4] free
- in_layer_1_channel_1[25,5] free
- in_layer_1_channel_1[25,6] free
- in_layer_1_channel_1[25,7] free
- in_layer_1_channel_1[25,8] free
- in_layer_1_channel_1[25,9] free
- in_layer_1_channel_1[25,10] free
- in_layer_1_channel_1[25,11] free
- in_layer_1_channel_1[25,12] free
- in_layer_1_channel_1[25,13] free
- in_layer_1_channel_1[25,14] free
- in_layer_1_channel_1[25,15] free
- in_layer_1_channel_1[25,16] free
- in_layer_1_channel_1[25,17] free
- in_layer_1_channel_1[25,18] free
- in_layer_1_channel_1[25,19] free
- in_layer_1_channel_1[25,20] free
- in_layer_1_channel_1[25,21] free
- in_layer_1_channel_1[25,22] free
- in_layer_1_channel_1[25,23] free
- in_layer_1_channel_1[25,24] free
- in_layer_1_channel_1[25,25] free
+ -2.208317844383418 <= in_layer_1_channel_1[22,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,9] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,10] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,11] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,12] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,13] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,14] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,15] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,16] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,17] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,18] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,19] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,20] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,21] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,22] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,23] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,24] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[22,25] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,9] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,10] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,11] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,12] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,13] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,14] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,15] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,16] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,17] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,18] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,19] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,20] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,21] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,22] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,23] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,24] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[23,25] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,9] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,10] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,11] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,12] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,13] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,14] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,15] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,16] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,17] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,18] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,19] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,20] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,21] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,22] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,23] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,24] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[24,25] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,0] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,1] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,2] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,3] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,4] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,5] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,6] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,7] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,8] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,9] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,10] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,11] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,12] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,13] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,14] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,15] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,16] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,17] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,18] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,19] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,20] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,21] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,22] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,23] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,24] <= 0.742214052192867
+ -2.208317844383418 <= in_layer_1_channel_1[25,25] <= 0.742214052192867
  out_layer_1_channel_0[0,0] free
  out_layer_1_channel_0[0,1] free
  out_layer_1_channel_0[0,2] free
