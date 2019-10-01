@@ -1,0 +1,1827 @@
+\ Model Neuron_Range_Update_copy
+\ LP format - for model browsing. Use MPS format to capture full model detail.
+Minimize
+ 
+Subject To
+ [8,_6,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[8,6]
+   - 1.612142443656921 in_layer_0_channel_0[8,7]
+   - 0.8327372074127197 in_layer_0_channel_0[8,8]
+   + 1.189462065696716 in_layer_0_channel_0[9,6]
+   - 1.090683341026306 in_layer_0_channel_0[9,7]
+   - 1.617893576622009 in_layer_0_channel_0[9,8]
+   + 1.486160159111023 in_layer_0_channel_0[10,6]
+   - 0.9966984987258911 in_layer_0_channel_0[10,7]
+   - 1.023223519325256 in_layer_0_channel_0[10,8]
+   - out_layer_0_channel_0[8,6] = -0.8490709066390991
+ [8,_6,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[8,6]
+   + 3.420669317245483 in_layer_0_channel_0[8,7]
+   + 2.405847549438477 in_layer_0_channel_0[8,8]
+   + 1.576184630393982 in_layer_0_channel_0[9,6]
+   + 3.762036323547363 in_layer_0_channel_0[9,7]
+   + 1.42918872833252 in_layer_0_channel_0[9,8]
+   - 0.2503938376903534 in_layer_0_channel_0[10,6]
+   + 0.1556247621774673 in_layer_0_channel_0[10,7]
+   - 0.0308094602078199 in_layer_0_channel_0[10,8]
+   - out_layer_0_channel_1[8,6] = 0.7330518960952759
+ [8,_7,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[8,7]
+   - 1.612142443656921 in_layer_0_channel_0[8,8]
+   - 0.8327372074127197 in_layer_0_channel_0[8,9]
+   + 1.189462065696716 in_layer_0_channel_0[9,7]
+   - 1.090683341026306 in_layer_0_channel_0[9,8]
+   - 1.617893576622009 in_layer_0_channel_0[9,9]
+   + 1.486160159111023 in_layer_0_channel_0[10,7]
+   - 0.9966984987258911 in_layer_0_channel_0[10,8]
+   - 1.023223519325256 in_layer_0_channel_0[10,9]
+   - out_layer_0_channel_0[8,7] = -0.8490709066390991
+ [8,_7,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[8,7]
+   + 3.420669317245483 in_layer_0_channel_0[8,8]
+   + 2.405847549438477 in_layer_0_channel_0[8,9]
+   + 1.576184630393982 in_layer_0_channel_0[9,7]
+   + 3.762036323547363 in_layer_0_channel_0[9,8]
+   + 1.42918872833252 in_layer_0_channel_0[9,9]
+   - 0.2503938376903534 in_layer_0_channel_0[10,7]
+   + 0.1556247621774673 in_layer_0_channel_0[10,8]
+   - 0.0308094602078199 in_layer_0_channel_0[10,9]
+   - out_layer_0_channel_1[8,7] = 0.7330518960952759
+ [8,_8,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[8,8]
+   - 1.612142443656921 in_layer_0_channel_0[8,9]
+   - 0.8327372074127197 in_layer_0_channel_0[8,10]
+   + 1.189462065696716 in_layer_0_channel_0[9,8]
+   - 1.090683341026306 in_layer_0_channel_0[9,9]
+   - 1.617893576622009 in_layer_0_channel_0[9,10]
+   + 1.486160159111023 in_layer_0_channel_0[10,8]
+   - 0.9966984987258911 in_layer_0_channel_0[10,9]
+   - 1.023223519325256 in_layer_0_channel_0[10,10]
+   - out_layer_0_channel_0[8,8] = -0.8490709066390991
+ [8,_8,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[8,8]
+   + 3.420669317245483 in_layer_0_channel_0[8,9]
+   + 2.405847549438477 in_layer_0_channel_0[8,10]
+   + 1.576184630393982 in_layer_0_channel_0[9,8]
+   + 3.762036323547363 in_layer_0_channel_0[9,9]
+   + 1.42918872833252 in_layer_0_channel_0[9,10]
+   - 0.2503938376903534 in_layer_0_channel_0[10,8]
+   + 0.1556247621774673 in_layer_0_channel_0[10,9]
+   - 0.0308094602078199 in_layer_0_channel_0[10,10]
+   - out_layer_0_channel_1[8,8] = 0.7330518960952759
+ [9,_2,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[9,2]
+   - 1.612142443656921 in_layer_0_channel_0[9,3]
+   - 0.8327372074127197 in_layer_0_channel_0[9,4]
+   + 1.189462065696716 in_layer_0_channel_0[10,2]
+   - 1.090683341026306 in_layer_0_channel_0[10,3]
+   - 1.617893576622009 in_layer_0_channel_0[10,4]
+   + 1.486160159111023 in_layer_0_channel_0[11,2]
+   - 0.9966984987258911 in_layer_0_channel_0[11,3]
+   - 1.023223519325256 in_layer_0_channel_0[11,4]
+   - out_layer_0_channel_0[9,2] = -0.8490709066390991
+ [9,_2,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[9,2]
+   + 3.420669317245483 in_layer_0_channel_0[9,3]
+   + 2.405847549438477 in_layer_0_channel_0[9,4]
+   + 1.576184630393982 in_layer_0_channel_0[10,2]
+   + 3.762036323547363 in_layer_0_channel_0[10,3]
+   + 1.42918872833252 in_layer_0_channel_0[10,4]
+   - 0.2503938376903534 in_layer_0_channel_0[11,2]
+   + 0.1556247621774673 in_layer_0_channel_0[11,3]
+   - 0.0308094602078199 in_layer_0_channel_0[11,4]
+   - out_layer_0_channel_1[9,2] = 0.7330518960952759
+ [9,_3,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[9,3]
+   - 1.612142443656921 in_layer_0_channel_0[9,4]
+   - 0.8327372074127197 in_layer_0_channel_0[9,5]
+   + 1.189462065696716 in_layer_0_channel_0[10,3]
+   - 1.090683341026306 in_layer_0_channel_0[10,4]
+   - 1.617893576622009 in_layer_0_channel_0[10,5]
+   + 1.486160159111023 in_layer_0_channel_0[11,3]
+   - 0.9966984987258911 in_layer_0_channel_0[11,4]
+   - 1.023223519325256 in_layer_0_channel_0[11,5]
+   - out_layer_0_channel_0[9,3] = -0.8490709066390991
+ [9,_3,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[9,3]
+   + 3.420669317245483 in_layer_0_channel_0[9,4]
+   + 2.405847549438477 in_layer_0_channel_0[9,5]
+   + 1.576184630393982 in_layer_0_channel_0[10,3]
+   + 3.762036323547363 in_layer_0_channel_0[10,4]
+   + 1.42918872833252 in_layer_0_channel_0[10,5]
+   - 0.2503938376903534 in_layer_0_channel_0[11,3]
+   + 0.1556247621774673 in_layer_0_channel_0[11,4]
+   - 0.0308094602078199 in_layer_0_channel_0[11,5]
+   - out_layer_0_channel_1[9,3] = 0.7330518960952759
+ [9,_4,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[9,4]
+   - 1.612142443656921 in_layer_0_channel_0[9,5]
+   - 0.8327372074127197 in_layer_0_channel_0[9,6]
+   + 1.189462065696716 in_layer_0_channel_0[10,4]
+   - 1.090683341026306 in_layer_0_channel_0[10,5]
+   - 1.617893576622009 in_layer_0_channel_0[10,6]
+   + 1.486160159111023 in_layer_0_channel_0[11,4]
+   - 0.9966984987258911 in_layer_0_channel_0[11,5]
+   - 1.023223519325256 in_layer_0_channel_0[11,6]
+   - out_layer_0_channel_0[9,4] = -0.8490709066390991
+ [9,_4,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[9,4]
+   + 3.420669317245483 in_layer_0_channel_0[9,5]
+   + 2.405847549438477 in_layer_0_channel_0[9,6]
+   + 1.576184630393982 in_layer_0_channel_0[10,4]
+   + 3.762036323547363 in_layer_0_channel_0[10,5]
+   + 1.42918872833252 in_layer_0_channel_0[10,6]
+   - 0.2503938376903534 in_layer_0_channel_0[11,4]
+   + 0.1556247621774673 in_layer_0_channel_0[11,5]
+   - 0.0308094602078199 in_layer_0_channel_0[11,6]
+   - out_layer_0_channel_1[9,4] = 0.7330518960952759
+ [9,_5,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[9,5]
+   - 1.612142443656921 in_layer_0_channel_0[9,6]
+   - 0.8327372074127197 in_layer_0_channel_0[9,7]
+   + 1.189462065696716 in_layer_0_channel_0[10,5]
+   - 1.090683341026306 in_layer_0_channel_0[10,6]
+   - 1.617893576622009 in_layer_0_channel_0[10,7]
+   + 1.486160159111023 in_layer_0_channel_0[11,5]
+   - 0.9966984987258911 in_layer_0_channel_0[11,6]
+   - 1.023223519325256 in_layer_0_channel_0[11,7]
+   - out_layer_0_channel_0[9,5] = -0.8490709066390991
+ [9,_5,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[9,5]
+   + 3.420669317245483 in_layer_0_channel_0[9,6]
+   + 2.405847549438477 in_layer_0_channel_0[9,7]
+   + 1.576184630393982 in_layer_0_channel_0[10,5]
+   + 3.762036323547363 in_layer_0_channel_0[10,6]
+   + 1.42918872833252 in_layer_0_channel_0[10,7]
+   - 0.2503938376903534 in_layer_0_channel_0[11,5]
+   + 0.1556247621774673 in_layer_0_channel_0[11,6]
+   - 0.0308094602078199 in_layer_0_channel_0[11,7]
+   - out_layer_0_channel_1[9,5] = 0.7330518960952759
+ [9,_6,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[9,6]
+   - 1.612142443656921 in_layer_0_channel_0[9,7]
+   - 0.8327372074127197 in_layer_0_channel_0[9,8]
+   + 1.189462065696716 in_layer_0_channel_0[10,6]
+   - 1.090683341026306 in_layer_0_channel_0[10,7]
+   - 1.617893576622009 in_layer_0_channel_0[10,8]
+   + 1.486160159111023 in_layer_0_channel_0[11,6]
+   - 0.9966984987258911 in_layer_0_channel_0[11,7]
+   - 1.023223519325256 in_layer_0_channel_0[11,8]
+   - out_layer_0_channel_0[9,6] = -0.8490709066390991
+ [9,_6,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[9,6]
+   + 3.420669317245483 in_layer_0_channel_0[9,7]
+   + 2.405847549438477 in_layer_0_channel_0[9,8]
+   + 1.576184630393982 in_layer_0_channel_0[10,6]
+   + 3.762036323547363 in_layer_0_channel_0[10,7]
+   + 1.42918872833252 in_layer_0_channel_0[10,8]
+   - 0.2503938376903534 in_layer_0_channel_0[11,6]
+   + 0.1556247621774673 in_layer_0_channel_0[11,7]
+   - 0.0308094602078199 in_layer_0_channel_0[11,8]
+   - out_layer_0_channel_1[9,6] = 0.7330518960952759
+ [9,_7,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[9,7]
+   - 1.612142443656921 in_layer_0_channel_0[9,8]
+   - 0.8327372074127197 in_layer_0_channel_0[9,9]
+   + 1.189462065696716 in_layer_0_channel_0[10,7]
+   - 1.090683341026306 in_layer_0_channel_0[10,8]
+   - 1.617893576622009 in_layer_0_channel_0[10,9]
+   + 1.486160159111023 in_layer_0_channel_0[11,7]
+   - 0.9966984987258911 in_layer_0_channel_0[11,8]
+   - 1.023223519325256 in_layer_0_channel_0[11,9]
+   - out_layer_0_channel_0[9,7] = -0.8490709066390991
+ [9,_7,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[9,7]
+   + 3.420669317245483 in_layer_0_channel_0[9,8]
+   + 2.405847549438477 in_layer_0_channel_0[9,9]
+   + 1.576184630393982 in_layer_0_channel_0[10,7]
+   + 3.762036323547363 in_layer_0_channel_0[10,8]
+   + 1.42918872833252 in_layer_0_channel_0[10,9]
+   - 0.2503938376903534 in_layer_0_channel_0[11,7]
+   + 0.1556247621774673 in_layer_0_channel_0[11,8]
+   - 0.0308094602078199 in_layer_0_channel_0[11,9]
+   - out_layer_0_channel_1[9,7] = 0.7330518960952759
+ [9,_8,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[9,8]
+   - 1.612142443656921 in_layer_0_channel_0[9,9]
+   - 0.8327372074127197 in_layer_0_channel_0[9,10]
+   + 1.189462065696716 in_layer_0_channel_0[10,8]
+   - 1.090683341026306 in_layer_0_channel_0[10,9]
+   - 1.617893576622009 in_layer_0_channel_0[10,10]
+   + 1.486160159111023 in_layer_0_channel_0[11,8]
+   - 0.9966984987258911 in_layer_0_channel_0[11,9]
+   - 1.023223519325256 in_layer_0_channel_0[11,10]
+   - out_layer_0_channel_0[9,8] = -0.8490709066390991
+ [9,_8,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[9,8]
+   + 3.420669317245483 in_layer_0_channel_0[9,9]
+   + 2.405847549438477 in_layer_0_channel_0[9,10]
+   + 1.576184630393982 in_layer_0_channel_0[10,8]
+   + 3.762036323547363 in_layer_0_channel_0[10,9]
+   + 1.42918872833252 in_layer_0_channel_0[10,10]
+   - 0.2503938376903534 in_layer_0_channel_0[11,8]
+   + 0.1556247621774673 in_layer_0_channel_0[11,9]
+   - 0.0308094602078199 in_layer_0_channel_0[11,10]
+   - out_layer_0_channel_1[9,8] = 0.7330518960952759
+ [10,_2,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[10,2]
+   - 1.612142443656921 in_layer_0_channel_0[10,3]
+   - 0.8327372074127197 in_layer_0_channel_0[10,4]
+   + 1.189462065696716 in_layer_0_channel_0[11,2]
+   - 1.090683341026306 in_layer_0_channel_0[11,3]
+   - 1.617893576622009 in_layer_0_channel_0[11,4]
+   + 1.486160159111023 in_layer_0_channel_0[12,2]
+   - 0.9966984987258911 in_layer_0_channel_0[12,3]
+   - 1.023223519325256 in_layer_0_channel_0[12,4]
+   - out_layer_0_channel_0[10,2] = -0.8490709066390991
+ [10,_2,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[10,2]
+   + 3.420669317245483 in_layer_0_channel_0[10,3]
+   + 2.405847549438477 in_layer_0_channel_0[10,4]
+   + 1.576184630393982 in_layer_0_channel_0[11,2]
+   + 3.762036323547363 in_layer_0_channel_0[11,3]
+   + 1.42918872833252 in_layer_0_channel_0[11,4]
+   - 0.2503938376903534 in_layer_0_channel_0[12,2]
+   + 0.1556247621774673 in_layer_0_channel_0[12,3]
+   - 0.0308094602078199 in_layer_0_channel_0[12,4]
+   - out_layer_0_channel_1[10,2] = 0.7330518960952759
+ [10,_3,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[10,3]
+   - 1.612142443656921 in_layer_0_channel_0[10,4]
+   - 0.8327372074127197 in_layer_0_channel_0[10,5]
+   + 1.189462065696716 in_layer_0_channel_0[11,3]
+   - 1.090683341026306 in_layer_0_channel_0[11,4]
+   - 1.617893576622009 in_layer_0_channel_0[11,5]
+   + 1.486160159111023 in_layer_0_channel_0[12,3]
+   - 0.9966984987258911 in_layer_0_channel_0[12,4]
+   - 1.023223519325256 in_layer_0_channel_0[12,5]
+   - out_layer_0_channel_0[10,3] = -0.8490709066390991
+ [10,_3,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[10,3]
+   + 3.420669317245483 in_layer_0_channel_0[10,4]
+   + 2.405847549438477 in_layer_0_channel_0[10,5]
+   + 1.576184630393982 in_layer_0_channel_0[11,3]
+   + 3.762036323547363 in_layer_0_channel_0[11,4]
+   + 1.42918872833252 in_layer_0_channel_0[11,5]
+   - 0.2503938376903534 in_layer_0_channel_0[12,3]
+   + 0.1556247621774673 in_layer_0_channel_0[12,4]
+   - 0.0308094602078199 in_layer_0_channel_0[12,5]
+   - out_layer_0_channel_1[10,3] = 0.7330518960952759
+ [10,_4,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[10,4]
+   - 1.612142443656921 in_layer_0_channel_0[10,5]
+   - 0.8327372074127197 in_layer_0_channel_0[10,6]
+   + 1.189462065696716 in_layer_0_channel_0[11,4]
+   - 1.090683341026306 in_layer_0_channel_0[11,5]
+   - 1.617893576622009 in_layer_0_channel_0[11,6]
+   + 1.486160159111023 in_layer_0_channel_0[12,4]
+   - 0.9966984987258911 in_layer_0_channel_0[12,5]
+   - 1.023223519325256 in_layer_0_channel_0[12,6]
+   - out_layer_0_channel_0[10,4] = -0.8490709066390991
+ [10,_5,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[10,5]
+   - 1.612142443656921 in_layer_0_channel_0[10,6]
+   - 0.8327372074127197 in_layer_0_channel_0[10,7]
+   + 1.189462065696716 in_layer_0_channel_0[11,5]
+   - 1.090683341026306 in_layer_0_channel_0[11,6]
+   - 1.617893576622009 in_layer_0_channel_0[11,7]
+   + 1.486160159111023 in_layer_0_channel_0[12,5]
+   - 0.9966984987258911 in_layer_0_channel_0[12,6]
+   - 1.023223519325256 in_layer_0_channel_0[12,7]
+   - out_layer_0_channel_0[10,5] = -0.8490709066390991
+ [10,_5,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[10,5]
+   + 3.420669317245483 in_layer_0_channel_0[10,6]
+   + 2.405847549438477 in_layer_0_channel_0[10,7]
+   + 1.576184630393982 in_layer_0_channel_0[11,5]
+   + 3.762036323547363 in_layer_0_channel_0[11,6]
+   + 1.42918872833252 in_layer_0_channel_0[11,7]
+   - 0.2503938376903534 in_layer_0_channel_0[12,5]
+   + 0.1556247621774673 in_layer_0_channel_0[12,6]
+   - 0.0308094602078199 in_layer_0_channel_0[12,7]
+   - out_layer_0_channel_1[10,5] = 0.7330518960952759
+ [10,_6,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[10,6]
+   - 1.612142443656921 in_layer_0_channel_0[10,7]
+   - 0.8327372074127197 in_layer_0_channel_0[10,8]
+   + 1.189462065696716 in_layer_0_channel_0[11,6]
+   - 1.090683341026306 in_layer_0_channel_0[11,7]
+   - 1.617893576622009 in_layer_0_channel_0[11,8]
+   + 1.486160159111023 in_layer_0_channel_0[12,6]
+   - 0.9966984987258911 in_layer_0_channel_0[12,7]
+   - 1.023223519325256 in_layer_0_channel_0[12,8]
+   - out_layer_0_channel_0[10,6] = -0.8490709066390991
+ [10,_6,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[10,6]
+   + 3.420669317245483 in_layer_0_channel_0[10,7]
+   + 2.405847549438477 in_layer_0_channel_0[10,8]
+   + 1.576184630393982 in_layer_0_channel_0[11,6]
+   + 3.762036323547363 in_layer_0_channel_0[11,7]
+   + 1.42918872833252 in_layer_0_channel_0[11,8]
+   - 0.2503938376903534 in_layer_0_channel_0[12,6]
+   + 0.1556247621774673 in_layer_0_channel_0[12,7]
+   - 0.0308094602078199 in_layer_0_channel_0[12,8]
+   - out_layer_0_channel_1[10,6] = 0.7330518960952759
+ [10,_7,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[10,7]
+   + 3.420669317245483 in_layer_0_channel_0[10,8]
+   + 2.405847549438477 in_layer_0_channel_0[10,9]
+   + 1.576184630393982 in_layer_0_channel_0[11,7]
+   + 3.762036323547363 in_layer_0_channel_0[11,8]
+   + 1.42918872833252 in_layer_0_channel_0[11,9]
+   - 0.2503938376903534 in_layer_0_channel_0[12,7]
+   + 0.1556247621774673 in_layer_0_channel_0[12,8]
+   - 0.0308094602078199 in_layer_0_channel_0[12,9]
+   - out_layer_0_channel_1[10,7] = 0.7330518960952759
+ [10,_8,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[10,8]
+   - 1.612142443656921 in_layer_0_channel_0[10,9]
+   - 0.8327372074127197 in_layer_0_channel_0[10,10]
+   + 1.189462065696716 in_layer_0_channel_0[11,8]
+   - 1.090683341026306 in_layer_0_channel_0[11,9]
+   - 1.617893576622009 in_layer_0_channel_0[11,10]
+   + 1.486160159111023 in_layer_0_channel_0[12,8]
+   - 0.9966984987258911 in_layer_0_channel_0[12,9]
+   - 1.023223519325256 in_layer_0_channel_0[12,10]
+   - out_layer_0_channel_0[10,8] = -0.8490709066390991
+ [10,_8,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[10,8]
+   + 3.420669317245483 in_layer_0_channel_0[10,9]
+   + 2.405847549438477 in_layer_0_channel_0[10,10]
+   + 1.576184630393982 in_layer_0_channel_0[11,8]
+   + 3.762036323547363 in_layer_0_channel_0[11,9]
+   + 1.42918872833252 in_layer_0_channel_0[11,10]
+   - 0.2503938376903534 in_layer_0_channel_0[12,8]
+   + 0.1556247621774673 in_layer_0_channel_0[12,9]
+   - 0.0308094602078199 in_layer_0_channel_0[12,10]
+   - out_layer_0_channel_1[10,8] = 0.7330518960952759
+ [11,_1,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[11,1]
+   - 1.612142443656921 in_layer_0_channel_0[11,2]
+   - 0.8327372074127197 in_layer_0_channel_0[11,3]
+   + 1.189462065696716 in_layer_0_channel_0[12,1]
+   - 1.090683341026306 in_layer_0_channel_0[12,2]
+   - 1.617893576622009 in_layer_0_channel_0[12,3]
+   + 1.486160159111023 in_layer_0_channel_0[13,1]
+   - 0.9966984987258911 in_layer_0_channel_0[13,2]
+   - 1.023223519325256 in_layer_0_channel_0[13,3]
+   - out_layer_0_channel_0[11,1] = -0.8490709066390991
+ [11,_1,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[11,1]
+   + 3.420669317245483 in_layer_0_channel_0[11,2]
+   + 2.405847549438477 in_layer_0_channel_0[11,3]
+   + 1.576184630393982 in_layer_0_channel_0[12,1]
+   + 3.762036323547363 in_layer_0_channel_0[12,2]
+   + 1.42918872833252 in_layer_0_channel_0[12,3]
+   - 0.2503938376903534 in_layer_0_channel_0[13,1]
+   + 0.1556247621774673 in_layer_0_channel_0[13,2]
+   - 0.0308094602078199 in_layer_0_channel_0[13,3]
+   - out_layer_0_channel_1[11,1] = 0.7330518960952759
+ [11,_2,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[11,2]
+   - 1.612142443656921 in_layer_0_channel_0[11,3]
+   - 0.8327372074127197 in_layer_0_channel_0[11,4]
+   + 1.189462065696716 in_layer_0_channel_0[12,2]
+   - 1.090683341026306 in_layer_0_channel_0[12,3]
+   - 1.617893576622009 in_layer_0_channel_0[12,4]
+   + 1.486160159111023 in_layer_0_channel_0[13,2]
+   - 0.9966984987258911 in_layer_0_channel_0[13,3]
+   - 1.023223519325256 in_layer_0_channel_0[13,4]
+   - out_layer_0_channel_0[11,2] = -0.8490709066390991
+ [11,_2,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[11,2]
+   + 3.420669317245483 in_layer_0_channel_0[11,3]
+   + 2.405847549438477 in_layer_0_channel_0[11,4]
+   + 1.576184630393982 in_layer_0_channel_0[12,2]
+   + 3.762036323547363 in_layer_0_channel_0[12,3]
+   + 1.42918872833252 in_layer_0_channel_0[12,4]
+   - 0.2503938376903534 in_layer_0_channel_0[13,2]
+   + 0.1556247621774673 in_layer_0_channel_0[13,3]
+   - 0.0308094602078199 in_layer_0_channel_0[13,4]
+   - out_layer_0_channel_1[11,2] = 0.7330518960952759
+ [11,_3,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[11,3]
+   - 1.612142443656921 in_layer_0_channel_0[11,4]
+   - 0.8327372074127197 in_layer_0_channel_0[11,5]
+   + 1.189462065696716 in_layer_0_channel_0[12,3]
+   - 1.090683341026306 in_layer_0_channel_0[12,4]
+   - 1.617893576622009 in_layer_0_channel_0[12,5]
+   + 1.486160159111023 in_layer_0_channel_0[13,3]
+   - 0.9966984987258911 in_layer_0_channel_0[13,4]
+   - 1.023223519325256 in_layer_0_channel_0[13,5]
+   - out_layer_0_channel_0[11,3] = -0.8490709066390991
+ [11,_3,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[11,3]
+   + 3.420669317245483 in_layer_0_channel_0[11,4]
+   + 2.405847549438477 in_layer_0_channel_0[11,5]
+   + 1.576184630393982 in_layer_0_channel_0[12,3]
+   + 3.762036323547363 in_layer_0_channel_0[12,4]
+   + 1.42918872833252 in_layer_0_channel_0[12,5]
+   - 0.2503938376903534 in_layer_0_channel_0[13,3]
+   + 0.1556247621774673 in_layer_0_channel_0[13,4]
+   - 0.0308094602078199 in_layer_0_channel_0[13,5]
+   - out_layer_0_channel_1[11,3] = 0.7330518960952759
+ [11,_4,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[11,4]
+   + 3.420669317245483 in_layer_0_channel_0[11,5]
+   + 2.405847549438477 in_layer_0_channel_0[11,6]
+   + 1.576184630393982 in_layer_0_channel_0[12,4]
+   + 3.762036323547363 in_layer_0_channel_0[12,5]
+   + 1.42918872833252 in_layer_0_channel_0[12,6]
+   - 0.2503938376903534 in_layer_0_channel_0[13,4]
+   + 0.1556247621774673 in_layer_0_channel_0[13,5]
+   - 0.0308094602078199 in_layer_0_channel_0[13,6]
+   - out_layer_0_channel_1[11,4] = 0.7330518960952759
+ [11,_5,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[11,5]
+   - 1.612142443656921 in_layer_0_channel_0[11,6]
+   - 0.8327372074127197 in_layer_0_channel_0[11,7]
+   + 1.189462065696716 in_layer_0_channel_0[12,5]
+   - 1.090683341026306 in_layer_0_channel_0[12,6]
+   - 1.617893576622009 in_layer_0_channel_0[12,7]
+   + 1.486160159111023 in_layer_0_channel_0[13,5]
+   - 0.9966984987258911 in_layer_0_channel_0[13,6]
+   - 1.023223519325256 in_layer_0_channel_0[13,7]
+   - out_layer_0_channel_0[11,5] = -0.8490709066390991
+ [11,_5,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[11,5]
+   + 3.420669317245483 in_layer_0_channel_0[11,6]
+   + 2.405847549438477 in_layer_0_channel_0[11,7]
+   + 1.576184630393982 in_layer_0_channel_0[12,5]
+   + 3.762036323547363 in_layer_0_channel_0[12,6]
+   + 1.42918872833252 in_layer_0_channel_0[12,7]
+   - 0.2503938376903534 in_layer_0_channel_0[13,5]
+   + 0.1556247621774673 in_layer_0_channel_0[13,6]
+   - 0.0308094602078199 in_layer_0_channel_0[13,7]
+   - out_layer_0_channel_1[11,5] = 0.7330518960952759
+ [11,_6,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[11,6]
+   - 1.612142443656921 in_layer_0_channel_0[11,7]
+   - 0.8327372074127197 in_layer_0_channel_0[11,8]
+   + 1.189462065696716 in_layer_0_channel_0[12,6]
+   - 1.090683341026306 in_layer_0_channel_0[12,7]
+   - 1.617893576622009 in_layer_0_channel_0[12,8]
+   + 1.486160159111023 in_layer_0_channel_0[13,6]
+   - 0.9966984987258911 in_layer_0_channel_0[13,7]
+   - 1.023223519325256 in_layer_0_channel_0[13,8]
+   - out_layer_0_channel_0[11,6] = -0.8490709066390991
+ [11,_6,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[11,6]
+   + 3.420669317245483 in_layer_0_channel_0[11,7]
+   + 2.405847549438477 in_layer_0_channel_0[11,8]
+   + 1.576184630393982 in_layer_0_channel_0[12,6]
+   + 3.762036323547363 in_layer_0_channel_0[12,7]
+   + 1.42918872833252 in_layer_0_channel_0[12,8]
+   - 0.2503938376903534 in_layer_0_channel_0[13,6]
+   + 0.1556247621774673 in_layer_0_channel_0[13,7]
+   - 0.0308094602078199 in_layer_0_channel_0[13,8]
+   - out_layer_0_channel_1[11,6] = 0.7330518960952759
+ [11,_7,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[11,7]
+   - 1.612142443656921 in_layer_0_channel_0[11,8]
+   - 0.8327372074127197 in_layer_0_channel_0[11,9]
+   + 1.189462065696716 in_layer_0_channel_0[12,7]
+   - 1.090683341026306 in_layer_0_channel_0[12,8]
+   - 1.617893576622009 in_layer_0_channel_0[12,9]
+   + 1.486160159111023 in_layer_0_channel_0[13,7]
+   - 0.9966984987258911 in_layer_0_channel_0[13,8]
+   - 1.023223519325256 in_layer_0_channel_0[13,9]
+   - out_layer_0_channel_0[11,7] = -0.8490709066390991
+ [11,_7,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[11,7]
+   + 3.420669317245483 in_layer_0_channel_0[11,8]
+   + 2.405847549438477 in_layer_0_channel_0[11,9]
+   + 1.576184630393982 in_layer_0_channel_0[12,7]
+   + 3.762036323547363 in_layer_0_channel_0[12,8]
+   + 1.42918872833252 in_layer_0_channel_0[12,9]
+   - 0.2503938376903534 in_layer_0_channel_0[13,7]
+   + 0.1556247621774673 in_layer_0_channel_0[13,8]
+   - 0.0308094602078199 in_layer_0_channel_0[13,9]
+   - out_layer_0_channel_1[11,7] = 0.7330518960952759
+ [11,_8,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[11,8]
+   - 1.612142443656921 in_layer_0_channel_0[11,9]
+   - 0.8327372074127197 in_layer_0_channel_0[11,10]
+   + 1.189462065696716 in_layer_0_channel_0[12,8]
+   - 1.090683341026306 in_layer_0_channel_0[12,9]
+   - 1.617893576622009 in_layer_0_channel_0[12,10]
+   + 1.486160159111023 in_layer_0_channel_0[13,8]
+   - 0.9966984987258911 in_layer_0_channel_0[13,9]
+   - 1.023223519325256 in_layer_0_channel_0[13,10]
+   - out_layer_0_channel_0[11,8] = -0.8490709066390991
+ [11,_8,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[11,8]
+   + 3.420669317245483 in_layer_0_channel_0[11,9]
+   + 2.405847549438477 in_layer_0_channel_0[11,10]
+   + 1.576184630393982 in_layer_0_channel_0[12,8]
+   + 3.762036323547363 in_layer_0_channel_0[12,9]
+   + 1.42918872833252 in_layer_0_channel_0[12,10]
+   - 0.2503938376903534 in_layer_0_channel_0[13,8]
+   + 0.1556247621774673 in_layer_0_channel_0[13,9]
+   - 0.0308094602078199 in_layer_0_channel_0[13,10]
+   - out_layer_0_channel_1[11,8] = 0.7330518960952759
+ [12,_0,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[12,0]
+   - 1.612142443656921 in_layer_0_channel_0[12,1]
+   - 0.8327372074127197 in_layer_0_channel_0[12,2]
+   + 1.189462065696716 in_layer_0_channel_0[13,0]
+   - 1.090683341026306 in_layer_0_channel_0[13,1]
+   - 1.617893576622009 in_layer_0_channel_0[13,2]
+   + 1.486160159111023 in_layer_0_channel_0[14,0]
+   - 0.9966984987258911 in_layer_0_channel_0[14,1]
+   - 1.023223519325256 in_layer_0_channel_0[14,2]
+   - out_layer_0_channel_0[12,0] = -0.8490709066390991
+ [12,_0,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[12,0]
+   + 3.420669317245483 in_layer_0_channel_0[12,1]
+   + 2.405847549438477 in_layer_0_channel_0[12,2]
+   + 1.576184630393982 in_layer_0_channel_0[13,0]
+   + 3.762036323547363 in_layer_0_channel_0[13,1]
+   + 1.42918872833252 in_layer_0_channel_0[13,2]
+   - 0.2503938376903534 in_layer_0_channel_0[14,0]
+   + 0.1556247621774673 in_layer_0_channel_0[14,1]
+   - 0.0308094602078199 in_layer_0_channel_0[14,2]
+   - out_layer_0_channel_1[12,0] = 0.7330518960952759
+ [12,_1,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[12,1]
+   - 1.612142443656921 in_layer_0_channel_0[12,2]
+   - 0.8327372074127197 in_layer_0_channel_0[12,3]
+   + 1.189462065696716 in_layer_0_channel_0[13,1]
+   - 1.090683341026306 in_layer_0_channel_0[13,2]
+   - 1.617893576622009 in_layer_0_channel_0[13,3]
+   + 1.486160159111023 in_layer_0_channel_0[14,1]
+   - 0.9966984987258911 in_layer_0_channel_0[14,2]
+   - 1.023223519325256 in_layer_0_channel_0[14,3]
+   - out_layer_0_channel_0[12,1] = -0.8490709066390991
+ [12,_1,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[12,1]
+   + 3.420669317245483 in_layer_0_channel_0[12,2]
+   + 2.405847549438477 in_layer_0_channel_0[12,3]
+   + 1.576184630393982 in_layer_0_channel_0[13,1]
+   + 3.762036323547363 in_layer_0_channel_0[13,2]
+   + 1.42918872833252 in_layer_0_channel_0[13,3]
+   - 0.2503938376903534 in_layer_0_channel_0[14,1]
+   + 0.1556247621774673 in_layer_0_channel_0[14,2]
+   - 0.0308094602078199 in_layer_0_channel_0[14,3]
+   - out_layer_0_channel_1[12,1] = 0.7330518960952759
+ [12,_2,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[12,2]
+   - 1.612142443656921 in_layer_0_channel_0[12,3]
+   - 0.8327372074127197 in_layer_0_channel_0[12,4]
+   + 1.189462065696716 in_layer_0_channel_0[13,2]
+   - 1.090683341026306 in_layer_0_channel_0[13,3]
+   - 1.617893576622009 in_layer_0_channel_0[13,4]
+   + 1.486160159111023 in_layer_0_channel_0[14,2]
+   - 0.9966984987258911 in_layer_0_channel_0[14,3]
+   - 1.023223519325256 in_layer_0_channel_0[14,4]
+   - out_layer_0_channel_0[12,2] = -0.8490709066390991
+ [12,_2,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[12,2]
+   + 3.420669317245483 in_layer_0_channel_0[12,3]
+   + 2.405847549438477 in_layer_0_channel_0[12,4]
+   + 1.576184630393982 in_layer_0_channel_0[13,2]
+   + 3.762036323547363 in_layer_0_channel_0[13,3]
+   + 1.42918872833252 in_layer_0_channel_0[13,4]
+   - 0.2503938376903534 in_layer_0_channel_0[14,2]
+   + 0.1556247621774673 in_layer_0_channel_0[14,3]
+   - 0.0308094602078199 in_layer_0_channel_0[14,4]
+   - out_layer_0_channel_1[12,2] = 0.7330518960952759
+ [12,_3,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[12,3]
+   - 1.612142443656921 in_layer_0_channel_0[12,4]
+   - 0.8327372074127197 in_layer_0_channel_0[12,5]
+   + 1.189462065696716 in_layer_0_channel_0[13,3]
+   - 1.090683341026306 in_layer_0_channel_0[13,4]
+   - 1.617893576622009 in_layer_0_channel_0[13,5]
+   + 1.486160159111023 in_layer_0_channel_0[14,3]
+   - 0.9966984987258911 in_layer_0_channel_0[14,4]
+   - 1.023223519325256 in_layer_0_channel_0[14,5]
+   - out_layer_0_channel_0[12,3] = -0.8490709066390991
+ [12,_3,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[12,3]
+   + 3.420669317245483 in_layer_0_channel_0[12,4]
+   + 2.405847549438477 in_layer_0_channel_0[12,5]
+   + 1.576184630393982 in_layer_0_channel_0[13,3]
+   + 3.762036323547363 in_layer_0_channel_0[13,4]
+   + 1.42918872833252 in_layer_0_channel_0[13,5]
+   - 0.2503938376903534 in_layer_0_channel_0[14,3]
+   + 0.1556247621774673 in_layer_0_channel_0[14,4]
+   - 0.0308094602078199 in_layer_0_channel_0[14,5]
+   - out_layer_0_channel_1[12,3] = 0.7330518960952759
+ [12,_4,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[12,4]
+   - 1.612142443656921 in_layer_0_channel_0[12,5]
+   - 0.8327372074127197 in_layer_0_channel_0[12,6]
+   + 1.189462065696716 in_layer_0_channel_0[13,4]
+   - 1.090683341026306 in_layer_0_channel_0[13,5]
+   - 1.617893576622009 in_layer_0_channel_0[13,6]
+   + 1.486160159111023 in_layer_0_channel_0[14,4]
+   - 0.9966984987258911 in_layer_0_channel_0[14,5]
+   - 1.023223519325256 in_layer_0_channel_0[14,6]
+   - out_layer_0_channel_0[12,4] = -0.8490709066390991
+ [12,_4,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[12,4]
+   + 3.420669317245483 in_layer_0_channel_0[12,5]
+   + 2.405847549438477 in_layer_0_channel_0[12,6]
+   + 1.576184630393982 in_layer_0_channel_0[13,4]
+   + 3.762036323547363 in_layer_0_channel_0[13,5]
+   + 1.42918872833252 in_layer_0_channel_0[13,6]
+   - 0.2503938376903534 in_layer_0_channel_0[14,4]
+   + 0.1556247621774673 in_layer_0_channel_0[14,5]
+   - 0.0308094602078199 in_layer_0_channel_0[14,6]
+   - out_layer_0_channel_1[12,4] = 0.7330518960952759
+ [12,_5,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[12,5]
+   + 3.420669317245483 in_layer_0_channel_0[12,6]
+   + 2.405847549438477 in_layer_0_channel_0[12,7]
+   + 1.576184630393982 in_layer_0_channel_0[13,5]
+   + 3.762036323547363 in_layer_0_channel_0[13,6]
+   + 1.42918872833252 in_layer_0_channel_0[13,7]
+   - 0.2503938376903534 in_layer_0_channel_0[14,5]
+   + 0.1556247621774673 in_layer_0_channel_0[14,6]
+   - 0.0308094602078199 in_layer_0_channel_0[14,7]
+   - out_layer_0_channel_1[12,5] = 0.7330518960952759
+ [13,_0,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[13,0]
+   - 1.612142443656921 in_layer_0_channel_0[13,1]
+   - 0.8327372074127197 in_layer_0_channel_0[13,2]
+   + 1.189462065696716 in_layer_0_channel_0[14,0]
+   - 1.090683341026306 in_layer_0_channel_0[14,1]
+   - 1.617893576622009 in_layer_0_channel_0[14,2]
+   + 1.486160159111023 in_layer_0_channel_0[15,0]
+   - 0.9966984987258911 in_layer_0_channel_0[15,1]
+   - 1.023223519325256 in_layer_0_channel_0[15,2]
+   - out_layer_0_channel_0[13,0] = -0.8490709066390991
+ [13,_0,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[13,0]
+   + 3.420669317245483 in_layer_0_channel_0[13,1]
+   + 2.405847549438477 in_layer_0_channel_0[13,2]
+   + 1.576184630393982 in_layer_0_channel_0[14,0]
+   + 3.762036323547363 in_layer_0_channel_0[14,1]
+   + 1.42918872833252 in_layer_0_channel_0[14,2]
+   - 0.2503938376903534 in_layer_0_channel_0[15,0]
+   + 0.1556247621774673 in_layer_0_channel_0[15,1]
+   - 0.0308094602078199 in_layer_0_channel_0[15,2]
+   - out_layer_0_channel_1[13,0] = 0.7330518960952759
+ [13,_1,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[13,1]
+   - 1.612142443656921 in_layer_0_channel_0[13,2]
+   - 0.8327372074127197 in_layer_0_channel_0[13,3]
+   + 1.189462065696716 in_layer_0_channel_0[14,1]
+   - 1.090683341026306 in_layer_0_channel_0[14,2]
+   - 1.617893576622009 in_layer_0_channel_0[14,3]
+   + 1.486160159111023 in_layer_0_channel_0[15,1]
+   - 0.9966984987258911 in_layer_0_channel_0[15,2]
+   - 1.023223519325256 in_layer_0_channel_0[15,3]
+   - out_layer_0_channel_0[13,1] = -0.8490709066390991
+ [13,_1,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[13,1]
+   + 3.420669317245483 in_layer_0_channel_0[13,2]
+   + 2.405847549438477 in_layer_0_channel_0[13,3]
+   + 1.576184630393982 in_layer_0_channel_0[14,1]
+   + 3.762036323547363 in_layer_0_channel_0[14,2]
+   + 1.42918872833252 in_layer_0_channel_0[14,3]
+   - 0.2503938376903534 in_layer_0_channel_0[15,1]
+   + 0.1556247621774673 in_layer_0_channel_0[15,2]
+   - 0.0308094602078199 in_layer_0_channel_0[15,3]
+   - out_layer_0_channel_1[13,1] = 0.7330518960952759
+ [13,_2,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[13,2]
+   - 1.612142443656921 in_layer_0_channel_0[13,3]
+   - 0.8327372074127197 in_layer_0_channel_0[13,4]
+   + 1.189462065696716 in_layer_0_channel_0[14,2]
+   - 1.090683341026306 in_layer_0_channel_0[14,3]
+   - 1.617893576622009 in_layer_0_channel_0[14,4]
+   + 1.486160159111023 in_layer_0_channel_0[15,2]
+   - 0.9966984987258911 in_layer_0_channel_0[15,3]
+   - 1.023223519325256 in_layer_0_channel_0[15,4]
+   - out_layer_0_channel_0[13,2] = -0.8490709066390991
+ [13,_3,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[13,3]
+   - 1.612142443656921 in_layer_0_channel_0[13,4]
+   - 0.8327372074127197 in_layer_0_channel_0[13,5]
+   + 1.189462065696716 in_layer_0_channel_0[14,3]
+   - 1.090683341026306 in_layer_0_channel_0[14,4]
+   - 1.617893576622009 in_layer_0_channel_0[14,5]
+   + 1.486160159111023 in_layer_0_channel_0[15,3]
+   - 0.9966984987258911 in_layer_0_channel_0[15,4]
+   - 1.023223519325256 in_layer_0_channel_0[15,5]
+   - out_layer_0_channel_0[13,3] = -0.8490709066390991
+ [13,_3,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[13,3]
+   + 3.420669317245483 in_layer_0_channel_0[13,4]
+   + 2.405847549438477 in_layer_0_channel_0[13,5]
+   + 1.576184630393982 in_layer_0_channel_0[14,3]
+   + 3.762036323547363 in_layer_0_channel_0[14,4]
+   + 1.42918872833252 in_layer_0_channel_0[14,5]
+   - 0.2503938376903534 in_layer_0_channel_0[15,3]
+   + 0.1556247621774673 in_layer_0_channel_0[15,4]
+   - 0.0308094602078199 in_layer_0_channel_0[15,5]
+   - out_layer_0_channel_1[13,3] = 0.7330518960952759
+ [14,_0,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[14,0]
+   - 1.612142443656921 in_layer_0_channel_0[14,1]
+   - 0.8327372074127197 in_layer_0_channel_0[14,2]
+   + 1.189462065696716 in_layer_0_channel_0[15,0]
+   - 1.090683341026306 in_layer_0_channel_0[15,1]
+   - 1.617893576622009 in_layer_0_channel_0[15,2]
+   + 1.486160159111023 in_layer_0_channel_0[16,0]
+   - 0.9966984987258911 in_layer_0_channel_0[16,1]
+   - 1.023223519325256 in_layer_0_channel_0[16,2]
+   - out_layer_0_channel_0[14,0] = -0.8490709066390991
+ [14,_0,_0]_convolutional_layer_linear:
+   1.721904873847961 in_layer_0_channel_0[14,0]
+   + 3.420669317245483 in_layer_0_channel_0[14,1]
+   + 2.405847549438477 in_layer_0_channel_0[14,2]
+   + 1.576184630393982 in_layer_0_channel_0[15,0]
+   + 3.762036323547363 in_layer_0_channel_0[15,1]
+   + 1.42918872833252 in_layer_0_channel_0[15,2]
+   - 0.2503938376903534 in_layer_0_channel_0[16,0]
+   + 0.1556247621774673 in_layer_0_channel_0[16,1]
+   - 0.0308094602078199 in_layer_0_channel_0[16,2]
+   - out_layer_0_channel_1[14,0] = 0.7330518960952759
+ [14,_1,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[14,1]
+   - 1.612142443656921 in_layer_0_channel_0[14,2]
+   - 0.8327372074127197 in_layer_0_channel_0[14,3]
+   + 1.189462065696716 in_layer_0_channel_0[15,1]
+   - 1.090683341026306 in_layer_0_channel_0[15,2]
+   - 1.617893576622009 in_layer_0_channel_0[15,3]
+   + 1.486160159111023 in_layer_0_channel_0[16,1]
+   - 0.9966984987258911 in_layer_0_channel_0[16,2]
+   - 1.023223519325256 in_layer_0_channel_0[16,3]
+   - out_layer_0_channel_0[14,1] = -0.8490709066390991
+ [14,_2,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[14,2]
+   - 1.612142443656921 in_layer_0_channel_0[14,3]
+   - 0.8327372074127197 in_layer_0_channel_0[14,4]
+   + 1.189462065696716 in_layer_0_channel_0[15,2]
+   - 1.090683341026306 in_layer_0_channel_0[15,3]
+   - 1.617893576622009 in_layer_0_channel_0[15,4]
+   + 1.486160159111023 in_layer_0_channel_0[16,2]
+   - 0.9966984987258911 in_layer_0_channel_0[16,3]
+   - 1.023223519325256 in_layer_0_channel_0[16,4]
+   - out_layer_0_channel_0[14,2] = -0.8490709066390991
+ [14,_3,_0]_convolutional_layer_linear:
+   0.7630057334899902 in_layer_0_channel_0[14,3]
+   - 1.612142443656921 in_layer_0_channel_0[14,4]
+   - 0.8327372074127197 in_layer_0_channel_0[14,5]
+   + 1.189462065696716 in_layer_0_channel_0[15,3]
+   - 1.090683341026306 in_layer_0_channel_0[15,4]
+   - 1.617893576622009 in_layer_0_channel_0[15,5]
+   + 1.486160159111023 in_layer_0_channel_0[16,3]
+   - 0.9966984987258911 in_layer_0_channel_0[16,4]
+   - 1.023223519325256 in_layer_0_channel_0[16,5]
+   - out_layer_0_channel_0[14,3] = -0.8490709066390991
+ R1582: inputs[8,6] - in_layer_0_channel_0[8,6] = 0
+ R1583: inputs[8,7] - in_layer_0_channel_0[8,7] = 0
+ R1584: inputs[8,8] - in_layer_0_channel_0[8,8] = 0
+ R1606: inputs[9,2] - in_layer_0_channel_0[9,2] = 0
+ R1607: inputs[9,3] - in_layer_0_channel_0[9,3] = 0
+ R1608: inputs[9,4] - in_layer_0_channel_0[9,4] = 0
+ R1610: inputs[9,6] - in_layer_0_channel_0[9,6] = 0
+ R1611: inputs[9,7] - in_layer_0_channel_0[9,7] = 0
+ R1612: inputs[9,8] - in_layer_0_channel_0[9,8] = 0
+ R1614: inputs[9,10] - in_layer_0_channel_0[9,10] = 0
+ R1634: inputs[10,2] - in_layer_0_channel_0[10,2] = 0
+ R1636: inputs[10,4] - in_layer_0_channel_0[10,4] = 0
+ R1637: inputs[10,5] - in_layer_0_channel_0[10,5] = 0
+ R1638: inputs[10,6] - in_layer_0_channel_0[10,6] = 0
+ R1639: inputs[10,7] - in_layer_0_channel_0[10,7] = 0
+ R1640: inputs[10,8] - in_layer_0_channel_0[10,8] = 0
+ R1641: inputs[10,9] - in_layer_0_channel_0[10,9] = 0
+ R1642: inputs[10,10] - in_layer_0_channel_0[10,10] = 0
+ R1661: inputs[11,1] - in_layer_0_channel_0[11,1] = 0
+ R1662: inputs[11,2] - in_layer_0_channel_0[11,2] = 0
+ R1663: inputs[11,3] - in_layer_0_channel_0[11,3] = 0
+ R1664: inputs[11,4] - in_layer_0_channel_0[11,4] = 0
+ R1665: inputs[11,5] - in_layer_0_channel_0[11,5] = 0
+ R1666: inputs[11,6] - in_layer_0_channel_0[11,6] = 0
+ R1667: inputs[11,7] - in_layer_0_channel_0[11,7] = 0
+ R1668: inputs[11,8] - in_layer_0_channel_0[11,8] = 0
+ R1669: inputs[11,9] - in_layer_0_channel_0[11,9] = 0
+ R1670: inputs[11,10] - in_layer_0_channel_0[11,10] = 0
+ R1688: inputs[12,0] - in_layer_0_channel_0[12,0] = 0
+ R1689: inputs[12,1] - in_layer_0_channel_0[12,1] = 0
+ R1690: inputs[12,2] - in_layer_0_channel_0[12,2] = 0
+ R1692: inputs[12,4] - in_layer_0_channel_0[12,4] = 0
+ R1693: inputs[12,5] - in_layer_0_channel_0[12,5] = 0
+ R1695: inputs[12,7] - in_layer_0_channel_0[12,7] = 0
+ R1696: inputs[12,8] - in_layer_0_channel_0[12,8] = 0
+ R1697: inputs[12,9] - in_layer_0_channel_0[12,9] = 0
+ R1698: inputs[12,10] - in_layer_0_channel_0[12,10] = 0
+ R1716: inputs[13,0] - in_layer_0_channel_0[13,0] = 0
+ R1717: inputs[13,1] - in_layer_0_channel_0[13,1] = 0
+ R1718: inputs[13,2] - in_layer_0_channel_0[13,2] = 0
+ R1719: inputs[13,3] - in_layer_0_channel_0[13,3] = 0
+ R1720: inputs[13,4] - in_layer_0_channel_0[13,4] = 0
+ R1721: inputs[13,5] - in_layer_0_channel_0[13,5] = 0
+ R1722: inputs[13,6] - in_layer_0_channel_0[13,6] = 0
+ R1723: inputs[13,7] - in_layer_0_channel_0[13,7] = 0
+ R1724: inputs[13,8] - in_layer_0_channel_0[13,8] = 0
+ R1725: inputs[13,9] - in_layer_0_channel_0[13,9] = 0
+ R1726: inputs[13,10] - in_layer_0_channel_0[13,10] = 0
+ R1744: inputs[14,0] - in_layer_0_channel_0[14,0] = 0
+ R1745: inputs[14,1] - in_layer_0_channel_0[14,1] = 0
+ R1746: inputs[14,2] - in_layer_0_channel_0[14,2] = 0
+ R1747: inputs[14,3] - in_layer_0_channel_0[14,3] = 0
+ R1749: inputs[14,5] - in_layer_0_channel_0[14,5] = 0
+ R1750: inputs[14,6] - in_layer_0_channel_0[14,6] = 0
+ R1751: inputs[14,7] - in_layer_0_channel_0[14,7] = 0
+ R1772: inputs[15,0] - in_layer_0_channel_0[15,0] = 0
+ R1774: inputs[15,2] - in_layer_0_channel_0[15,2] = 0
+ R1775: inputs[15,3] - in_layer_0_channel_0[15,3] = 0
+ R1776: inputs[15,4] - in_layer_0_channel_0[15,4] = 0
+ R1777: inputs[15,5] - in_layer_0_channel_0[15,5] = 0
+ R1800: inputs[16,0] - in_layer_0_channel_0[16,0] = 0
+ R1801: inputs[16,1] - in_layer_0_channel_0[16,1] = 0
+ R1802: inputs[16,2] - in_layer_0_channel_0[16,2] = 0
+ R1803: inputs[16,3] - in_layer_0_channel_0[16,3] = 0
+ R1804: inputs[16,4] - in_layer_0_channel_0[16,4] = 0
+ R1805: inputs[16,5] - in_layer_0_channel_0[16,5] = 0
+ [8,_6,_0]_relaxation_A1: 0.2472085197897162 in_layer_1_channel_0[8,6]
+   - out_layer_1_channel_0[8,6] <= -0.4996058205308919
+ [8,_7,_0]_relaxation_A1: 0.2472085197897162 in_layer_1_channel_0[8,7]
+   - out_layer_1_channel_0[8,7] <= -0.4996058205308919
+ [8,_8,_0]_relaxation_A1: 0.2472085197897162 in_layer_1_channel_0[8,8]
+   - out_layer_1_channel_0[8,8] <= -0.4996058205308919
+ [9,_2,_0]_relaxation_A1: 0.2472085197897162 in_layer_1_channel_0[9,2]
+   - out_layer_1_channel_0[9,2] <= -0.4996058205308919
+ [9,_3,_0]_relaxation_A1: 0.2472085197897162 in_layer_1_channel_0[9,3]
+   - out_layer_1_channel_0[9,3] <= -0.4996058205308919
+ [9,_4,_0]_relaxation_A1: 0.2472085197897162 in_layer_1_channel_0[9,4]
+   - out_layer_1_channel_0[9,4] <= -0.4996058205308919
+ [9,_5,_0]_relaxation_A1: 0.2472085197897162 in_layer_1_channel_0[9,5]
+   - out_layer_1_channel_0[9,5] <= -0.4996058205308919
+ [9,_6,_0]_relaxation_A2: - 0.1944455648529664 in_layer_1_channel_0[9,6]
+   + out_layer_1_channel_0[9,6] >= 0.4996058205308919
+ [9,_7,_0]_relaxation_A1: 0.2472085197897162 in_layer_1_channel_0[9,7]
+   - out_layer_1_channel_0[9,7] <= -0.4996058205308919
+ [9,_8,_0]_relaxation_A3: 0.1123221548153061 in_layer_1_channel_0[9,8]
+   - out_layer_1_channel_0[9,8] >= -0.6564838352301483
+ [10,_2,_0]_relaxation_A2: - 0.1944455648529664 in_layer_1_channel_0[10,2]
+   + out_layer_1_channel_0[10,2] >= 0.4996058205308919
+ [10,_2,_0]_relaxation_A4: - 0.9867465444008752 in_layer_1_channel_0[10,2]
+   + out_layer_1_channel_0[10,2] <= 0.6564838352301483
+ [10,_3,_0]_relaxation_A1: 0.2472085197897162 in_layer_1_channel_0[10,3]
+   - out_layer_1_channel_0[10,3] <= -0.4996058205308919
+ [10,_3,_0]_relaxation_A3: 0.1123221548153061 in_layer_1_channel_0[10,3]
+   - out_layer_1_channel_0[10,3] >= -0.6564838352301483
+ [10,_4,_0]_relaxation_A1: 0.1745101583698045 in_layer_1_channel_0[10,4]
+   - out_layer_1_channel_0[10,4] <= -0.4408275466881163
+ [10,_5,_0]_relaxation_A1: 0.1770505518532676 in_layer_1_channel_0[10,5]
+   - out_layer_1_channel_0[10,5] <= -0.4439321530359473
+ [10,_6,_0]_relaxation_A2: - 0.2305431171240429 in_layer_1_channel_0[10,6]
+   + out_layer_1_channel_0[10,6] >= 0.4828974472506439
+ [10,_8,_0]_relaxation_C3: - 0.0594783948356603 in_layer_1_channel_0[10,8]
+   + out_layer_1_channel_0[10,8] >= 0.7487568005461038
+ [11,_1,_0]_relaxation_A1: 0.2472085197897162 in_layer_1_channel_0[11,1]
+   - out_layer_1_channel_0[11,1] <= -0.4996058205308919
+ [11,_2,_0]_relaxation_A2: - 0.3015091148344476 in_layer_1_channel_0[11,2]
+   + out_layer_1_channel_0[11,2] >= 0.4408275466881163
+ [11,_3,_0]_relaxation_A2: - 0.2953224247641945 in_layer_1_channel_0[11,3]
+   + out_layer_1_channel_0[11,3] >= 0.4439321530359473
+ [11,_5,_0]_relaxation_A1: 0.1680277058825423 in_layer_1_channel_0[11,5]
+   - out_layer_1_channel_0[11,5] <= -0.4326006539114267
+ [11,_6,_0]_relaxation_B3: - 0.1749981627065679 in_layer_1_channel_0[11,6]
+   + out_layer_1_channel_0[11,6] <= 0.4898481058456198
+ [11,_7,_0]_relaxation_B3: - 0.0535118819339763 in_layer_1_channel_0[11,7]
+   + out_layer_1_channel_0[11,7] <= 0.2324431606617742
+ [11,_8,_0]_relaxation_A4: - 0.1907181736396862 in_layer_1_channel_0[11,8]
+   + out_layer_1_channel_0[11,8] <= 0.5000888215619332
+ [12,_0,_0]_relaxation_A1: 0.2472085197897162 in_layer_1_channel_0[12,0]
+   - out_layer_1_channel_0[12,0] <= -0.4996058205308919
+ [12,_1,_0]_relaxation_A1: 0.2472085197897162 in_layer_1_channel_0[12,1]
+   - out_layer_1_channel_0[12,1] <= -0.4996058205308919
+ [12,_2,_0]_relaxation_A1: 0.1191264426222581 in_layer_1_channel_0[12,2]
+   - out_layer_1_channel_0[12,2] <= -0.3562396631477809
+ [12,_3,_0]_relaxation_A2: - 0.3191215580533469 in_layer_1_channel_0[12,3]
+   + out_layer_1_channel_0[12,3] >= 0.4326006539114267
+ [12,_4,_0]_relaxation_A1: 0.1130252617804076 in_layer_1_channel_0[12,4]
+   - out_layer_1_channel_0[12,4] <= -0.3448563282429055
+ [12,_5,_0]_relaxation_B2: - out_layer_1_channel_0[12,5]
+   <= -3.6671336132189098e-04
+ [13,_0,_0]_relaxation_B1: 0.2488445875607758 in_layer_1_channel_0[13,0]
+   - out_layer_1_channel_0[13,0] <= -0.4998951722334203
+ [13,_1,_0]_relaxation_B1: 0.0949653355779488 in_layer_1_channel_0[13,1]
+   - out_layer_1_channel_0[13,1] <= -0.3084911496223035
+ [13,_2,_0]_relaxation_A2: - 0.2715600903067173 in_layer_1_channel_0[13,2]
+   + out_layer_1_channel_0[13,2] >= 0.456957263179527
+ [13,_3,_0]_relaxation_A1: 0.1135911832775952 in_layer_1_channel_0[13,3]
+   - out_layer_1_channel_0[13,3] <= -0.3459307149386433
+ [14,_0,_0]_relaxation_C3: - 0.1060599567593125 in_layer_1_channel_0[14,0]
+   + out_layer_1_channel_0[14,0] >= 0.625950098331026
+ [14,_1,_0]_relaxation_B3: - 0.012032948351116 in_layer_1_channel_0[14,1]
+   + out_layer_1_channel_0[14,1] <= 0.0713151755832284
+ [14,_2,_0]_relaxation_A3: 0.2355780983760574 in_layer_1_channel_0[14,2]
+   - out_layer_1_channel_0[14,2] >= -0.5046731642567649
+ [14,_3,_0]_relaxation_B3: - 0.1824593181469276 in_layer_1_channel_0[14,3]
+   + out_layer_1_channel_0[14,3] <= 0.4974835132838717
+ [8,_6,_1]_relaxation_A4: - 0.188514232318306 in_layer_1_channel_1[8,6]
+   + out_layer_1_channel_1[8,6] <= 0.5153053698721293
+ [8,_7,_1]_relaxation_A2: - 0.513980264474259 in_layer_1_channel_1[8,7]
+   + out_layer_1_channel_1[8,7] >= 0.2959964437987756
+ [8,_7,_1]_relaxation_A4: - 0.188514232318306 in_layer_1_channel_1[8,7]
+   + out_layer_1_channel_1[8,7] <= 0.5153053698721293
+ [8,_8,_1]_relaxation_A2: - 0.513980264474259 in_layer_1_channel_1[8,8]
+   + out_layer_1_channel_1[8,8] >= 0.2959964437987756
+ [8,_8,_1]_relaxation_A4: - 0.188514232318306 in_layer_1_channel_1[8,8]
+   + out_layer_1_channel_1[8,8] <= 0.5153053698721293
+ [9,_2,_1]_relaxation_A3: 0.218500913975024 in_layer_1_channel_1[9,2]
+   - out_layer_1_channel_1[9,2] >= -0.5153053698721293
+ [9,_3,_1]_relaxation_A3: 0.218500913975024 in_layer_1_channel_1[9,3]
+   - out_layer_1_channel_1[9,3] >= -0.5153053698721293
+ [9,_4,_1]_relaxation_A2: - 0.513980264474259 in_layer_1_channel_1[9,4]
+   + out_layer_1_channel_1[9,4] >= 0.2959964437987756
+ [9,_4,_1]_relaxation_A4: - 0.188514232318306 in_layer_1_channel_1[9,4]
+   + out_layer_1_channel_1[9,4] <= 0.5153053698721293
+ [9,_5,_1]_relaxation_A3: 0.218500913975024 in_layer_1_channel_1[9,5]
+   - out_layer_1_channel_1[9,5] >= -0.5153053698721293
+ [9,_6,_1]_relaxation_A1: 0.0892038333958236 in_layer_1_channel_1[9,6]
+   - out_layer_1_channel_1[9,6] <= -0.2959964437987756
+ [9,_7,_1]_relaxation_A3: 0.218500913975024 in_layer_1_channel_1[9,7]
+   - out_layer_1_channel_1[9,7] >= -0.5153053698721293
+ [9,_8,_1]_relaxation_A2: - 0.513980264474259 in_layer_1_channel_1[9,8]
+   + out_layer_1_channel_1[9,8] >= 0.2959964437987756
+ [10,_2,_1]_relaxation_A3: 0.218500913975024 in_layer_1_channel_1[10,2]
+   - out_layer_1_channel_1[10,2] >= -0.5153053698721293
+ [10,_3,_1]_relaxation_A3: 0.218500913975024 in_layer_1_channel_1[10,3]
+   - out_layer_1_channel_1[10,3] >= -0.5153053698721293
+ [10,_5,_1]_relaxation_A1: 0.1008345310486519 in_layer_1_channel_1[10,5]
+   - out_layer_1_channel_1[10,5] <= -0.3207628873492081
+ [10,_6,_1]_relaxation_A1: 0.0689030802217027 in_layer_1_channel_1[10,6]
+   - out_layer_1_channel_1[10,6] <= -0.2481037041196351
+ [10,_7,_1]_relaxation_A1: 0.1108603050397473 in_layer_1_channel_1[10,7]
+   - out_layer_1_channel_1[10,7] <= -0.3407107826640042
+ [10,_8,_1]_relaxation_A1: 0.0669811645123473 in_layer_1_channel_1[10,8]
+   - out_layer_1_channel_1[10,8] <= -0.2432281074115916
+ [11,_1,_1]_relaxation_A4: - 0.188514232318306 in_layer_1_channel_1[11,1]
+   + out_layer_1_channel_1[11,1] <= 0.5153053698721293
+ [11,_2,_1]_relaxation_A4: - 0.1863676442416364 in_layer_1_channel_1[11,2]
+   + out_layer_1_channel_1[11,2] <= 0.5135923373149889
+ [11,_3,_1]_relaxation_A1: 0.1008345310486519 in_layer_1_channel_1[11,3]
+   - out_layer_1_channel_1[11,3] <= -0.3207628873492081
+ [11,_4,_1]_relaxation_A1: 0.1939146772059612 in_layer_1_channel_1[11,4]
+   - out_layer_1_channel_1[11,4] <= -0.4628162112371841
+ [11,_5,_1]_relaxation_C3: - 0.0554506799978256 in_layer_1_channel_1[11,5]
+   + out_layer_1_channel_1[11,5] >= 0.7392954008470312
+ [11,_6,_1]_relaxation_C3: - 0.031114355778368 in_layer_1_channel_1[11,6]
+   + out_layer_1_channel_1[11,6] >= 0.8333134661749814
+ [11,_7,_1]_relaxation_C3:
+   - 3.7751642370723607e-04 in_layer_1_channel_1[11,7]
+   + out_layer_1_channel_1[11,7] >= 0.996278241175097
+ [11,_8,_1]_relaxation_C3: - 0.00315186851273565 in_layer_1_channel_1[11,8]
+   + out_layer_1_channel_1[11,8] >= 0.975640235971911
+ [12,_0,_1]_relaxation_A3: 0.218500913975024 in_layer_1_channel_1[12,0]
+   - out_layer_1_channel_1[12,0] >= -0.5153053698721293
+ [12,_1,_1]_relaxation_A3: 0.218500913975024 in_layer_1_channel_1[12,1]
+   - out_layer_1_channel_1[12,1] >= -0.5153053698721293
+ [12,_2,_1]_relaxation_A1: 0.2155925739333656 in_layer_1_channel_1[12,2]
+   - out_layer_1_channel_1[12,2] <= -0.4824820633922449
+ [12,_3,_1]_relaxation_C3: - 0.0554506799978256 in_layer_1_channel_1[12,3]
+   + out_layer_1_channel_1[12,3] >= 0.7392954008470312
+ [12,_4,_1]_relaxation_C3: - 0.0486484539362785 in_layer_1_channel_1[12,4]
+   + out_layer_1_channel_1[12,4] >= 0.7638170767740919
+ [12,_5,_1]_relaxation_C3: - 0.0627098442565749 in_layer_1_channel_1[12,5]
+   + out_layer_1_channel_1[12,5] >= 0.7144249542288561
+ [13,_0,_1]_relaxation_A3: 0.2231461276516173 in_layer_1_channel_1[13,0]
+   - out_layer_1_channel_1[13,0] >= -0.5119993435500666
+ [13,_1,_1]_relaxation_A3: 0.1973517234965771 in_layer_1_channel_1[13,1]
+   - out_layer_1_channel_1[13,1] >= -0.5337098701358588
+ [13,_3,_1]_relaxation_C3: - 0.0969298416127836 in_layer_1_channel_1[13,3]
+   + out_layer_1_channel_1[13,3] >= 0.6130808810795736
+ [14,_0,_1]_relaxation_A3: 0.0517184396891898 in_layer_1_channel_1[14,0]
+   - out_layer_1_channel_1[14,0] >= -0.797921137685369
+ R4960: out_layer_1_channel_1[14,1] = 0.999985256067268
+ R4961: out_layer_1_channel_1[14,2] = 0.999997368212593
+ R4962: out_layer_1_channel_1[14,3] = 0.9999728741719502
+ R5810: out_layer_0_channel_0[8,6] - in_layer_1_channel_0[8,6] = 0
+ R5811: out_layer_0_channel_0[8,7] - in_layer_1_channel_0[8,7] = 0
+ R5812: out_layer_0_channel_0[8,8] - in_layer_1_channel_0[8,8] = 0
+ R5832: out_layer_0_channel_0[9,2] - in_layer_1_channel_0[9,2] = 0
+ R5833: out_layer_0_channel_0[9,3] - in_layer_1_channel_0[9,3] = 0
+ R5834: out_layer_0_channel_0[9,4] - in_layer_1_channel_0[9,4] = 0
+ R5835: out_layer_0_channel_0[9,5] - in_layer_1_channel_0[9,5] = 0
+ R5836: out_layer_0_channel_0[9,6] - in_layer_1_channel_0[9,6] = 0
+ R5837: out_layer_0_channel_0[9,7] - in_layer_1_channel_0[9,7] = 0
+ R5838: out_layer_0_channel_0[9,8] - in_layer_1_channel_0[9,8] = 0
+ R5858: out_layer_0_channel_0[10,2] - in_layer_1_channel_0[10,2] = 0
+ R5859: out_layer_0_channel_0[10,3] - in_layer_1_channel_0[10,3] = 0
+ R5860: out_layer_0_channel_0[10,4] - in_layer_1_channel_0[10,4] = 0
+ R5861: out_layer_0_channel_0[10,5] - in_layer_1_channel_0[10,5] = 0
+ R5862: out_layer_0_channel_0[10,6] - in_layer_1_channel_0[10,6] = 0
+ R5864: out_layer_0_channel_0[10,8] - in_layer_1_channel_0[10,8] = 0
+ R5883: out_layer_0_channel_0[11,1] - in_layer_1_channel_0[11,1] = 0
+ R5884: out_layer_0_channel_0[11,2] - in_layer_1_channel_0[11,2] = 0
+ R5885: out_layer_0_channel_0[11,3] - in_layer_1_channel_0[11,3] = 0
+ R5887: out_layer_0_channel_0[11,5] - in_layer_1_channel_0[11,5] = 0
+ R5888: out_layer_0_channel_0[11,6] - in_layer_1_channel_0[11,6] = 0
+ R5889: out_layer_0_channel_0[11,7] - in_layer_1_channel_0[11,7] = 0
+ R5890: out_layer_0_channel_0[11,8] - in_layer_1_channel_0[11,8] = 0
+ R5908: out_layer_0_channel_0[12,0] - in_layer_1_channel_0[12,0] = 0
+ R5909: out_layer_0_channel_0[12,1] - in_layer_1_channel_0[12,1] = 0
+ R5910: out_layer_0_channel_0[12,2] - in_layer_1_channel_0[12,2] = 0
+ R5911: out_layer_0_channel_0[12,3] - in_layer_1_channel_0[12,3] = 0
+ R5912: out_layer_0_channel_0[12,4] - in_layer_1_channel_0[12,4] = 0
+ R5934: out_layer_0_channel_0[13,0] - in_layer_1_channel_0[13,0] = 0
+ R5935: out_layer_0_channel_0[13,1] - in_layer_1_channel_0[13,1] = 0
+ R5936: out_layer_0_channel_0[13,2] - in_layer_1_channel_0[13,2] = 0
+ R5937: out_layer_0_channel_0[13,3] - in_layer_1_channel_0[13,3] = 0
+ R5960: out_layer_0_channel_0[14,0] - in_layer_1_channel_0[14,0] = 0
+ R5961: out_layer_0_channel_0[14,1] - in_layer_1_channel_0[14,1] = 0
+ R5962: out_layer_0_channel_0[14,2] - in_layer_1_channel_0[14,2] = 0
+ R5963: out_layer_0_channel_0[14,3] - in_layer_1_channel_0[14,3] = 0
+ R6486: out_layer_0_channel_1[8,6] - in_layer_1_channel_1[8,6] = 0
+ R6487: out_layer_0_channel_1[8,7] - in_layer_1_channel_1[8,7] = 0
+ R6488: out_layer_0_channel_1[8,8] - in_layer_1_channel_1[8,8] = 0
+ R6508: out_layer_0_channel_1[9,2] - in_layer_1_channel_1[9,2] = 0
+ R6509: out_layer_0_channel_1[9,3] - in_layer_1_channel_1[9,3] = 0
+ R6510: out_layer_0_channel_1[9,4] - in_layer_1_channel_1[9,4] = 0
+ R6511: out_layer_0_channel_1[9,5] - in_layer_1_channel_1[9,5] = 0
+ R6512: out_layer_0_channel_1[9,6] - in_layer_1_channel_1[9,6] = 0
+ R6513: out_layer_0_channel_1[9,7] - in_layer_1_channel_1[9,7] = 0
+ R6514: out_layer_0_channel_1[9,8] - in_layer_1_channel_1[9,8] = 0
+ R6534: out_layer_0_channel_1[10,2] - in_layer_1_channel_1[10,2] = 0
+ R6535: out_layer_0_channel_1[10,3] - in_layer_1_channel_1[10,3] = 0
+ R6537: out_layer_0_channel_1[10,5] - in_layer_1_channel_1[10,5] = 0
+ R6538: out_layer_0_channel_1[10,6] - in_layer_1_channel_1[10,6] = 0
+ R6539: out_layer_0_channel_1[10,7] - in_layer_1_channel_1[10,7] = 0
+ R6540: out_layer_0_channel_1[10,8] - in_layer_1_channel_1[10,8] = 0
+ R6559: out_layer_0_channel_1[11,1] - in_layer_1_channel_1[11,1] = 0
+ R6560: out_layer_0_channel_1[11,2] - in_layer_1_channel_1[11,2] = 0
+ R6561: out_layer_0_channel_1[11,3] - in_layer_1_channel_1[11,3] = 0
+ R6562: out_layer_0_channel_1[11,4] - in_layer_1_channel_1[11,4] = 0
+ R6563: out_layer_0_channel_1[11,5] - in_layer_1_channel_1[11,5] = 0
+ R6564: out_layer_0_channel_1[11,6] - in_layer_1_channel_1[11,6] = 0
+ R6565: out_layer_0_channel_1[11,7] - in_layer_1_channel_1[11,7] = 0
+ R6566: out_layer_0_channel_1[11,8] - in_layer_1_channel_1[11,8] = 0
+ R6584: out_layer_0_channel_1[12,0] - in_layer_1_channel_1[12,0] = 0
+ R6585: out_layer_0_channel_1[12,1] - in_layer_1_channel_1[12,1] = 0
+ R6586: out_layer_0_channel_1[12,2] - in_layer_1_channel_1[12,2] = 0
+ R6587: out_layer_0_channel_1[12,3] - in_layer_1_channel_1[12,3] = 0
+ R6588: out_layer_0_channel_1[12,4] - in_layer_1_channel_1[12,4] = 0
+ R6589: out_layer_0_channel_1[12,5] - in_layer_1_channel_1[12,5] = 0
+ R6610: out_layer_0_channel_1[13,0] - in_layer_1_channel_1[13,0] = 0
+ R6611: out_layer_0_channel_1[13,1] - in_layer_1_channel_1[13,1] = 0
+ R6613: out_layer_0_channel_1[13,3] - in_layer_1_channel_1[13,3] = 0
+ R6636: out_layer_0_channel_1[14,0] - in_layer_1_channel_1[14,0] = 0
+ [8,_6,_1]_convolutional_layer_linear:
+   - 1.029732704162598 in_layer_2_channel_0[8,6]
+   - 1.135206341743469 in_layer_2_channel_0[8,7]
+   - 0.6400731801986694 in_layer_2_channel_0[8,8]
+   - 1.052167773246765 in_layer_2_channel_0[9,6]
+   - 1.028741478919983 in_layer_2_channel_0[9,7]
+   - 0.4887064695358276 in_layer_2_channel_0[9,8]
+   - 0.8323666453361511 in_layer_2_channel_0[10,6]
+   - 1.067261934280396 in_layer_2_channel_0[10,7]
+   - 0.5635332465171814 in_layer_2_channel_0[10,8]
+   + 0.0702980682253838 in_layer_2_channel_1[8,6]
+   + 1.055417060852051 in_layer_2_channel_1[8,7]
+   + 0.9857980012893677 in_layer_2_channel_1[8,8]
+   + 0.0484711192548275 in_layer_2_channel_1[9,6]
+   + 0.7939043641090393 in_layer_2_channel_1[9,7]
+   + 0.980741024017334 in_layer_2_channel_1[9,8]
+   + 0.1393779218196869 in_layer_2_channel_1[10,6]
+   + 0.7943235635757446 in_layer_2_channel_1[10,7]
+   + 0.7747857570648193 in_layer_2_channel_1[10,8]
+   - out_layer_2_channel_2[8,6] = 0.4025244116783142
+ [9,_2,_1]_convolutional_layer_linear:
+   - 1.029732704162598 in_layer_2_channel_0[9,2]
+   - 1.135206341743469 in_layer_2_channel_0[9,3]
+   - 0.6400731801986694 in_layer_2_channel_0[9,4]
+   - 1.052167773246765 in_layer_2_channel_0[10,2]
+   - 1.028741478919983 in_layer_2_channel_0[10,3]
+   - 0.4887064695358276 in_layer_2_channel_0[10,4]
+   - 0.8323666453361511 in_layer_2_channel_0[11,2]
+   - 1.067261934280396 in_layer_2_channel_0[11,3]
+   - 0.5635332465171814 in_layer_2_channel_0[11,4]
+   + 0.0702980682253838 in_layer_2_channel_1[9,2]
+   + 1.055417060852051 in_layer_2_channel_1[9,3]
+   + 0.9857980012893677 in_layer_2_channel_1[9,4]
+   + 0.0484711192548275 in_layer_2_channel_1[10,2]
+   + 0.7939043641090393 in_layer_2_channel_1[10,3]
+   + 0.980741024017334 in_layer_2_channel_1[10,4]
+   + 0.1393779218196869 in_layer_2_channel_1[11,2]
+   + 0.7943235635757446 in_layer_2_channel_1[11,3]
+   + 0.7747857570648193 in_layer_2_channel_1[11,4]
+   - out_layer_2_channel_2[9,2] = 0.4025244116783142
+ [9,_5,_1]_convolutional_layer_linear:
+   0.9423938989639282 in_layer_2_channel_0[9,5]
+   + 1.833400130271912 in_layer_2_channel_0[9,6]
+   + 1.073405027389526 in_layer_2_channel_0[9,7]
+   + 0.7692935466766357 in_layer_2_channel_0[10,5]
+   + 1.284010529518127 in_layer_2_channel_0[10,6]
+   + 1.119359970092773 in_layer_2_channel_0[10,7]
+   + 0.9450438618659973 in_layer_2_channel_0[11,5]
+   + 1.931183934211731 in_layer_2_channel_0[11,6]
+   + 1.049430727958679 in_layer_2_channel_0[11,7]
+   - 0.4408800601959229 in_layer_2_channel_1[9,5]
+   - 0.7494900226593018 in_layer_2_channel_1[9,6]
+   - 0.666249692440033 in_layer_2_channel_1[9,7]
+   - 0.2960455715656281 in_layer_2_channel_1[10,5]
+   - 0.2566759288311005 in_layer_2_channel_1[10,6]
+   - 0.087298221886158 in_layer_2_channel_1[10,7]
+   - 0.2111302018165588 in_layer_2_channel_1[11,5]
+   - 0.6010398268699646 in_layer_2_channel_1[11,6]
+   - 0.6947429776191711 in_layer_2_channel_1[11,7]
+   - out_layer_2_channel_1[9,5] = -0.4194715321063995
+ [9,_6,_1]_convolutional_layer_linear:
+   0.9520500898361206 in_layer_2_channel_0[9,6]
+   + 1.20765209197998 in_layer_2_channel_0[9,7]
+   + 0.7488678693771362 in_layer_2_channel_0[9,8]
+   + 0.9376372098922729 in_layer_2_channel_0[10,6]
+   + 1.355478048324585 in_layer_2_channel_0[10,7]
+   + 0.2387101203203201 in_layer_2_channel_0[10,8]
+   + 0.9279353618621826 in_layer_2_channel_0[11,6]
+   + 1.12156867980957 in_layer_2_channel_0[11,7]
+   + 0.2485640197992325 in_layer_2_channel_0[11,8]
+   - 0.5383967161178589 in_layer_2_channel_1[9,6]
+   - 0.925487756729126 in_layer_2_channel_1[9,7]
+   - 1.302583575248718 in_layer_2_channel_1[9,8]
+   - 0.760054886341095 in_layer_2_channel_1[10,6]
+   - 1.800532102584839 in_layer_2_channel_1[10,7]
+   - 1.455497026443481 in_layer_2_channel_1[10,8]
+   - 0.862892210483551 in_layer_2_channel_1[11,6]
+   - 1.337960958480835 in_layer_2_channel_1[11,7]
+   - 1.245649099349976 in_layer_2_channel_1[11,8]
+   - out_layer_2_channel_3[9,6] = 0.1022069081664085
+ [10,_3,_1]_convolutional_layer_linear:
+   0.9423938989639282 in_layer_2_channel_0[10,3]
+   + 1.833400130271912 in_layer_2_channel_0[10,4]
+   + 1.073405027389526 in_layer_2_channel_0[10,5]
+   + 0.7692935466766357 in_layer_2_channel_0[11,3]
+   + 1.284010529518127 in_layer_2_channel_0[11,4]
+   + 1.119359970092773 in_layer_2_channel_0[11,5]
+   + 0.9450438618659973 in_layer_2_channel_0[12,3]
+   + 1.931183934211731 in_layer_2_channel_0[12,4]
+   + 1.049430727958679 in_layer_2_channel_0[12,5]
+   - 0.4408800601959229 in_layer_2_channel_1[10,3]
+   - 0.7494900226593018 in_layer_2_channel_1[10,4]
+   - 0.666249692440033 in_layer_2_channel_1[10,5]
+   - 0.2960455715656281 in_layer_2_channel_1[11,3]
+   - 0.2566759288311005 in_layer_2_channel_1[11,4]
+   - 0.087298221886158 in_layer_2_channel_1[11,5]
+   - 0.2111302018165588 in_layer_2_channel_1[12,3]
+   - 0.6010398268699646 in_layer_2_channel_1[12,4]
+   - 0.6947429776191711 in_layer_2_channel_1[12,5]
+   - out_layer_2_channel_1[10,3] = -0.4194715321063995
+ [10,_3,_1]_convolutional_layer_linear:
+   0.9520500898361206 in_layer_2_channel_0[10,3]
+   + 1.20765209197998 in_layer_2_channel_0[10,4]
+   + 0.7488678693771362 in_layer_2_channel_0[10,5]
+   + 0.9376372098922729 in_layer_2_channel_0[11,3]
+   + 1.355478048324585 in_layer_2_channel_0[11,4]
+   + 0.2387101203203201 in_layer_2_channel_0[11,5]
+   + 0.9279353618621826 in_layer_2_channel_0[12,3]
+   + 1.12156867980957 in_layer_2_channel_0[12,4]
+   + 0.2485640197992325 in_layer_2_channel_0[12,5]
+   - 0.5383967161178589 in_layer_2_channel_1[10,3]
+   - 0.925487756729126 in_layer_2_channel_1[10,4]
+   - 1.302583575248718 in_layer_2_channel_1[10,5]
+   - 0.760054886341095 in_layer_2_channel_1[11,3]
+   - 1.800532102584839 in_layer_2_channel_1[11,4]
+   - 1.455497026443481 in_layer_2_channel_1[11,5]
+   - 0.862892210483551 in_layer_2_channel_1[12,3]
+   - 1.337960958480835 in_layer_2_channel_1[12,4]
+   - 1.245649099349976 in_layer_2_channel_1[12,5]
+   - out_layer_2_channel_3[10,3] = 0.1022069081664085
+ [11,_1,_1]_convolutional_layer_linear:
+   0.9423938989639282 in_layer_2_channel_0[11,1]
+   + 1.833400130271912 in_layer_2_channel_0[11,2]
+   + 1.073405027389526 in_layer_2_channel_0[11,3]
+   + 0.7692935466766357 in_layer_2_channel_0[12,1]
+   + 1.284010529518127 in_layer_2_channel_0[12,2]
+   + 1.119359970092773 in_layer_2_channel_0[12,3]
+   + 0.9450438618659973 in_layer_2_channel_0[13,1]
+   + 1.931183934211731 in_layer_2_channel_0[13,2]
+   + 1.049430727958679 in_layer_2_channel_0[13,3]
+   - 0.4408800601959229 in_layer_2_channel_1[11,1]
+   - 0.7494900226593018 in_layer_2_channel_1[11,2]
+   - 0.666249692440033 in_layer_2_channel_1[11,3]
+   - 0.2960455715656281 in_layer_2_channel_1[12,1]
+   - 0.2566759288311005 in_layer_2_channel_1[12,2]
+   - 0.087298221886158 in_layer_2_channel_1[12,3]
+   - 0.2111302018165588 in_layer_2_channel_1[13,1]
+   - 0.6010398268699646 in_layer_2_channel_1[13,2]
+   - 0.6947429776191711 in_layer_2_channel_1[13,3]
+   - out_layer_2_channel_1[11,1] = -0.4194715321063995
+ [12,_0,_1]_convolutional_layer_linear:
+   0.9423938989639282 in_layer_2_channel_0[12,0]
+   + 1.833400130271912 in_layer_2_channel_0[12,1]
+   + 1.073405027389526 in_layer_2_channel_0[12,2]
+   + 0.7692935466766357 in_layer_2_channel_0[13,0]
+   + 1.284010529518127 in_layer_2_channel_0[13,1]
+   + 1.119359970092773 in_layer_2_channel_0[13,2]
+   + 0.9450438618659973 in_layer_2_channel_0[14,0]
+   + 1.931183934211731 in_layer_2_channel_0[14,1]
+   + 1.049430727958679 in_layer_2_channel_0[14,2]
+   - 0.4408800601959229 in_layer_2_channel_1[12,0]
+   - 0.7494900226593018 in_layer_2_channel_1[12,1]
+   - 0.666249692440033 in_layer_2_channel_1[12,2]
+   - 0.2960455715656281 in_layer_2_channel_1[13,0]
+   - 0.2566759288311005 in_layer_2_channel_1[13,1]
+   - 0.087298221886158 in_layer_2_channel_1[13,2]
+   - 0.2111302018165588 in_layer_2_channel_1[14,0]
+   - 0.6010398268699646 in_layer_2_channel_1[14,1]
+   - 0.6947429776191711 in_layer_2_channel_1[14,2]
+   - out_layer_2_channel_1[12,0] = -0.4194715321063995
+ [12,_1,_1]_convolutional_layer_linear:
+   - 1.029732704162598 in_layer_2_channel_0[12,1]
+   - 1.135206341743469 in_layer_2_channel_0[12,2]
+   - 0.6400731801986694 in_layer_2_channel_0[12,3]
+   - 1.052167773246765 in_layer_2_channel_0[13,1]
+   - 1.028741478919983 in_layer_2_channel_0[13,2]
+   - 0.4887064695358276 in_layer_2_channel_0[13,3]
+   - 0.8323666453361511 in_layer_2_channel_0[14,1]
+   - 1.067261934280396 in_layer_2_channel_0[14,2]
+   - 0.5635332465171814 in_layer_2_channel_0[14,3]
+   + 0.0702980682253838 in_layer_2_channel_1[12,1]
+   + 1.055417060852051 in_layer_2_channel_1[12,2]
+   + 0.9857980012893677 in_layer_2_channel_1[12,3]
+   + 0.0484711192548275 in_layer_2_channel_1[13,1]
+   + 0.7939043641090393 in_layer_2_channel_1[13,2]
+   + 0.980741024017334 in_layer_2_channel_1[13,3]
+   + 0.1393779218196869 in_layer_2_channel_1[14,1]
+   + 0.7943235635757446 in_layer_2_channel_1[14,2]
+   + 0.7747857570648193 in_layer_2_channel_1[14,3]
+   - out_layer_2_channel_2[12,1] = 0.4025244116783142
+ R9466: out_layer_1_channel_0[8,6] - in_layer_2_channel_0[8,6] = 0
+ R9467: out_layer_1_channel_0[8,7] - in_layer_2_channel_0[8,7] = 0
+ R9468: out_layer_1_channel_0[8,8] - in_layer_2_channel_0[8,8] = 0
+ R9488: out_layer_1_channel_0[9,2] - in_layer_2_channel_0[9,2] = 0
+ R9489: out_layer_1_channel_0[9,3] - in_layer_2_channel_0[9,3] = 0
+ R9490: out_layer_1_channel_0[9,4] - in_layer_2_channel_0[9,4] = 0
+ R9491: out_layer_1_channel_0[9,5] - in_layer_2_channel_0[9,5] = 0
+ R9492: out_layer_1_channel_0[9,6] - in_layer_2_channel_0[9,6] = 0
+ R9493: out_layer_1_channel_0[9,7] - in_layer_2_channel_0[9,7] = 0
+ R9494: out_layer_1_channel_0[9,8] - in_layer_2_channel_0[9,8] = 0
+ R9514: out_layer_1_channel_0[10,2] - in_layer_2_channel_0[10,2] = 0
+ R9515: out_layer_1_channel_0[10,3] - in_layer_2_channel_0[10,3] = 0
+ R9516: out_layer_1_channel_0[10,4] - in_layer_2_channel_0[10,4] = 0
+ R9517: out_layer_1_channel_0[10,5] - in_layer_2_channel_0[10,5] = 0
+ R9518: out_layer_1_channel_0[10,6] - in_layer_2_channel_0[10,6] = 0
+ R9520: out_layer_1_channel_0[10,8] - in_layer_2_channel_0[10,8] = 0
+ R9539: out_layer_1_channel_0[11,1] - in_layer_2_channel_0[11,1] = 0
+ R9540: out_layer_1_channel_0[11,2] - in_layer_2_channel_0[11,2] = 0
+ R9541: out_layer_1_channel_0[11,3] - in_layer_2_channel_0[11,3] = 0
+ R9543: out_layer_1_channel_0[11,5] - in_layer_2_channel_0[11,5] = 0
+ R9544: out_layer_1_channel_0[11,6] - in_layer_2_channel_0[11,6] = 0
+ R9545: out_layer_1_channel_0[11,7] - in_layer_2_channel_0[11,7] = 0
+ R9546: out_layer_1_channel_0[11,8] - in_layer_2_channel_0[11,8] = 0
+ R9564: out_layer_1_channel_0[12,0] - in_layer_2_channel_0[12,0] = 0
+ R9565: out_layer_1_channel_0[12,1] - in_layer_2_channel_0[12,1] = 0
+ R9566: out_layer_1_channel_0[12,2] - in_layer_2_channel_0[12,2] = 0
+ R9567: out_layer_1_channel_0[12,3] - in_layer_2_channel_0[12,3] = 0
+ R9568: out_layer_1_channel_0[12,4] - in_layer_2_channel_0[12,4] = 0
+ R9569: out_layer_1_channel_0[12,5] - in_layer_2_channel_0[12,5] = 0
+ R9590: out_layer_1_channel_0[13,0] - in_layer_2_channel_0[13,0] = 0
+ R9591: out_layer_1_channel_0[13,1] - in_layer_2_channel_0[13,1] = 0
+ R9592: out_layer_1_channel_0[13,2] - in_layer_2_channel_0[13,2] = 0
+ R9593: out_layer_1_channel_0[13,3] - in_layer_2_channel_0[13,3] = 0
+ R9616: out_layer_1_channel_0[14,0] - in_layer_2_channel_0[14,0] = 0
+ R9617: out_layer_1_channel_0[14,1] - in_layer_2_channel_0[14,1] = 0
+ R9618: out_layer_1_channel_0[14,2] - in_layer_2_channel_0[14,2] = 0
+ R9619: out_layer_1_channel_0[14,3] - in_layer_2_channel_0[14,3] = 0
+ R10142: out_layer_1_channel_1[8,6] - in_layer_2_channel_1[8,6] = 0
+ R10143: out_layer_1_channel_1[8,7] - in_layer_2_channel_1[8,7] = 0
+ R10144: out_layer_1_channel_1[8,8] - in_layer_2_channel_1[8,8] = 0
+ R10164: out_layer_1_channel_1[9,2] - in_layer_2_channel_1[9,2] = 0
+ R10165: out_layer_1_channel_1[9,3] - in_layer_2_channel_1[9,3] = 0
+ R10166: out_layer_1_channel_1[9,4] - in_layer_2_channel_1[9,4] = 0
+ R10167: out_layer_1_channel_1[9,5] - in_layer_2_channel_1[9,5] = 0
+ R10168: out_layer_1_channel_1[9,6] - in_layer_2_channel_1[9,6] = 0
+ R10169: out_layer_1_channel_1[9,7] - in_layer_2_channel_1[9,7] = 0
+ R10170: out_layer_1_channel_1[9,8] - in_layer_2_channel_1[9,8] = 0
+ R10190: out_layer_1_channel_1[10,2] - in_layer_2_channel_1[10,2] = 0
+ R10191: out_layer_1_channel_1[10,3] - in_layer_2_channel_1[10,3] = 0
+ R10193: out_layer_1_channel_1[10,5] - in_layer_2_channel_1[10,5] = 0
+ R10194: out_layer_1_channel_1[10,6] - in_layer_2_channel_1[10,6] = 0
+ R10195: out_layer_1_channel_1[10,7] - in_layer_2_channel_1[10,7] = 0
+ R10196: out_layer_1_channel_1[10,8] - in_layer_2_channel_1[10,8] = 0
+ R10215: out_layer_1_channel_1[11,1] - in_layer_2_channel_1[11,1] = 0
+ R10216: out_layer_1_channel_1[11,2] - in_layer_2_channel_1[11,2] = 0
+ R10217: out_layer_1_channel_1[11,3] - in_layer_2_channel_1[11,3] = 0
+ R10218: out_layer_1_channel_1[11,4] - in_layer_2_channel_1[11,4] = 0
+ R10219: out_layer_1_channel_1[11,5] - in_layer_2_channel_1[11,5] = 0
+ R10220: out_layer_1_channel_1[11,6] - in_layer_2_channel_1[11,6] = 0
+ R10221: out_layer_1_channel_1[11,7] - in_layer_2_channel_1[11,7] = 0
+ R10222: out_layer_1_channel_1[11,8] - in_layer_2_channel_1[11,8] = 0
+ R10240: out_layer_1_channel_1[12,0] - in_layer_2_channel_1[12,0] = 0
+ R10241: out_layer_1_channel_1[12,1] - in_layer_2_channel_1[12,1] = 0
+ R10242: out_layer_1_channel_1[12,2] - in_layer_2_channel_1[12,2] = 0
+ R10243: out_layer_1_channel_1[12,3] - in_layer_2_channel_1[12,3] = 0
+ R10244: out_layer_1_channel_1[12,4] - in_layer_2_channel_1[12,4] = 0
+ R10245: out_layer_1_channel_1[12,5] - in_layer_2_channel_1[12,5] = 0
+ R10266: out_layer_1_channel_1[13,0] - in_layer_2_channel_1[13,0] = 0
+ R10267: out_layer_1_channel_1[13,1] - in_layer_2_channel_1[13,1] = 0
+ R10269: out_layer_1_channel_1[13,3] - in_layer_2_channel_1[13,3] = 0
+ R10292: out_layer_1_channel_1[14,0] - in_layer_2_channel_1[14,0] = 0
+ R10293: out_layer_1_channel_1[14,1] - in_layer_2_channel_1[14,1] = 0
+ R10294: out_layer_1_channel_1[14,2] - in_layer_2_channel_1[14,2] = 0
+ R10295: out_layer_1_channel_1[14,3] - in_layer_2_channel_1[14,3] = 0
+ [9,_5,_1]_relaxation_A1: 0.2499754237179034 in_layer_3_channel_1[9,5]
+   - out_layer_3_channel_1[9,5] <= -0.4999996750986272
+ [9,_5,_1]_relaxation_A3: 0.00347647931357249 in_layer_3_channel_1[9,5]
+   - out_layer_3_channel_1[9,5] >= -0.9768527435936971
+ [10,_3,_1]_relaxation_A1: 0.2410571964067836 in_layer_3_channel_1[10,3]
+   - out_layer_3_channel_1[10,3] <= -0.4977284436678457
+ [10,_3,_1]_relaxation_A3: 0.00284990978364261 in_layer_3_channel_1[10,3]
+   - out_layer_3_channel_1[10,3] >= -0.9804564305405513
+ [11,_1,_1]_relaxation_A1: 0.244548190582696 in_layer_3_channel_1[11,1]
+   - out_layer_3_channel_1[11,1] <= -0.4989218290988539
+ [11,_1,_1]_relaxation_A3: 0.00162487481589565 in_layer_3_channel_1[11,1]
+   - out_layer_3_channel_1[11,1] >= -0.9879422963602669
+ [12,_0,_1]_relaxation_A1: 0.2439587815769605 in_layer_3_channel_1[12,0]
+   - out_layer_3_channel_1[12,0] <= -0.498741737234461
+ [12,_0,_1]_relaxation_A3: 0.0102547830666327 in_layer_3_channel_1[12,0]
+   - out_layer_3_channel_1[12,0] >= -0.9428844550718796
+ [8,_6,_2]_relaxation_A1: 0.00245223089292912 in_layer_3_channel_2[8,6]
+   - out_layer_3_channel_2[8,6] <= -0.0171859669006624
+ [8,_6,_2]_relaxation_A3: 0.2473403593348512 in_layer_3_channel_2[8,6]
+   - out_layer_3_channel_2[8,6] >= -0.5003665476845393
+ [9,_2,_2]_relaxation_A1: 0.00213852111740132 in_layer_3_channel_2[9,2]
+   - out_layer_3_channel_2[9,2] <= -0.0152807976075671
+ [9,_2,_2]_relaxation_A3: 0.2268449136162615 in_layer_3_channel_2[9,2]
+   - out_layer_3_channel_2[9,2] >= -0.5095772360221924
+ [12,_1,_2]_relaxation_A1: 0.2312560808680532 in_layer_3_channel_2[12,1]
+   - out_layer_3_channel_2[12,1] <= -0.4930507421405216
+ [12,_1,_2]_relaxation_A3: 0.0236417341099615 in_layer_3_channel_2[12,1]
+   - out_layer_3_channel_2[12,1] >= -0.8883987712911627
+ [9,_6,_3]_relaxation_A1: 0.00227163893187815 in_layer_3_channel_3[9,6]
+   - out_layer_3_channel_3[9,6] <= -0.0160945093408561
+ [9,_6,_3]_relaxation_A3: 0.2379714747103001 in_layer_3_channel_3[9,6]
+   - out_layer_3_channel_3[9,6] >= -0.5035525006637294
+ [10,_3,_3]_relaxation_A1: - out_layer_3_channel_3[10,3] <= -0.000977954
+ [10,_3,_3]_relaxation_A3: 0.236060488980335 in_layer_3_channel_3[10,3]
+   - out_layer_3_channel_3[10,3] >= -0.5044388905263044
+ R16895: out_layer_2_channel_1[9,5] - in_layer_3_channel_1[9,5] = 0
+ R16917: out_layer_2_channel_1[10,3] - in_layer_3_channel_1[10,3] = 0
+ R16939: out_layer_2_channel_1[11,1] - in_layer_3_channel_1[11,1] = 0
+ R16962: out_layer_2_channel_1[12,0] - in_layer_3_channel_1[12,0] = 0
+ R17448: out_layer_2_channel_2[8,6] - in_layer_3_channel_2[8,6] = 0
+ R17468: out_layer_2_channel_2[9,2] - in_layer_3_channel_2[9,2] = 0
+ R17539: out_layer_2_channel_2[12,1] - in_layer_3_channel_2[12,1] = 0
+ R18048: out_layer_2_channel_3[9,6] - in_layer_3_channel_3[9,6] = 0
+ R18069: out_layer_2_channel_3[10,3] - in_layer_3_channel_3[10,3] = 0
+Bounds
+ inputs[8,6] >= -0.1
+ -infinity <= inputs[8,7] <= 0.1
+ -infinity <= inputs[8,8] <= 0.1
+ inputs[9,2] >= -0.1
+ -infinity <= inputs[9,3] <= 0.1
+ -infinity <= inputs[9,4] <= 0.1
+ inputs[9,6] >= -0.1
+ inputs[9,7] >= -0.1
+ inputs[9,8] >= -0.1
+ inputs[9,10] >= -0.1
+ inputs[10,2] >= -0.1
+ -infinity <= inputs[10,4] <= 0.1
+ -infinity <= inputs[10,5] <= 0.1
+ inputs[10,6] >= -0.1
+ inputs[10,7] >= -0.1
+ inputs[10,8] >= -0.1
+ inputs[10,9] >= -0.1
+ inputs[10,10] >= -0.1
+ inputs[11,1] >= -0.1
+ inputs[11,2] >= -0.1
+ -infinity <= inputs[11,3] <= 0.1
+ inputs[11,4] >= -0.1
+ inputs[11,5] >= -0.1
+ inputs[11,6] >= -0.1
+ inputs[11,7] >= -0.1
+ inputs[11,8] >= -0.1
+ inputs[11,9] >= -0.1
+ inputs[11,10] >= -0.1
+ inputs[12,0] >= -0.1
+ -infinity <= inputs[12,1] <= 0.1
+ -infinity <= inputs[12,2] <= 0.1
+ inputs[12,4] >= -0.1
+ inputs[12,5] >= -0.1
+ inputs[12,7] >= -0.1
+ inputs[12,8] >= 1.9
+ inputs[12,9] >= 0.9
+ inputs[12,10] >= -0.1
+ inputs[13,0] >= -0.1
+ inputs[13,1] >= -0.1
+ inputs[13,2] >= -0.1
+ -infinity <= inputs[13,3] <= 0.1
+ -infinity <= inputs[13,4] <= 1.1
+ inputs[13,5] >= -0.1
+ -infinity <= inputs[13,6] <= 0.1
+ inputs[13,7] >= -0.1
+ inputs[13,8] >= -0.1
+ inputs[13,9] >= -0.1
+ inputs[13,10] >= 2.9
+ inputs[14,0] >= -0.1
+ -infinity <= inputs[14,1] <= 0.1
+ inputs[14,2] >= -0.1
+ -infinity <= inputs[14,3] <= 0.1
+ -infinity <= inputs[14,5] <= 0.1
+ -infinity <= inputs[14,6] <= 2.1
+ -infinity <= inputs[14,7] <= 4.1
+ inputs[15,0] >= -0.1
+ inputs[15,2] >= 1.9
+ -infinity <= inputs[15,3] <= 2.1
+ -infinity <= inputs[15,4] <= 1.1
+ inputs[15,5] >= 1.9
+ inputs[16,0] >= 2.9
+ -infinity <= inputs[16,1] <= 0.1
+ -infinity <= inputs[16,2] <= 0.1
+ inputs[16,3] >= -0.1
+ inputs[16,4] >= -0.1
+ inputs[16,5] >= -0.1
+ in_layer_0_channel_0[8,6] free
+ in_layer_0_channel_0[8,7] free
+ in_layer_0_channel_0[8,8] free
+ in_layer_0_channel_0[8,9] free
+ in_layer_0_channel_0[8,10] free
+ in_layer_0_channel_0[9,2] free
+ in_layer_0_channel_0[9,3] free
+ in_layer_0_channel_0[9,4] free
+ in_layer_0_channel_0[9,5] free
+ in_layer_0_channel_0[9,6] free
+ in_layer_0_channel_0[9,7] free
+ in_layer_0_channel_0[9,8] free
+ in_layer_0_channel_0[9,9] free
+ in_layer_0_channel_0[9,10] free
+ in_layer_0_channel_0[10,2] free
+ in_layer_0_channel_0[10,3] free
+ in_layer_0_channel_0[10,4] free
+ in_layer_0_channel_0[10,5] free
+ in_layer_0_channel_0[10,6] free
+ in_layer_0_channel_0[10,7] free
+ in_layer_0_channel_0[10,8] free
+ in_layer_0_channel_0[10,9] free
+ in_layer_0_channel_0[10,10] free
+ in_layer_0_channel_0[11,1] free
+ in_layer_0_channel_0[11,2] free
+ in_layer_0_channel_0[11,3] free
+ in_layer_0_channel_0[11,4] free
+ in_layer_0_channel_0[11,5] free
+ in_layer_0_channel_0[11,6] free
+ in_layer_0_channel_0[11,7] free
+ in_layer_0_channel_0[11,8] free
+ in_layer_0_channel_0[11,9] free
+ in_layer_0_channel_0[11,10] free
+ in_layer_0_channel_0[12,0] free
+ in_layer_0_channel_0[12,1] free
+ in_layer_0_channel_0[12,2] free
+ in_layer_0_channel_0[12,3] free
+ in_layer_0_channel_0[12,4] free
+ in_layer_0_channel_0[12,5] free
+ in_layer_0_channel_0[12,6] free
+ in_layer_0_channel_0[12,7] free
+ in_layer_0_channel_0[12,8] free
+ in_layer_0_channel_0[12,9] free
+ in_layer_0_channel_0[12,10] free
+ in_layer_0_channel_0[13,0] free
+ in_layer_0_channel_0[13,1] free
+ in_layer_0_channel_0[13,2] free
+ in_layer_0_channel_0[13,3] free
+ in_layer_0_channel_0[13,4] free
+ in_layer_0_channel_0[13,5] free
+ in_layer_0_channel_0[13,6] free
+ in_layer_0_channel_0[13,7] free
+ in_layer_0_channel_0[13,8] free
+ in_layer_0_channel_0[13,9] free
+ in_layer_0_channel_0[13,10] free
+ in_layer_0_channel_0[14,0] free
+ in_layer_0_channel_0[14,1] free
+ in_layer_0_channel_0[14,2] free
+ in_layer_0_channel_0[14,3] free
+ in_layer_0_channel_0[14,4] free
+ in_layer_0_channel_0[14,5] free
+ in_layer_0_channel_0[14,6] free
+ in_layer_0_channel_0[14,7] free
+ in_layer_0_channel_0[15,0] free
+ in_layer_0_channel_0[15,1] free
+ in_layer_0_channel_0[15,2] free
+ in_layer_0_channel_0[15,3] free
+ in_layer_0_channel_0[15,4] free
+ in_layer_0_channel_0[15,5] free
+ in_layer_0_channel_0[16,0] free
+ in_layer_0_channel_0[16,1] free
+ in_layer_0_channel_0[16,2] free
+ in_layer_0_channel_0[16,3] free
+ in_layer_0_channel_0[16,4] free
+ in_layer_0_channel_0[16,5] free
+ out_layer_0_channel_0[8,6] free
+ out_layer_0_channel_0[8,7] free
+ out_layer_0_channel_0[8,8] free
+ out_layer_0_channel_0[9,2] free
+ out_layer_0_channel_0[9,3] free
+ out_layer_0_channel_0[9,4] free
+ out_layer_0_channel_0[9,5] free
+ out_layer_0_channel_0[9,6] free
+ out_layer_0_channel_0[9,7] free
+ out_layer_0_channel_0[9,8] free
+ out_layer_0_channel_0[10,2] free
+ out_layer_0_channel_0[10,3] free
+ out_layer_0_channel_0[10,4] free
+ out_layer_0_channel_0[10,5] free
+ out_layer_0_channel_0[10,6] free
+ out_layer_0_channel_0[10,8] free
+ out_layer_0_channel_0[11,1] free
+ out_layer_0_channel_0[11,2] free
+ out_layer_0_channel_0[11,3] free
+ out_layer_0_channel_0[11,5] free
+ out_layer_0_channel_0[11,6] free
+ out_layer_0_channel_0[11,7] free
+ out_layer_0_channel_0[11,8] free
+ out_layer_0_channel_0[12,0] free
+ out_layer_0_channel_0[12,1] free
+ out_layer_0_channel_0[12,2] free
+ out_layer_0_channel_0[12,3] free
+ out_layer_0_channel_0[12,4] free
+ out_layer_0_channel_0[13,0] free
+ out_layer_0_channel_0[13,1] free
+ out_layer_0_channel_0[13,2] free
+ out_layer_0_channel_0[13,3] free
+ out_layer_0_channel_0[14,0] free
+ out_layer_0_channel_0[14,1] free
+ out_layer_0_channel_0[14,2] free
+ out_layer_0_channel_0[14,3] free
+ out_layer_0_channel_1[8,6] free
+ out_layer_0_channel_1[8,7] free
+ out_layer_0_channel_1[8,8] free
+ out_layer_0_channel_1[9,2] free
+ out_layer_0_channel_1[9,3] free
+ out_layer_0_channel_1[9,4] free
+ out_layer_0_channel_1[9,5] free
+ out_layer_0_channel_1[9,6] free
+ out_layer_0_channel_1[9,7] free
+ out_layer_0_channel_1[9,8] free
+ out_layer_0_channel_1[10,2] free
+ out_layer_0_channel_1[10,3] free
+ out_layer_0_channel_1[10,5] free
+ out_layer_0_channel_1[10,6] free
+ out_layer_0_channel_1[10,7] free
+ out_layer_0_channel_1[10,8] free
+ out_layer_0_channel_1[11,1] free
+ out_layer_0_channel_1[11,2] free
+ out_layer_0_channel_1[11,3] free
+ out_layer_0_channel_1[11,4] free
+ out_layer_0_channel_1[11,5] free
+ out_layer_0_channel_1[11,6] free
+ out_layer_0_channel_1[11,7] free
+ out_layer_0_channel_1[11,8] free
+ out_layer_0_channel_1[12,0] free
+ out_layer_0_channel_1[12,1] free
+ out_layer_0_channel_1[12,2] free
+ out_layer_0_channel_1[12,3] free
+ out_layer_0_channel_1[12,4] free
+ out_layer_0_channel_1[12,5] free
+ out_layer_0_channel_1[13,0] free
+ out_layer_0_channel_1[13,1] free
+ out_layer_0_channel_1[13,3] free
+ out_layer_0_channel_1[14,0] free
+ in_layer_1_channel_0[8,6] free
+ in_layer_1_channel_0[8,7] free
+ in_layer_1_channel_0[8,8] free
+ in_layer_1_channel_0[9,2] free
+ in_layer_1_channel_0[9,3] free
+ in_layer_1_channel_0[9,4] free
+ in_layer_1_channel_0[9,5] free
+ in_layer_1_channel_0[9,6] free
+ in_layer_1_channel_0[9,7] free
+ in_layer_1_channel_0[9,8] free
+ in_layer_1_channel_0[10,2] free
+ in_layer_1_channel_0[10,3] free
+ in_layer_1_channel_0[10,4] free
+ in_layer_1_channel_0[10,5] free
+ in_layer_1_channel_0[10,6] free
+ in_layer_1_channel_0[10,8] free
+ in_layer_1_channel_0[11,1] free
+ in_layer_1_channel_0[11,2] free
+ in_layer_1_channel_0[11,3] free
+ in_layer_1_channel_0[11,5] free
+ in_layer_1_channel_0[11,6] free
+ in_layer_1_channel_0[11,7] free
+ in_layer_1_channel_0[11,8] free
+ in_layer_1_channel_0[12,0] free
+ in_layer_1_channel_0[12,1] free
+ in_layer_1_channel_0[12,2] free
+ in_layer_1_channel_0[12,3] free
+ in_layer_1_channel_0[12,4] free
+ in_layer_1_channel_0[13,0] free
+ in_layer_1_channel_0[13,1] free
+ in_layer_1_channel_0[13,2] free
+ in_layer_1_channel_0[13,3] free
+ in_layer_1_channel_0[14,0] free
+ in_layer_1_channel_0[14,1] free
+ in_layer_1_channel_0[14,2] free
+ in_layer_1_channel_0[14,3] free
+ in_layer_1_channel_1[8,6] free
+ in_layer_1_channel_1[8,7] free
+ in_layer_1_channel_1[8,8] free
+ in_layer_1_channel_1[9,2] free
+ in_layer_1_channel_1[9,3] free
+ in_layer_1_channel_1[9,4] free
+ in_layer_1_channel_1[9,5] free
+ in_layer_1_channel_1[9,6] free
+ in_layer_1_channel_1[9,7] free
+ in_layer_1_channel_1[9,8] free
+ in_layer_1_channel_1[10,2] free
+ in_layer_1_channel_1[10,3] free
+ in_layer_1_channel_1[10,5] free
+ in_layer_1_channel_1[10,6] free
+ in_layer_1_channel_1[10,7] free
+ in_layer_1_channel_1[10,8] free
+ in_layer_1_channel_1[11,1] free
+ in_layer_1_channel_1[11,2] free
+ in_layer_1_channel_1[11,3] free
+ in_layer_1_channel_1[11,4] free
+ in_layer_1_channel_1[11,5] free
+ in_layer_1_channel_1[11,6] free
+ in_layer_1_channel_1[11,7] free
+ in_layer_1_channel_1[11,8] free
+ in_layer_1_channel_1[12,0] free
+ in_layer_1_channel_1[12,1] free
+ in_layer_1_channel_1[12,2] free
+ in_layer_1_channel_1[12,3] free
+ in_layer_1_channel_1[12,4] free
+ in_layer_1_channel_1[12,5] free
+ in_layer_1_channel_1[13,0] free
+ in_layer_1_channel_1[13,1] free
+ in_layer_1_channel_1[13,3] free
+ in_layer_1_channel_1[14,0] free
+ out_layer_1_channel_0[8,6] free
+ out_layer_1_channel_0[8,7] free
+ out_layer_1_channel_0[8,8] free
+ out_layer_1_channel_0[9,2] free
+ out_layer_1_channel_0[9,3] free
+ out_layer_1_channel_0[9,4] free
+ out_layer_1_channel_0[9,5] free
+ out_layer_1_channel_0[9,6] free
+ out_layer_1_channel_0[9,7] free
+ out_layer_1_channel_0[9,8] free
+ out_layer_1_channel_0[10,2] free
+ out_layer_1_channel_0[10,3] free
+ out_layer_1_channel_0[10,4] free
+ out_layer_1_channel_0[10,5] free
+ out_layer_1_channel_0[10,6] free
+ out_layer_1_channel_0[10,8] free
+ out_layer_1_channel_0[11,1] free
+ out_layer_1_channel_0[11,2] free
+ out_layer_1_channel_0[11,3] free
+ out_layer_1_channel_0[11,5] free
+ out_layer_1_channel_0[11,6] free
+ out_layer_1_channel_0[11,7] free
+ out_layer_1_channel_0[11,8] free
+ out_layer_1_channel_0[12,0] free
+ out_layer_1_channel_0[12,1] free
+ out_layer_1_channel_0[12,2] free
+ out_layer_1_channel_0[12,3] free
+ out_layer_1_channel_0[12,4] free
+ out_layer_1_channel_0[12,5] free
+ out_layer_1_channel_0[13,0] free
+ out_layer_1_channel_0[13,1] free
+ out_layer_1_channel_0[13,2] free
+ out_layer_1_channel_0[13,3] free
+ out_layer_1_channel_0[14,0] free
+ out_layer_1_channel_0[14,1] free
+ out_layer_1_channel_0[14,2] free
+ out_layer_1_channel_0[14,3] free
+ out_layer_1_channel_1[8,6] free
+ out_layer_1_channel_1[8,7] free
+ out_layer_1_channel_1[8,8] free
+ out_layer_1_channel_1[9,2] free
+ out_layer_1_channel_1[9,3] free
+ out_layer_1_channel_1[9,4] free
+ out_layer_1_channel_1[9,5] free
+ out_layer_1_channel_1[9,6] free
+ out_layer_1_channel_1[9,7] free
+ out_layer_1_channel_1[9,8] free
+ out_layer_1_channel_1[10,2] free
+ out_layer_1_channel_1[10,3] free
+ out_layer_1_channel_1[10,5] free
+ out_layer_1_channel_1[10,6] free
+ out_layer_1_channel_1[10,7] free
+ out_layer_1_channel_1[10,8] free
+ out_layer_1_channel_1[11,1] free
+ out_layer_1_channel_1[11,2] free
+ out_layer_1_channel_1[11,3] free
+ out_layer_1_channel_1[11,4] free
+ out_layer_1_channel_1[11,5] free
+ out_layer_1_channel_1[11,6] free
+ out_layer_1_channel_1[11,7] free
+ out_layer_1_channel_1[11,8] free
+ out_layer_1_channel_1[12,0] free
+ out_layer_1_channel_1[12,1] free
+ out_layer_1_channel_1[12,2] free
+ out_layer_1_channel_1[12,3] free
+ out_layer_1_channel_1[12,4] free
+ out_layer_1_channel_1[12,5] free
+ out_layer_1_channel_1[13,0] free
+ out_layer_1_channel_1[13,1] free
+ out_layer_1_channel_1[13,3] free
+ out_layer_1_channel_1[14,0] free
+ out_layer_1_channel_1[14,1] free
+ out_layer_1_channel_1[14,2] free
+ out_layer_1_channel_1[14,3] free
+ in_layer_2_channel_0[8,6] free
+ in_layer_2_channel_0[8,7] free
+ in_layer_2_channel_0[8,8] free
+ in_layer_2_channel_0[9,2] free
+ in_layer_2_channel_0[9,3] free
+ in_layer_2_channel_0[9,4] free
+ in_layer_2_channel_0[9,5] free
+ in_layer_2_channel_0[9,6] free
+ in_layer_2_channel_0[9,7] free
+ in_layer_2_channel_0[9,8] free
+ in_layer_2_channel_0[10,2] free
+ in_layer_2_channel_0[10,3] free
+ in_layer_2_channel_0[10,4] free
+ in_layer_2_channel_0[10,5] free
+ in_layer_2_channel_0[10,6] free
+ in_layer_2_channel_0[10,7] free
+ in_layer_2_channel_0[10,8] free
+ in_layer_2_channel_0[11,1] free
+ in_layer_2_channel_0[11,2] free
+ in_layer_2_channel_0[11,3] free
+ in_layer_2_channel_0[11,4] free
+ in_layer_2_channel_0[11,5] free
+ in_layer_2_channel_0[11,6] free
+ in_layer_2_channel_0[11,7] free
+ in_layer_2_channel_0[11,8] free
+ in_layer_2_channel_0[12,0] free
+ in_layer_2_channel_0[12,1] free
+ in_layer_2_channel_0[12,2] free
+ in_layer_2_channel_0[12,3] free
+ in_layer_2_channel_0[12,4] free
+ in_layer_2_channel_0[12,5] free
+ in_layer_2_channel_0[13,0] free
+ in_layer_2_channel_0[13,1] free
+ in_layer_2_channel_0[13,2] free
+ in_layer_2_channel_0[13,3] free
+ in_layer_2_channel_0[14,0] free
+ in_layer_2_channel_0[14,1] free
+ in_layer_2_channel_0[14,2] free
+ in_layer_2_channel_0[14,3] free
+ in_layer_2_channel_1[8,6] free
+ in_layer_2_channel_1[8,7] free
+ in_layer_2_channel_1[8,8] free
+ in_layer_2_channel_1[9,2] free
+ in_layer_2_channel_1[9,3] free
+ in_layer_2_channel_1[9,4] free
+ in_layer_2_channel_1[9,5] free
+ in_layer_2_channel_1[9,6] free
+ in_layer_2_channel_1[9,7] free
+ in_layer_2_channel_1[9,8] free
+ in_layer_2_channel_1[10,2] free
+ in_layer_2_channel_1[10,3] free
+ in_layer_2_channel_1[10,4] free
+ in_layer_2_channel_1[10,5] free
+ in_layer_2_channel_1[10,6] free
+ in_layer_2_channel_1[10,7] free
+ in_layer_2_channel_1[10,8] free
+ in_layer_2_channel_1[11,1] free
+ in_layer_2_channel_1[11,2] free
+ in_layer_2_channel_1[11,3] free
+ in_layer_2_channel_1[11,4] free
+ in_layer_2_channel_1[11,5] free
+ in_layer_2_channel_1[11,6] free
+ in_layer_2_channel_1[11,7] free
+ in_layer_2_channel_1[11,8] free
+ in_layer_2_channel_1[12,0] free
+ in_layer_2_channel_1[12,1] free
+ in_layer_2_channel_1[12,2] free
+ in_layer_2_channel_1[12,3] free
+ in_layer_2_channel_1[12,4] free
+ in_layer_2_channel_1[12,5] free
+ in_layer_2_channel_1[13,0] free
+ in_layer_2_channel_1[13,1] free
+ in_layer_2_channel_1[13,2] free
+ in_layer_2_channel_1[13,3] free
+ in_layer_2_channel_1[14,0] free
+ in_layer_2_channel_1[14,1] free
+ in_layer_2_channel_1[14,2] free
+ in_layer_2_channel_1[14,3] free
+ out_layer_2_channel_1[9,5] free
+ out_layer_2_channel_1[10,3] free
+ out_layer_2_channel_1[11,1] free
+ out_layer_2_channel_1[12,0] free
+ out_layer_2_channel_2[8,6] free
+ out_layer_2_channel_2[9,2] free
+ out_layer_2_channel_2[12,1] free
+ out_layer_2_channel_3[9,6] free
+ out_layer_2_channel_3[10,3] free
+ in_layer_3_channel_1[9,5] free
+ in_layer_3_channel_1[10,3] free
+ in_layer_3_channel_1[11,1] free
+ in_layer_3_channel_1[12,0] free
+ in_layer_3_channel_2[8,6] free
+ in_layer_3_channel_2[9,2] free
+ in_layer_3_channel_2[12,1] free
+ in_layer_3_channel_3[9,6] free
+ in_layer_3_channel_3[10,3] free
+ out_layer_3_channel_1[9,5] free
+ out_layer_3_channel_1[10,3] free
+ out_layer_3_channel_1[11,1] free
+ out_layer_3_channel_1[12,0] free
+ out_layer_3_channel_2[8,6] free
+ out_layer_3_channel_2[9,2] free
+ out_layer_3_channel_2[12,1] free
+ out_layer_3_channel_3[9,6] free
+ out_layer_3_channel_3[10,3] free
+End
