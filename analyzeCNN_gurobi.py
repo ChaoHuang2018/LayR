@@ -815,7 +815,9 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
                         if abs(temp) <= 10e-4:
                             temp = 0
                         #print('temp: ' +str(temp))
-                        model.addConstr(x_out[s][i,j] == temp)
+                        #model.addConstr(x_out[s][i,j] == temp)
+                        x_out[s][i,j].setAttr(GRB.Attr.LB, activate(activation,seg_left))
+                        x_out[s][i,j].setAttr(GRB.Attr.UB, activate(activation,seg_right)) 
                     elif refinement_degree_layer[s][i][j] == 0:
 ##                    if refinement_degree_layer[s][i][j] == 0:
                         seg_left = low
