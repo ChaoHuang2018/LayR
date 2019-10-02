@@ -149,7 +149,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 refinement_degree_layer.append(0)
             refinement_degree_all.append(refinement_degree_layer)
 
-    layer_index = 7
+    layer_index = 8
     neuron_index = 0
 
 ##    for i in range(NN.layers[layer_index].input_dim[0]):
@@ -363,7 +363,7 @@ def neuron_input_range_cnn(
             for s in range(NN.layers[k].input_dim[2]):
                 x_in_layer.append(
                     model.addVars(
-                        NN.layers[k].output_dim[0].item(),
+                        NN.layers[k].input_dim[0],
                         NN.layers[k].input_dim[1],
                         lb=-GRB.INFINITY,
                         ub=GRB.INFINITY,
@@ -376,7 +376,7 @@ def neuron_input_range_cnn(
                 lb=-GRB.INFINITY,
                 ub=GRB.INFINITY,
                 vtype=GRB.CONTINUOUS,
-                name='in_layer_'+str(k))
+                name='out_layer_'+str(k))
             x_out.append(x_out_layer)
 
             z0.append([])
@@ -970,8 +970,8 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
                         x_in[s][i,j].setAttr(GRB.Attr.LB, seg_left)
                         x_in[s][i,j].setAttr(GRB.Attr.UB, seg_right)
                         temp = activate(activation,upp)
-                        if abs(temp) <= 10e-4:
-                            temp = 0
+                        #if abs(temp) <= 10e-4:
+                        #    temp = 0
                         #print('temp: ' +str(temp))
                         #model.addConstr(x_out[s][i,j] == temp)
                         x_out[s][i,j].setAttr(GRB.Attr.LB, activate(activation,seg_left))
@@ -1012,10 +1012,22 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
         for i in range(layer.output_dim[0]):
             low = input_range_layer[i][0]
             upp = input_range_layer[i][1]
-            if activate(activation,upp)-activate(activation,low) <= 10e-6:
+            if upp < low:
+                raise ValueError('Error: Wrong range!')
+            if activate(activation,upp)-activate(activation,low) < 0:
+                raise ValueError('Error: Wrong sigmoid result!')
+            if activate(activation,upp)-activate(activation,low) <= 10e-1 or upp-low<=10e-4:
+                seg_left = low
+                seg_right = upp
+                x_in[i].setAttr(GRB.Attr.LB, seg_left)
+                x_in[i].setAttr(GRB.Attr.UB, seg_right)
                 temp = activate(activation,upp)
+                #if abs(temp) <= 10e-4:
+                #    temp = 0
                 #print('temp: ' +str(temp))
-                model.addConstr(x_out[i] == temp)
+                #model.addConstr(x_out[s][i,j] == temp)
+                x_out[i].setAttr(GRB.Attr.LB, activate(activation,seg_left))
+                x_out[i].setAttr(GRB.Attr.UB, activate(activation,seg_right))
             elif refinement_degree_layer[i] == 0:
 ##            if refinement_degree_layer[i] == 0:
                 seg_left = low
