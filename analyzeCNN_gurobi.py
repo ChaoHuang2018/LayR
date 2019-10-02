@@ -135,7 +135,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 for i in range(NN.layers[k].input_dim[0]):
                     refinement_degree_layer_row = []
                     for j in range(NN.layers[k].input_dim[1]):
-                        refinement_degree_layer_row.append(1)
+                        refinement_degree_layer_row.append(0)
                     refinement_degree_layer_channel.append(
                         refinement_degree_layer_row
                     )
