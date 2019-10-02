@@ -595,6 +595,7 @@ def neuron_input_range_cnn(
         else:
           print('IIS is not minimal\n')
         model.write("model.ilp")
+        model.write("model.lp")
         raise ValueError('Error: No result for lower bound!')
 
     # define objective: biggest output of [layer_index, neuron_index]
