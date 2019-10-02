@@ -142,30 +142,29 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
             refinement_degree_all.append(refinement_degree_layer)
 
     layer_index = 3
-##    print(NN.layers[layer_index].input_dim)
-##    for s in range(NN.layers[layer_index].input_dim[2]):
-##        for i in range(NN.layers[layer_index].input_dim[0]):
-##            for j in range(NN.layers[layer_index].input_dim[1]):
-##                neuron_index = [i,j,s]
-##                print(neuron_index)
-##                input_range_last_neuron, _ = neuron_input_range_cnn(
-##                    NN,
-##                    layer_index,
-##                    neuron_index,
-##                    network_input_box,
-##                    input_range_all,
-##                    refinement_degree_all
-##                )
-    neuron_index = [8,17,0]
-    naive_input = input_range_all[layer_index][neuron_index]
-    input_range_last_neuron, _ = neuron_input_range_cnn(
-        NN,
-        layer_index,
-        neuron_index,
-        network_input_box,
-        input_range_all,
-        refinement_degree_all
-    )
+    print(NN.layers[layer_index].input_dim)
+    for s in range(NN.layers[layer_index].input_dim[2]):
+        for i in range(NN.layers[layer_index].input_dim[0]):
+            for j in range(NN.layers[layer_index].input_dim[1]):
+                neuron_index = [i,j,s]
+                input_range_last_neuron, _ = neuron_input_range_cnn(
+                    NN,
+                    layer_index,
+                    neuron_index,
+                    network_input_box,
+                    input_range_all,
+                    refinement_degree_all
+                )
+##    neuron_index = [8,17,0]
+##    naive_input = input_range_all[layer_index][neuron_index]
+##    input_range_last_neuron, _ = neuron_input_range_cnn(
+##        NN,
+##        layer_index,
+##        neuron_index,
+##        network_input_box,
+##        input_range_all,
+##        refinement_degree_all
+##    )
 
     
     print('input range naive: ' + str(naive_input))
@@ -391,7 +390,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     # add constraint for the last layer and the neuron
     # Notice that we only need to handle activation function layer. For other layers, update the input range of the neuron does not improve the result (which is equivalant in fact)
     
-    print(NN.layers[layer_index].type)
+    # print(NN.layers[layer_index].type)
 
     if NN.layers[layer_index].type == 'Activation' or NN.layers[layer_index].type == 'Flatten' or NN.layers[layer_index].type == 'Pooling':
         model.addConstr(x_in_neuron == x_out[layer_index-1][neuron_index[2]][neuron_index[0],neuron_index[1]])
@@ -431,7 +430,7 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
 
     if model.status == GRB.OPTIMAL:
         neuron_min = model.objVal
-        print(model.printQuality())
+        #print(model.printQuality())
         #model.write("model.lp")
         #print('lower bound: ' + str(l_neuron))
         #for variable in prob_min.variables():
@@ -463,12 +462,11 @@ def neuron_input_range_cnn(NN, layer_index, neuron_index, network_input_box, inp
     
 
     if NN.layers[layer_index].type == 'Activation':
-        print(neuron_index)
-        print(input_range_all[layer_index].shape)
         if input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]][0]>neuron_max or input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]][1]<neuron_min:
+            print('Inconsistant Range of ' + str(neuron_index))
             print(input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]])
             print([neuron_min, neuron_max])
-            raise ValueError('Error: Wrong input bound!')
+            #raise ValueError('Error: Wrong input bound!')
         input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]] = [neuron_min, neuron_max]
     elif (
         NN.layers[layer_index].type == 'Fully_connected' and
