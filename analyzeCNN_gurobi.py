@@ -149,18 +149,29 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 refinement_degree_layer.append(0)
             refinement_degree_all.append(refinement_degree_layer)
 
-    layer_index = 4
-    neuron_index = [0, 0, 0]
-    naive_input = input_range_all[layer_index][neuron_index]
-    input_range_last_neuron, _ = neuron_input_range_cnn(
-        NN,
-        layer_index,
-        neuron_index,
-        network_input_box,
-        input_range_all,
-        refinement_degree_all
-    )
+    layer_index = 7
+    neuron_index = 0
 
+##    for i in range(NN.layers[layer_index].input_dim[0]):
+##        neuron_index = i
+##        input_range_last_neuron, _ = neuron_input_range_cnn(
+##            NN,
+##            layer_index,
+##            neuron_index,
+##            network_input_box,
+##            input_range_all,
+##            refinement_degree_all
+##        )
+    input_range_last_neuron, _ = neuron_input_range_cnn(
+            NN,
+            layer_index,
+            neuron_index,
+            network_input_box,
+            input_range_all,
+            refinement_degree_all
+            )
+
+    naive_input = input_range_all[layer_index][neuron_index]
     print('input range naive: {}'.format(naive_input))
     print('output range naive: [{}, {}]'.format(
         activate(NN.layers[layer_index].activation, naive_input[0]),
@@ -602,16 +613,20 @@ def neuron_input_range_cnn(
 
 
     if NN.layers[layer_index].type == 'Activation':
+        print(input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]])
+        print([neuron_min, neuron_max])
         if input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]][0]>neuron_max or input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]][1]<neuron_min:
-            print('Inconsistant Range of ' + str(neuron_index))
-            print(input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]])
-            print([neuron_min, neuron_max])
+            print('Inconsistant Range of ' + str(neuron_index) +'!!!!!!!!!!!!!!!')
             #raise ValueError('Error: Wrong input bound!')
         input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]] = [neuron_min, neuron_max]
     elif (
         NN.layers[layer_index].type == 'Fully_connected' and
         layer_index < NN.num_of_hidden_layers - 1
     ):
+        print(input_range_all[layer_index][neuron_index])
+        print([neuron_min, neuron_max])
+        if input_range_all[layer_index][neuron_index][0]>neuron_max or input_range_all[layer_index][neuron_index][1]<neuron_min:
+            print('Inconsistant Range of ' + str(neuron_index) +'!!!!!!!!!!!!!!!')
         input_range_all[layer_index][neuron_index] = [neuron_min, neuron_max]
 
 
@@ -946,7 +961,9 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
                     ## To avoid numerial issue
                     if upp < low:
                         raise ValueError('Error: Wrong range!')
-                    if activate(activation,upp)-activate(activation,low) <= 10e-4 or upp-low<=10e-4:
+                    if activate(activation,upp)-activate(activation,low) < 0:
+                        raise ValueError('Error: Wrong sigmoid result!')
+                    if activate(activation,upp)-activate(activation,low) <= 10e-1 or upp-low<=10e-4:
                         seg_left = low
                         seg_right = upp
                         x_in[s][i,j].setAttr(GRB.Attr.LB, seg_left)
@@ -1002,7 +1019,7 @@ def relaxation_activation_layer(model, layer, x_in, x_out, z0, z1, input_range_l
 ##            if refinement_degree_layer[i] == 0:
                 seg_left = low
                 seg_right = upp
-                segment_relaxation_basic(model, x_in[i], x_out[i], seg_left, seg_right, activation)
+                segment_relaxation_basic(model, x_in[i], x_out[i], seg_left, seg_right, activation, i)
             else:
                 # any neuron can only be within a region, thus sum of slack integers should be 1
                 constraints += [z0[i].sum()+z1[i].sum()==1]
