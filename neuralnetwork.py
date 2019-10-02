@@ -345,14 +345,20 @@ class Layer(object):
 
     @property
     def weight(self):
+        if self._weight is not None:
+            return self._weight.astype(np.float32)
         return self._weight
 
     @property
     def bias(self):
+        if self._bias is not None:
+            return self._bias.astype(np.float32)
         return self._bias
 
     @property
     def kernal(self):
+        if self._kernal is not None:
+            return self._kernal.astype(np.float32)
         return self._kernal
 
     @property
