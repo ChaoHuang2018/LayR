@@ -141,30 +141,30 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
                 refinement_degree_layer.append(0)
             refinement_degree_all.append(refinement_degree_layer)
 
-    layer_index = 3
-    print(NN.layers[layer_index].input_dim)
-    for s in range(NN.layers[layer_index].input_dim[2]):
-        for i in range(NN.layers[layer_index].input_dim[0]):
-            for j in range(NN.layers[layer_index].input_dim[1]):
-                neuron_index = [i,j,s]
-                input_range_last_neuron, _ = neuron_input_range_cnn(
-                    NN,
-                    layer_index,
-                    neuron_index,
-                    network_input_box,
-                    input_range_all,
-                    refinement_degree_all
-                )
-##    neuron_index = [8,17,0]
-##    naive_input = input_range_all[layer_index][neuron_index]
-##    input_range_last_neuron, _ = neuron_input_range_cnn(
-##        NN,
-##        layer_index,
-##        neuron_index,
-##        network_input_box,
-##        input_range_all,
-##        refinement_degree_all
-##    )
+    layer_index = 4
+##    print(NN.layers[layer_index].input_dim)
+##    for s in range(NN.layers[layer_index].input_dim[2]):
+##        for i in range(NN.layers[layer_index].input_dim[0]):
+##            for j in range(NN.layers[layer_index].input_dim[1]):
+##                neuron_index = [i,j,s]
+##                input_range_last_neuron, _ = neuron_input_range_cnn(
+##                    NN,
+##                    layer_index,
+##                    neuron_index,
+##                    network_input_box,
+##                    input_range_all,
+##                    refinement_degree_all
+##                )
+    neuron_index = [0,0,0]
+    naive_input = input_range_all[layer_index][neuron_index]
+    input_range_last_neuron, _ = neuron_input_range_cnn(
+        NN,
+        layer_index,
+        neuron_index,
+        network_input_box,
+        input_range_all,
+        refinement_degree_all
+    )
 
     
     print('input range naive: ' + str(naive_input))
