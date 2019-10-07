@@ -1184,9 +1184,9 @@ def add_last_neuron_constraint(model, NN, all_variables, input_range_all, layer_
         x_in_neuron.setAttr(GRB.Attr.UB, input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]][1])
     elif NN.layers[layer_index].type == 'Fully_connected':
         x_in_neuron.setAttr(GRB.Attr.LB,
-                            input_range_all[layer_index][neuron_index][0])
+                            input_range_all[layer_index][0][0])
         x_in_neuron.setAttr(GRB.Attr.UB,
-                            input_range_all[layer_index][neuron_index][1])
+                            input_range_all[layer_index][0][1])
 
     # add the constraint between the neuron and previous layer
     if NN.layers[layer_index].type == 'Activation' or NN.layers[layer_index].type == 'Flatten' or NN.layers[
