@@ -1883,43 +1883,50 @@ def segment_relaxation_basic(model, x_in_neuron, x_out_neuron, seg_left, seg_rig
     ##                model.addConstr(x_out_neuron - activate(activation,seg_left) >= 0, str(index)+'_relaxation_AA2')
 
     elif seg_right <= 0:
-        # triangle relaxation
-        model.addConstr(
-            -x_out_neuron + activate_de_left(activation, seg_right) * (x_in_neuron - seg_right) + activate(activation,
-                                                                                                           seg_right) <= 0,
-            str(index) + '_relaxation_B1')
-        model.addConstr(
-            -x_out_neuron + activate_de_right(activation, seg_left) * (x_in_neuron - seg_left) + activate(activation,
-                                                                                                          seg_left) <= 0,
-            str(index) + '_relaxation_B2')
-        temp_x_diff = (seg_left - seg_right)
-        temp_y_diff = (activate(activation, seg_left) - activate(activation, seg_right))
-        if np.isnan(temp_y_diff / temp_x_diff):
-            print("x: {}, y : {}".format(temp_x_diff, temp_y_diff))
-        model.addConstr(
-            x_out_neuron - temp_y_diff / temp_x_diff * (x_in_neuron - seg_right) - activate(activation, seg_right) <= 0,
-            str(index) + '_relaxation_B3')
-        # polytope relaxation
-        # model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= 0)
-        # model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) >= 0)
+
+        if activation == 'ReLU':
+            model.addConstr(x_out_neuron == 0)
+        else:
+            # triangle relaxation
+            model.addConstr(
+                -x_out_neuron + activate_de_left(activation, seg_right) * (x_in_neuron - seg_right) + activate(activation,
+                                                                                                               seg_right) <= 0,
+                str(index) + '_relaxation_B1')
+            model.addConstr(
+                -x_out_neuron + activate_de_right(activation, seg_left) * (x_in_neuron - seg_left) + activate(activation,
+                                                                                                              seg_left) <= 0,
+                str(index) + '_relaxation_B2')
+            temp_x_diff = (seg_left - seg_right)
+            temp_y_diff = (activate(activation, seg_left) - activate(activation, seg_right))
+            if np.isnan(temp_y_diff / temp_x_diff):
+                print("x: {}, y : {}".format(temp_x_diff, temp_y_diff))
+            model.addConstr(
+                x_out_neuron - temp_y_diff / temp_x_diff * (x_in_neuron - seg_right) - activate(activation, seg_right) <= 0,
+                str(index) + '_relaxation_B3')
+            # polytope relaxation
+            # model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= 0)
+            # model.addConstr(-x_out_neuron + activate_de_right(activation,seg_left)*(x_in_neuron-seg_left) + activate(activation,seg_left) >= 0)
 
     else:
+        if activation == 'ReLU':
+            model.addConstr(x_out_neuron == x_in_neuron)
+        else:
         # triangle relaxation
-        model.addConstr(
-            -x_out_neuron + activate_de_left(activation, seg_right) * (x_in_neuron - seg_right) + activate(activation,
-                                                                                                           seg_right) >= 0,
-            str(index) + '_relaxation_C1')
-        model.addConstr(
-            -x_out_neuron + activate_de_right(activation, seg_left) * (x_in_neuron - seg_left) + activate(activation,
-                                                                                                          seg_left) >= 0,
-            str(index) + '_relaxation_C2')
-        temp_x_diff = (seg_left - seg_right)
-        temp_y_diff = (activate(activation, seg_left) - activate(activation, seg_right))
-        if np.isnan(temp_y_diff / temp_x_diff):
-            print("x: {}, y : {}".format(temp_x_diff, temp_y_diff))
-        model.addConstr(
-            x_out_neuron - temp_y_diff / temp_x_diff * (x_in_neuron - seg_right) - activate(activation, seg_right) >= 0,
-            str(index) + '_relaxation_C3')
+            model.addConstr(
+                -x_out_neuron + activate_de_left(activation, seg_right) * (x_in_neuron - seg_right) + activate(activation,
+                                                                                                               seg_right) >= 0,
+                str(index) + '_relaxation_C1')
+            model.addConstr(
+                -x_out_neuron + activate_de_right(activation, seg_left) * (x_in_neuron - seg_left) + activate(activation,
+                                                                                                              seg_left) >= 0,
+                str(index) + '_relaxation_C2')
+            temp_x_diff = (seg_left - seg_right)
+            temp_y_diff = (activate(activation, seg_left) - activate(activation, seg_right))
+            if np.isnan(temp_y_diff / temp_x_diff):
+                print("x: {}, y : {}".format(temp_x_diff, temp_y_diff))
+            model.addConstr(
+                x_out_neuron - temp_y_diff / temp_x_diff * (x_in_neuron - seg_right) - activate(activation, seg_right) >= 0,
+                str(index) + '_relaxation_C3')
 
         # polytope relaxation
         # model.addConstr(-x_out_neuron + activate_de_left(activation,seg_right)*(x_in_neuron-seg_right) + activate(activation,seg_right) <= 0)
