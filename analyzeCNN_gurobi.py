@@ -46,6 +46,38 @@ Keep the original properties:
  offset: number
 """
 
+##############################################################
+def global_robustness_analysis(NN, network_input_box1, network_input_box2, output_index):
+    input_range_all_NN1 = construct_naive_input_range(NN, network_input_box1, output_index)
+    input_range_all_NN2 = construct_naive_input_range(NN, network_input_box2, output_index)
+
+    print('-------MILP based range analysis begins.----------')
+
+    # Initialize the refinement degree
+    refinement_degree_all_NN1 = initialize_refinement_degree(NN)
+    refinement_degree_all_NN2 = initialize_refinement_degree(NN)
+
+    # We can use different strategies to interatively update the refinement_degree_all and input_range_all
+    model = Model('Function_distance_update')
+    all_variables_NN1 = declare_variables(model, NN, refinement_degree_all_NN1)
+    all_variables_NN2 = declare_variables(model, NN, refinement_degree_all_NN2)
+    # add constraints for NN1
+    add_input_constraint(model, NN, all_variables_NN1, network_input_box)
+    for k in range(NN.num_of_hidden_layers):
+        add_interlayers_constraint(model, NN, all_variables_NN1, k)
+        add_innerlayer_constraint(model, NN, all_variables_NN1, input_range_all_NN1, refinement_degree_all_NN1, k)
+    add_last_neuron_constraint(model, NN, all_variables_NN1, input_range_all_NN1, NN1.num_of_hidden_layers - 1, output_index)
+    # add constraints for NN2
+    add_input_constraint(model, NN, all_variables_NN2, network_input_box)
+    for k in range(NN.num_of_hidden_layers):
+        add_interlayers_constraint(model, NN, all_variables_NN2, k)
+        add_innerlayer_constraint(model, NN, all_variables_NN2, input_range_all_NN2, refinement_degree_all_NN2, k)
+    add_last_neuron_constraint(model, NN, all_variables_NN2, input_range_all_NN2, NN2.num_of_hidden_layers - 1,
+                               output_index)
+    # obtain the function distance
+    [distance_min, distance_max] = compute_nn_distance(model, all_variables_NN1, all_variables_NN2)
+
+    return [distance_min, distance_max]
 
 ##############################################################
 def function_distance_analysis(NN1, NN2, network_input_box, output_index):
