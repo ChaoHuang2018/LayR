@@ -766,32 +766,6 @@ def neuron_input_range_cnn(
 
     return [neuron_min, neuron_max], input_range_all
 
-# add perturbed input constraints
-def construct_perturbed_input_set(NN, network_input_box, perturbation):
-    network_input_box_
-    if len(NN.layers[k].input_dim) == 3:
-        for s in range(NN.layers[k].input_dim[2]):
-            refinement_degree_layer_channel = []
-            for i in range(NN.layers[k].input_dim[0]):
-                refinement_degree_layer_row = []
-                for j in range(NN.layers[k].input_dim[1]):
-                    refinement_degree_layer_row.append(0)
-                refinement_degree_layer_channel.append(
-                    refinement_degree_layer_row
-                )
-            refinement_degree_layer.append(
-                refinement_degree_layer_channel
-            )
-        refinement_degree_all.append(
-            refinement_degree_layer
-        )
-    if len(NN.layers[k].input_dim) == 1:
-        for i in range(NN.layers[k].output_dim[0]):
-            refinement_degree_layer.append(0)
-        refinement_degree_all.append(refinement_degree_layer)
-    return refinement_degree_all
-
-
 # Initialize the refinement degree
 def initialize_refinement_degree(NN):
     refinement_degree_all = []
@@ -1047,6 +1021,21 @@ def declare_variables(model, NN, refinement_degree_all, layer_index):
 
     return all_variables
 
+
+# add perturbed input constraints
+def add_perturbed_input_constraints(model, NN, all_variables_NN1, all_variables_NN2, perturbation):
+    network_in_NN1 = all_variables_NN1[1]
+    network_in_NN2 = all_variables_NN2[1]
+    if len(NN.layers[0].input_dim) == 3:
+        for s in range(NN.layers[0].input_dim[2]):
+            for i in range(NN.layers[0].input_dim[0]):
+                for j in range(NN.layers[0].input_dim[1]):
+                    model.addConstr(network_in_NN1[s][i, j] - network_in_NN2[s][i, j] <= perturbation)
+                    model.addConstr(network_in_NN1[s][i, j] - network_in_NN2[s][i, j] >= -perturbation)
+    if len(NN.layers[0].input_dim) == 1:
+        for i in range(NN.layers[0].output_dim[0]):
+            model.addConstr(network_in_NN1[i] - network_in_NN2[i] <= perturbation)
+            model.addConstr(network_in_NN1[i] - network_in_NN2[i] >= -perturbation)
 
 # add constraints for the input layer
 def add_input_constraint(model, NN, all_variables, network_input_box):
