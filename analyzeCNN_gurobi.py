@@ -96,13 +96,13 @@ def function_distance_analysis(NN1, NN2, network_input_box, output_index):
     all_variables_NN2 = declare_variables(model, NN2, refinement_degree_all_NN2, NN2.num_of_hidden_layers - 1)
     # add constraints for NN1
     add_input_constraint(model, NN1, all_variables_NN1, network_input_box)
-    for k in range(NN1.num_of_hidden_layers):
+    for k in range(NN1.num_of_hidden_layers - 1):
         add_interlayers_constraint(model, NN1, all_variables_NN1, k)
         add_innerlayer_constraint(model, NN1, all_variables_NN1, input_range_all_NN1, refinement_degree_all_NN1, k)
     add_last_neuron_constraint(model, NN1, all_variables_NN1, input_range_all_NN1, NN1.num_of_hidden_layers - 1, output_index)
     # add constraints for NN2
     add_input_constraint(model, NN2, all_variables_NN2, network_input_box)
-    for k in range(NN2.num_of_hidden_layers):
+    for k in range(NN2.num_of_hidden_layers - 1):
         add_interlayers_constraint(model, NN2, all_variables_NN2, k)
         add_innerlayer_constraint(model, NN2, all_variables_NN2, input_range_all_NN2, refinement_degree_all_NN2, k)
     add_last_neuron_constraint(model, NN2, all_variables_NN2, input_range_all_NN2, NN2.num_of_hidden_layers - 1,
@@ -1140,7 +1140,7 @@ def add_innerlayer_constraint(model, NN, all_variables, input_range_all, refinem
                         model.addConstr(x_out[layer_index - 1][s][i, j] == x_in[layer_index][s][i, j])
     if NN.layers[layer_index].type == 'Flatten':
         relaxation_flatten_layer(model, NN.layers[layer_index], x_in[layer_index], x_out[layer_index])
-        if k == 0:
+        if layer_index == 0:
             for s in range(NN.layers[layer_index].input_dim[2]):
                 for i in range(NN.layers[layer_index].input_dim[0]):
                     for j in range(NN.layers[layer_index].input_dim[1]):
