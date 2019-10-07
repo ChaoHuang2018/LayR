@@ -120,14 +120,13 @@ def output_range_analysis(NN, network_input_box, output_index):
 
     # Initialize the refinement degree
     refinement_degree_all = initialize_refinement_degree(NN)
-
-
+    layer_index = NN.num_of_hidden_layers - 1
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
     model = Model('Input_range_update')
     all_variables = declare_variables(model, NN, refinement_degree_all, layer_index)
     add_input_constraint(model, NN, all_variables, network_input_box)
-    for k in range(NN.num_of_hidden_layers):
+    for k in range(NN.num_of_hidden_layers - 1):
         add_interlayers_constraint(model, NN, all_variables, k)
         add_innerlayer_constraint(model, NN, all_variables, input_range_all, refinement_degree_all, k)
     add_last_neuron_constraint(model, NN, all_variables, input_range_all, NN.num_of_hidden_layers-1, output_index)
