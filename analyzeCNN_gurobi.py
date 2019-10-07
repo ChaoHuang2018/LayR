@@ -92,8 +92,8 @@ def function_distance_analysis(NN1, NN2, network_input_box, output_index):
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
     model = Model('Function_distance_update')
-    all_variables_NN1 = declare_variables(model, NN1, refinement_degree_all_NN1, layer_index)
-    all_variables_NN2 = declare_variables(model, NN2, refinement_degree_all_NN2, layer_index)
+    all_variables_NN1 = declare_variables(model, NN1, refinement_degree_all_NN1, NN1.num_of_hidden_layers - 1)
+    all_variables_NN2 = declare_variables(model, NN2, refinement_degree_all_NN2, NN2.num_of_hidden_layers - 1)
     # add constraints for NN1
     add_input_constraint(model, NN1, all_variables_NN1, network_input_box)
     for k in range(NN1.num_of_hidden_layers):
