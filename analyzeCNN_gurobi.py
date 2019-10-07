@@ -47,7 +47,7 @@ Keep the original properties:
 """
 
 ##############################################################
-def global_robustness_analysis(NN, network_input_box1, network_input_box2, output_index):
+def global_robustness_analysis(NN, network_input_box, perturbation, output_index):
     input_range_all_NN1 = construct_naive_input_range(NN, network_input_box1, output_index)
     input_range_all_NN2 = construct_naive_input_range(NN, network_input_box2, output_index)
 
@@ -59,8 +59,8 @@ def global_robustness_analysis(NN, network_input_box1, network_input_box2, outpu
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
     model = Model('Function_distance_update')
-    all_variables_NN1 = declare_variables(model, NN, refinement_degree_all_NN1)
-    all_variables_NN2 = declare_variables(model, NN, refinement_degree_all_NN2)
+    all_variables_NN1 = declare_variables(model, NN, refinement_degree_all_NN1, layer_index)
+    all_variables_NN2 = declare_variables(model, NN, refinement_degree_all_NN2, layer_index)
     # add constraints for NN1
     add_input_constraint(model, NN, all_variables_NN1, network_input_box)
     for k in range(NN.num_of_hidden_layers):
@@ -92,8 +92,8 @@ def function_distance_analysis(NN1, NN2, network_input_box, output_index):
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
     model = Model('Function_distance_update')
-    all_variables_NN1 = declare_variables(model, NN1, refinement_degree_all_NN1)
-    all_variables_NN2 = declare_variables(model, NN2, refinement_degree_all_NN2)
+    all_variables_NN1 = declare_variables(model, NN1, refinement_degree_all_NN1, layer_index)
+    all_variables_NN2 = declare_variables(model, NN2, refinement_degree_all_NN2, layer_index)
     # add constraints for NN1
     add_input_constraint(model, NN1, all_variables_NN1, network_input_box)
     for k in range(NN1.num_of_hidden_layers):
@@ -125,7 +125,7 @@ def output_range_analysis(NN, network_input_box, output_index):
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
     model = Model('Input_range_update')
-    all_variables = declare_variables(model, NN, refinement_degree_all)
+    all_variables = declare_variables(model, NN, refinement_degree_all, layer_index)
     add_input_constraint(model, NN, all_variables, network_input_box)
     for k in range(NN.num_of_hidden_layers):
         add_interlayers_constraint(model, NN, all_variables, k)
@@ -766,6 +766,34 @@ def neuron_input_range_cnn(
 
     return [neuron_min, neuron_max], input_range_all
 
+# Construct perturbed input set
+def construct_perturbed_input_set(NN, network_input_box, perturbation):
+    refinement_degree_all = []
+    for k in range(NN.num_of_hidden_layers):
+        refinement_degree_layer = []
+        if len(NN.layers[k].input_dim) == 3:
+            for s in range(NN.layers[k].input_dim[2]):
+                refinement_degree_layer_channel = []
+                for i in range(NN.layers[k].input_dim[0]):
+                    refinement_degree_layer_row = []
+                    for j in range(NN.layers[k].input_dim[1]):
+                        refinement_degree_layer_row.append(0)
+                    refinement_degree_layer_channel.append(
+                        refinement_degree_layer_row
+                    )
+                refinement_degree_layer.append(
+                    refinement_degree_layer_channel
+                )
+            refinement_degree_all.append(
+                refinement_degree_layer
+            )
+        if len(NN.layers[k].input_dim) == 1:
+            for i in range(NN.layers[k].output_dim[0]):
+                refinement_degree_layer.append(0)
+            refinement_degree_all.append(refinement_degree_layer)
+    return refinement_degree_all
+
+
 # Initialize the refinement degree
 def initialize_refinement_degree(NN):
     refinement_degree_all = []
@@ -793,7 +821,7 @@ def initialize_refinement_degree(NN):
             refinement_degree_all.append(refinement_degree_layer)
     return refinement_degree_all
 
-def declare_variables(model, NN, refinement_degree_all):
+def declare_variables(model, NN, refinement_degree_all, layer_index):
     # variables in the input layer
     if NN.type == 'Convolutional':
         network_in = []
