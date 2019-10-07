@@ -1579,7 +1579,7 @@ def relaxation_convolutional_layer(model, layer, x_in, x_out, kernal, bias, stri
                         for q in range(kernal.shape[1]):
                             sum_expr = sum_expr + x_in[s][i * stride[0] + p, j * stride[1] + q] * kernal[p, q, s, k]
                     sum_expr = sum_expr + bias[k]
-                model.addConstr(sum_expr == x_out[k][i, j], str([i, j, s]) + '_convolutional_layer_linear')
+                model.addConstr(sum_expr == x_out[k][i, j], str([i,j,s]) + '_convolutional_layer_linear')
 
 
 # pooling layer
