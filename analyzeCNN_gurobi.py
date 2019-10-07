@@ -766,31 +766,29 @@ def neuron_input_range_cnn(
 
     return [neuron_min, neuron_max], input_range_all
 
-# Construct perturbed input set
+# add perturbed input constraints
 def construct_perturbed_input_set(NN, network_input_box, perturbation):
-    refinement_degree_all = []
-    for k in range(NN.num_of_hidden_layers):
-        refinement_degree_layer = []
-        if len(NN.layers[k].input_dim) == 3:
-            for s in range(NN.layers[k].input_dim[2]):
-                refinement_degree_layer_channel = []
-                for i in range(NN.layers[k].input_dim[0]):
-                    refinement_degree_layer_row = []
-                    for j in range(NN.layers[k].input_dim[1]):
-                        refinement_degree_layer_row.append(0)
-                    refinement_degree_layer_channel.append(
-                        refinement_degree_layer_row
-                    )
-                refinement_degree_layer.append(
-                    refinement_degree_layer_channel
+    network_input_box_
+    if len(NN.layers[k].input_dim) == 3:
+        for s in range(NN.layers[k].input_dim[2]):
+            refinement_degree_layer_channel = []
+            for i in range(NN.layers[k].input_dim[0]):
+                refinement_degree_layer_row = []
+                for j in range(NN.layers[k].input_dim[1]):
+                    refinement_degree_layer_row.append(0)
+                refinement_degree_layer_channel.append(
+                    refinement_degree_layer_row
                 )
-            refinement_degree_all.append(
-                refinement_degree_layer
+            refinement_degree_layer.append(
+                refinement_degree_layer_channel
             )
-        if len(NN.layers[k].input_dim) == 1:
-            for i in range(NN.layers[k].output_dim[0]):
-                refinement_degree_layer.append(0)
-            refinement_degree_all.append(refinement_degree_layer)
+        refinement_degree_all.append(
+            refinement_degree_layer
+        )
+    if len(NN.layers[k].input_dim) == 1:
+        for i in range(NN.layers[k].output_dim[0]):
+            refinement_degree_layer.append(0)
+        refinement_degree_all.append(refinement_degree_layer)
     return refinement_degree_all
 
 
@@ -1134,55 +1132,55 @@ def add_innerlayer_constraint(model, NN, all_variables, input_range_all, refinem
             NN.layers[layer_index].bias,
             NN.layers[layer_index].stride
         )
-    if NN.layers[k].type == 'Activation':
+    if NN.layers[layer_index].type == 'Activation':
         relaxation_activation_layer(model, NN.layers[layer_index], x_in[layer_index], x_out[layer_index],
                                     z0[layer_index], z1[layer_index], input_range_all[layer_index],
-                                    NN.layers[k].activation, refinement_degree_all[k])
-    if NN.layers[k].type == 'Pooling':
-        relaxation_pooling_layer(model, NN.layers[k], x_in[k], x_out[k], NN.layers[k].filter_size,
-                                 NN.layers[k].activation, NN.layers[k].stride)
-        if k == 0:
-            for s in range(NN.layers[k].input_dim[2]):
-                for i in range(NN.layers[k].input_dim[0]):
-                    for j in range(NN.layers[k].input_dim[1]):
-                        model.addConstr(network_in[s][i, j] == x_in[k][s][i, j])
+                                    NN.layers[layer_index].activation, refinement_degree_all[layer_index])
+    if NN.layers[layer_index].type == 'Pooling':
+        relaxation_pooling_layer(model, NN.layers[layer_index], x_in[layer_index], x_out[layer_index], NN.layers[layer_index].filter_size,
+                                 NN.layers[layer_index].activation, NN.layers[layer_index].stride)
+        if layer_index == 0:
+            for s in range(NN.layers[layer_index].input_dim[2]):
+                for i in range(NN.layers[layer_index].input_dim[0]):
+                    for j in range(NN.layers[layer_index].input_dim[1]):
+                        model.addConstr(network_in[s][i, j] == x_in[layer_index][s][i, j])
         else:
-            for s in range(NN.layers[k].input_dim[2]):
-                for i in range(NN.layers[k].input_dim[0]):
-                    for j in range(NN.layers[k].input_dim[1]):
-                        model.addConstr(x_out[k - 1][s][i, j] == x_in[k][s][i, j])
-    if NN.layers[k].type == 'Flatten':
-        relaxation_flatten_layer(model, NN.layers[k], x_in[k], x_out[k])
+            for s in range(NN.layers[layer_index].input_dim[2]):
+                for i in range(NN.layers[layer_index].input_dim[0]):
+                    for j in range(NN.layers[layer_index].input_dim[1]):
+                        model.addConstr(x_out[layer_index - 1][s][i, j] == x_in[layer_index][s][i, j])
+    if NN.layers[layer_index].type == 'Flatten':
+        relaxation_flatten_layer(model, NN.layers[layer_index], x_in[layer_index], x_out[layer_index])
         if k == 0:
-            for s in range(NN.layers[k].input_dim[2]):
-                for i in range(NN.layers[k].input_dim[0]):
-                    for j in range(NN.layers[k].input_dim[1]):
-                        model.addConstr(network_in[s][i, j] == x_in[k][s][i, j])
+            for s in range(NN.layers[layer_index].input_dim[2]):
+                for i in range(NN.layers[layer_index].input_dim[0]):
+                    for j in range(NN.layers[layer_index].input_dim[1]):
+                        model.addConstr(network_in[s][i, j] == x_in[layer_index][s][i, j])
         else:
-            for s in range(NN.layers[k].input_dim[2]):
-                for i in range(NN.layers[k].input_dim[0]):
-                    for j in range(NN.layers[k].input_dim[1]):
-                        model.addConstr(x_out[k - 1][s][i, j] == x_in[k][s][i, j])
-    if NN.layers[k].type == 'Fully_connected':
-        relaxation_activation_layer(model, NN.layers[k], x_in[k], x_out[k], z0[k], z1[k], input_range_all[k],
-                                    NN.layers[k].activation, refinement_degree_all[k])
+            for s in range(NN.layers[layer_index].input_dim[2]):
+                for i in range(NN.layers[layer_index].input_dim[0]):
+                    for j in range(NN.layers[layer_index].input_dim[1]):
+                        model.addConstr(x_out[layer_index - 1][s][i, j] == x_in[layer_index][s][i, j])
+    if NN.layers[layer_index].type == 'Fully_connected':
+        relaxation_activation_layer(model, NN.layers[layer_index], x_in[layer_index], x_out[layer_index], z0[layer_index], z1[layer_index], input_range_all[layer_index],
+                                    NN.layers[layer_index].activation, refinement_degree_all[layer_index])
         # add constraint for linear transformation between layers
-        weight_k = NN.layers[k].weight
-        bias_k = NN.layers[k].bias
-        if k == 0:
-            for i in range(NN.layers[k].output_dim[0]):
-                weight_k_i = np.reshape(weight_k[:, i], (-1, 1))
-                weight_k_i_dic = {}
-                for j in range(weight_k_i.shape[0]):
-                    weight_k_i_dic[j] = weight_k_i[j][0]
-                model.addConstr(network_in.prod(weight_k_i_dic) + bias_k[i] == x_in[k][i])
+        weight = NN.layers[layer_index].weight
+        bias = NN.layers[layer_index].bias
+        if layer_index == 0:
+            for i in range(NN.layers[layer_index].output_dim[0]):
+                weight_i = np.reshape(weight[:, i], (-1, 1))
+                weight_i_dic = {}
+                for j in range(weight_i.shape[0]):
+                    weight_i_dic[j] = weight_i[j][0]
+                model.addConstr(network_in.prod(weight_i_dic) + bias[i] == x_in[layer_index][i])
         else:
-            for i in range(NN.layers[k].output_dim[0]):
-                weight_k_i = np.reshape(weight_k[:, i], (-1, 1))
-                weight_k_i_dic = {}
-                for j in range(weight_k_i.shape[0]):
-                    weight_k_i_dic[j] = weight_k_i[j][0]
-                model.addConstr(x_out[k - 1].prod(weight_k_i_dic) + bias_k[i] == x_in[k][i])
+            for i in range(NN.layers[layer_index].output_dim[0]):
+                weight_i = np.reshape(weight[:, i], (-1, 1))
+                weight_i_dic = {}
+                for j in range(weight_i.shape[0]):
+                    weight_i_dic[j] = weight_i[j][0]
+                model.addConstr(x_out[layer_index - 1].prod(weight_i_dic) + bias[i] == x_in[layer_index][i])
 
 
 # add constraints for the concerned neuron
