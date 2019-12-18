@@ -130,7 +130,7 @@ def output_range_analysis(NN, network_input_box, output_index):
         add_interlayers_constraint(model, NN, all_variables, k)
         add_innerlayer_constraint(model, NN, all_variables, input_range_all, refinement_degree_all, k)
     add_last_neuron_constraint(model, NN, all_variables, input_range_all, NN.num_of_hidden_layers-1, output_index)
-    input_range_last_neuron = update_neuron_input_range(model, NN, all_variables, input_range_all, NN.num_of_hidden_layers-1,
+    input_range_last_neuron = update_neuron_input_range(model, NN, all_variables, input_range_all, layer_index,
                                                            output_index)
 
     naive_input = input_range_all[NN.num_of_hidden_layers-1][0]

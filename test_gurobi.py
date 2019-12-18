@@ -16,7 +16,7 @@ import cvxpy as cp
 from network_parser import nn_controller, nn_controller_details
 from numpy import pi, tanh, array, dot
 from gurobipy import *
-from analyzeCNN_gurobi import output_range_MILP_CNN, function_distance_analysis, output_range_analysis
+from phased_MILP import global_robustness_analysis, function_distance_analysis, output_range_analysis
 #import controller_approximation_lib as cal
 
 #import tensorflow as tf
