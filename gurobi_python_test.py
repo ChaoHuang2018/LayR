@@ -9,7 +9,7 @@ try:
     # Create variables
     x = m.addVar(vtype=GRB.CONTINUOUS, name="x")
     y = m.addVar(vtype=GRB.CONTINUOUS, name="y")
-    z = m.addVar(vtype=GRB.CONTINUOUS, name="z")
+    z = m.addVar(vtype=GRB.BINARY, name="z")
 
     # Set objective
     m.setObjective(x + y + 2 * z, GRB.MAXIMIZE)
@@ -19,6 +19,9 @@ try:
 
     # Add constraint: x + y >= 1
     m.addConstr(x + y >= 1, "c1")
+
+    # Add constraint: Z ==  1
+    m.addConstr(z == 1, "c2")
 
     # Optimize model
     m.optimize()
