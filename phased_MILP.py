@@ -121,9 +121,9 @@ def output_range_analysis(NN, network_input_box, neuron_index):
 
     # Initialize the refinement degree
     refinement_degree_all = initialize_refinement_degree(NN)
-    layer_index = NN.num_of_hidden_layers - 1
-    #layer_index = 8
-    #neuron_index = 0
+    # layer_index = NN.num_of_hidden_layers - 1
+    layer_index = 8
+    neuron_index = 0
 
     # for opt_index in range(NN.layers[layer_index].output_dim[0]):
     #     output_index = opt_index
@@ -138,7 +138,7 @@ def output_range_analysis(NN, network_input_box, neuron_index):
         activate(NN.layers[layer_index].activation, naive_input[1])
     ))
 
-    traceback = 9
+    traceback = 4
 
     input_range_last_neuron = update_neuron_input_range(NN, network_input_box, input_range_all, refinement_degree_all, layer_index, neuron_index, traceback)
 
@@ -186,10 +186,10 @@ def update_neuron_input_range(NN, network_input_box, input_range_all, refinement
     x_in_neuron = all_variables[5]
 
     model.setObjective(x_in_neuron, GRB.MINIMIZE)
-    neuron_min = optimize_model(model, 0)
+    neuron_min = optimize_model(model, 1)
 
     model.setObjective(x_in_neuron, GRB.MAXIMIZE)
-    neuron_max = optimize_model(model, 0)
+    neuron_max = optimize_model(model, 1)
     #neuron_max = 0
 
     if NN.layers[layer_index].type == 'Fully_connected':
@@ -204,10 +204,10 @@ def compute_nn_distance(model, all_variables_NN1, all_variables_NN2):
     x_in_neuron_NN2 = all_variables_NN2[5]
 
     model.setObjective(x_in_neuron_NN1-x_in_neuron_NN2, GRB.MINIMIZE)
-    distance_min = optimize_model(model, 0)
+    distance_min = optimize_model(model, 1)
 
     model.setObjective(x_in_neuron_NN1 - x_in_neuron_NN2, GRB.MAXIMIZE)
-    distance_max = optimize_model(model, 0)
+    distance_max = optimize_model(model, 1)
 
     return [distance_min, distance_max]
 
