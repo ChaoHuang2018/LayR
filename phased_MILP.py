@@ -81,7 +81,7 @@ def global_robustness_analysis(NN, network_input_box, perturbation, output_index
     return [distance_min, distance_max]
 
 ##############################################################
-def function_distance_analysis(NN1, NN2, network_input_box, neuron_index):
+def function_distance_analysis(NN1, NN2, network_input_box_NN1, network_input_box_NN2, neuron_index):
     input_range_all_NN1 = construct_naive_input_range(NN1, network_input_box)
     input_range_all_NN2 = construct_naive_input_range(NN2, network_input_box)
 
@@ -91,31 +91,35 @@ def function_distance_analysis(NN1, NN2, network_input_box, neuron_index):
     refinement_degree_all_NN1 = initialize_refinement_degree(NN1)
     refinement_degree_all_NN2 = initialize_refinement_degree(NN2)
 
-    #layer_index = NN.num_of_hidden_layers - 1
-    #layer_index = 8
-    neuron_index = 0
+    layer_index_NN1 = NN1.num_of_hidden_layers - 1
+    # layer_index = 8
+    # neuron_index = 0
+
+    # if type(neuron_index) == list:
+    #     naive_input = input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]]
+    # else:
+    #     naive_input = input_range_all[layer_index][neuron_index]
+    naive_input_NN1 = input_range_all_NN1[-1][neuron_index]
+    naive_input_NN2 = input_range_all_NN2[-1][neuron_index]
+    print(str(neuron_index) + 'Input range naive of NN1: {}'.format(naive_input_NN1))
+    print(str(neuron_index) + 'Input range naive of NN2: {}'.format(naive_input_NN2))
+    print('output range naive: [{}, {}]'.format(
+        activate(NN1.layers[-1].activation, naive_input_NN1[0]) - activate(NN2.layers[-1].activation, naive_input_NN2[1]),
+        activate(NN1.layers[-1].activation, naive_input[1]) - activate(NN2.layers[-1].activation, naive_input_NN2[0])
+    ))
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
-    model = gp.Model('Function_distance_update')
-    all_variables_NN1 = declare_variables(model, NN1, refinement_degree_all_NN1, NN1.num_of_hidden_layers - 1)
-    all_variables_NN2 = declare_variables(model, NN2, refinement_degree_all_NN2, NN2.num_of_hidden_layers - 1)
-    # add constraints for NN1
-    add_input_constraint(model, NN1, all_variables_NN1, network_input_box)
-    for k in range(NN1.num_of_hidden_layers - 1):
-        add_interlayers_constraint(model, NN1, all_variables_NN1, k)
-        add_innerlayer_constraint(model, NN1, all_variables_NN1, input_range_all_NN1, refinement_degree_all_NN1, k)
-    add_last_neuron_constraint(model, NN1, all_variables_NN1, input_range_all_NN1, NN1.num_of_hidden_layers - 1, neuron_index)
-    # add constraints for NN2
-    add_input_constraint(model, NN2, all_variables_NN2, network_input_box)
-    for k in range(NN2.num_of_hidden_layers - 1):
-        add_interlayers_constraint(model, NN2, all_variables_NN2, k)
-        add_innerlayer_constraint(model, NN2, all_variables_NN2, input_range_all_NN2, refinement_degree_all_NN2, k)
-    add_last_neuron_constraint(model, NN2, all_variables_NN2, input_range_all_NN2, NN2.num_of_hidden_layers - 1,
-                               neuron_index)
-    # obtain the function distance
-    [distance_min, distance_max] = compute_nn_distance(model, all_variables_NN1, all_variables_NN2)
+    heuristic_refinement_strategy(NN1, network_input_box_NN1, input_range_all_NN1, refinement_degree_all_NN1, neuron_index, 'RANDOM')
+    heuristic_refinement_strategy(NN2, network_input_box_NN2, input_range_all_NN2, refinement_degree_all_NN2,
+                                  neuron_index, 'RANDOM')
 
-    return [distance_min, distance_max]
+    distance_range = compute_nn_distance(NN1, network_input_box_NN1, input_range_all_NN1, refinement_degree_all_NN1, NN2,
+                        network_input_box_NN2, input_range_all_NN2, refinement_degree_all_NN2, output_index,
+                        4, 4)
+
+
+
+    return distance_range
 
 
 def output_range_analysis(NN, network_input_box, neuron_index):
@@ -168,7 +172,7 @@ def heuristic_refinement_strategy(NN, network_input_box, input_range_all, refine
         number = 20
         traceback = 4
         for i in range(number):
-            # randomly choose a neuron to update the range
+            # randomly choose a neuron
             layer_index = (NN.num_of_hidden_layers - 1) - math.ceil(np.random.rand() * traceback)
             if len(NN.layers[layer_index].input_dim) == 1:
                 neuron_index = round(np.random.rand() * (NN.layers[layer_index].input_dim[0] - 1))
@@ -177,16 +181,25 @@ def heuristic_refinement_strategy(NN, network_input_box, input_range_all, refine
                 neuron_index_1 = round(np.random.rand() * (NN.layers[layer_index].input_dim[1] - 1))
                 neuron_index_2 = round(np.random.rand() * (NN.layers[layer_index].input_dim[2] - 1))
                 neuron_index = [neuron_index_0, neuron_index_1, neuron_index_2]
-            print('Start to update neuron ' + str(i))
+            print('Start to process neuron ' + str(i))
             print('layer_index: ' + str(layer_index) + ', neuron_index: ' + str(neuron_index))
-            if type(neuron_index) == list:
-                naive_input = input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]]
+            # randomly decide whether update the range or increase an integer slack variable
+            if np.random.rand() >= 0.5:
+                print('Update neuron range.')
+                if type(neuron_index) == list:
+                    naive_input = input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]]
+                else:
+                    naive_input = input_range_all[layer_index][neuron_index]
+                print('input range naive: {}'.format(naive_input))
+                input_range_last_neuron = update_neuron_input_range(NN, network_input_box, input_range_all, refinement_degree_all, layer_index,
+                                          neuron_index, traceback)
+                print('input range update: {}'.format(input_range_last_neuron))
             else:
-                naive_input = input_range_all[layer_index][neuron_index]
-            print('input range naive: {}'.format(naive_input))
-            input_range_last_neuron = update_neuron_input_range(NN, network_input_box, input_range_all, refinement_degree_all, layer_index,
-                                      neuron_index, traceback)
-            print('input range update: {}'.format(input_range_last_neuron))
+                print('Increase slack integer variables.')
+                if type(neuron_index) == list:
+                    refinement_degree_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] += 1
+                else:
+                    refinement_degree_all[layer_index][neuron_index] += 1
             # update the range of the neural network output
             layer_index = NN.num_of_hidden_layers - 1
             neuron_index = output_index
@@ -206,7 +219,7 @@ def update_neuron_input_range(NN, network_input_box, input_range_all, refinement
     model = gp.Model('Input_range_update')
     traceback = min(traceback, layer_index + 1)
 
-    all_variables = declare_variables(model, NN, refinement_degree_all, layer_index)
+    all_variables = declare_variables(model, NN, refinement_degree_all, layer_index, traceback)
     # add_input_constraint(model, NN, all_variables, network_input_box)
     # for k in range(layer_index):
     #     add_interlayers_constraint(model, NN, all_variables, k)
@@ -236,15 +249,41 @@ def update_neuron_input_range(NN, network_input_box, input_range_all, refinement
 
     return [neuron_min, neuron_max]
 
-def compute_nn_distance(model, all_variables_NN1, all_variables_NN2):
+def compute_nn_distance(NN1, network_input_box_NN1, input_range_all_NN1, refinement_degree_all_NN1, NN2, network_input_box_NN2, input_range_all_NN2, refinement_degree_all_NN2, output_index, traceback_NN1 = 100, traceback_NN2 = 100):
+
+    # We can use different strategies to interatively update the refinement_degree_all and input_range_all
+    model = gp.Model('Function_distance_update')
+    all_variables_NN1 = declare_variables(model, NN1, refinement_degree_all_NN1, NN1.num_of_hidden_layers - 1, traceback_NN1)
+    all_variables_NN2 = declare_variables(model, NN2, refinement_degree_all_NN2, NN2.num_of_hidden_layers - 1, traceback_NN2)
+    # add constraints for NN1
+    layer_index_NN1 = NN1.num_of_hidden_layers - 1
+    add_last_neuron_constraint(model, NN1, all_variables_NN1, input_range_all_NN1, layer_index_NN1, output_index)
+    for k in range(layer_index_NN1 - 1, layer_index_NN1 - 1 - traceback_NN1, -1):
+        if k >= 0:
+            add_innerlayer_constraint(model, NN1, all_variables_NN1, input_range_all_NN1, refinement_degree_all_NN1, k)
+        if k >= layer_index_NN1 - 1 - traceback_NN1 + 2:
+            add_interlayers_constraint(model, NN1, all_variables_NN1, k)
+        if k == -1:
+            add_input_constraint(model, NN1, all_variables_NN1, network_input_box_NN1)
+    # add constraints for NN2
+    layer_index_NN2 = NN2.num_of_hidden_layers - 1
+    add_last_neuron_constraint(model, NN2, all_variables_NN2, input_range_all_NN2, layer_index_NN2, output_index)
+    for k in range(layer_index_NN2 - 1, layer_index_NN2 - 1 - traceback_NN2, -1):
+        if k >= 0:
+            add_innerlayer_constraint(model, NN2, all_variables_NN2, input_range_all_NN2, refinement_degree_all_NN2, k)
+        if k >= layer_index_NN2 - 1 - traceback_NN2 + 2:
+            add_interlayers_constraint(model, NN2, all_variables_NN2, k)
+        if k == -1:
+            add_input_constraint(model, NN2, all_variables_NN2, network_input_box_NN2)
+
     x_in_neuron_NN1 = all_variables_NN1[5]
     x_in_neuron_NN2 = all_variables_NN2[5]
 
     model.setObjective(x_in_neuron_NN1-x_in_neuron_NN2, GRB.MINIMIZE)
-    distance_min = optimize_model(model, 1)
+    distance_min = optimize_model(model, 0)
 
     model.setObjective(x_in_neuron_NN1 - x_in_neuron_NN2, GRB.MAXIMIZE)
-    distance_max = optimize_model(model, 1)
+    distance_max = optimize_model(model, 0)
 
     return [distance_min, distance_max]
 
