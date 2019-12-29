@@ -146,7 +146,7 @@ def output_range_analysis(NN, network_input_box, neuron_index):
 
     traceback = 4
 
-    input_range_last_neuron = heuristic_refinement_strategy(NN, network_input_box, input_range_all, refinement_degree_all, neuron_index, 'RANDOM')
+    input_range_last_neuron = heuristic_refinement_strategy(NN, network_input_box, input_range_all, refinement_degree_all, neuron_index, 'VOLUME_FIRST')
 
     #input_range_last_neuron = update_neuron_input_range(NN, network_input_box, input_range_all, refinement_degree_all, layer_index, neuron_index, traceback)
 
@@ -168,7 +168,7 @@ def output_range_analysis(NN, network_input_box, neuron_index):
 
 def heuristic_refinement_strategy(NN, network_input_box, input_range_all, refinement_degree_all, output_index, strategy_name):
     if strategy_name == 'RANDOM':
-        print('-------Random refinement begins.----------')
+        print('-------RANDOM refinement begins.----------')
         number = 20
         traceback = 4
         for i in range(number):
@@ -206,6 +206,55 @@ def heuristic_refinement_strategy(NN, network_input_box, input_range_all, refine
             input_range_network_output = update_neuron_input_range(NN, network_input_box, input_range_all, refinement_degree_all, layer_index,
                                       neuron_index, traceback)
             print('After ' + str(i) + '-th refinement, output range of the neural network becomes: ' + str(input_range_network_output))
+        return input_range_network_output
+    if strategy_name == 'VOLUME_FIRST':
+        number = 20
+        traceback = 4
+        # construct a dictionary to store the volume of each neuron's input
+        volume_all = {}
+        for layer_index in range(NN.num_of_hidden_layers):
+            if len(NN.layers[layer_index].input_dim) == 3:
+                for i in range(NN.layers[layer_index].input_dim[0]):
+                    for j in range(NN.layers[layer_index].input_dim[1]):
+                        for s in range(NN.layers[layer_index].input_dim[2]):
+                            #print(str([layer_index,i,j,s]))
+                            volume_all[layer_index,i,j,s] = input_range_all[layer_index][i][j][s][1] - input_range_all[layer_index][i][j][s][0]
+            else:
+                for i in range(NN.layers[layer_index].input_dim[0]):
+                    #print(str([layer_index, i]))
+                    volume_all[layer_index, i] = input_range_all[layer_index][i][1] - input_range_all[layer_index][i][0]
+        sorted_volume_all = sorted(volume_all.items(), key = lambda kv:(kv[1], kv[0]), reverse=True)
+        for n in range(number):
+            print('-------VOLUME-FIRST refinement begins.----------')
+            neuron_layer_index = list(sorted_volume_all[n])[0]
+            layer_index = neuron_layer_index[0]
+            neuron_index = list(neuron_layer_index[1:])
+            if len(neuron_index) == 1:
+                neuron_index = neuron_index[0]
+            print('Start to process neuron ' + str(n))
+            print('layer_index: ' + str(layer_index) + ', neuron_index: ' + str(neuron_index))
+            print('Update neuron range and increase a slack integer variable.')
+            if type(neuron_index) == list:
+                naive_input = input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]]
+            else:
+                naive_input = input_range_all[layer_index][neuron_index]
+            print('input range naive: {}'.format(naive_input))
+            input_range_last_neuron = update_neuron_input_range(NN, network_input_box, input_range_all,
+                                                                refinement_degree_all, layer_index,
+                                                                neuron_index, traceback)
+            print('input range update: {}'.format(input_range_last_neuron))
+            # add integer variable
+            if type(neuron_index) == list:
+                refinement_degree_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] += 1
+            else:
+                refinement_degree_all[layer_index][neuron_index] += 1
+            layer_index = NN.num_of_hidden_layers - 1
+            neuron_index = output_index
+            input_range_network_output = update_neuron_input_range(NN, network_input_box, input_range_all,
+                                                                   refinement_degree_all, layer_index,
+                                                                   neuron_index, traceback)
+            print('After ' + str(i) + '-th refinement, output range of the neural network becomes: ' + str(
+                input_range_network_output))
         return input_range_network_output
 
 # define large positive number M to enable Big M method
@@ -1545,6 +1594,7 @@ def lipschitz_layer(weight, bias, input_range_layer, activation):
 
 
 ##############################################################
+
 def degree_comb_lists(d, m):
     # generate the degree combination list
     degree_lists = []
