@@ -255,6 +255,11 @@ def heuristic_refinement_strategy(NN, network_input_box, input_range_all, refine
                                                                    neuron_index, traceback)
             print('After ' + str(i) + '-th refinement, output range of the neural network becomes: ' + str(
                 input_range_network_output))
+            if type(neuron_index) == list:
+                volume_all[layer_index,neuron_index[0],neuron_index[1],neuron_index[2]] = input_range_last_neuron[1] - input_range_last_neuron[0]
+            else:
+                volume_all[layer_index, neuron_index] = input_range_last_neuron[1] - input_range_last_neuron[0]
+            sorted_volume_all = sorted(volume_all.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)
         return input_range_network_output
 
 # define large positive number M to enable Big M method
