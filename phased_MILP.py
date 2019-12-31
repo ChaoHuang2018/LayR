@@ -208,7 +208,7 @@ def heuristic_refinement_strategy(NN, network_input_box, input_range_all, refine
             print('After ' + str(i) + '-th refinement, output range of the neural network becomes: ' + str(input_range_network_output))
         return input_range_network_output
     if strategy_name == 'VOLUME_FIRST':
-        number = 20
+        number = 40
         traceback = 4
         # construct a dictionary to store the volume of each neuron's input
         volume_all = {}
