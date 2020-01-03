@@ -296,6 +296,8 @@ def update_neuron_input_range(NN, network_input_box, input_range_all, refinement
     return [neuron_min, neuron_max]
 
 def compute_global_robustness(NN, network_input_box, input_range_all, perturbation, refinement_degree_all, output_index, traceback = 100):
+    traceback = NN.num_of_hidden_layers
+
     model = gp.Model('global_robustness_update')
     # declare variables for two inputs xx1 and xx2. For each input variables, we need construct the LP/MILP relaxation
     # seperately with the same setting
@@ -695,7 +697,8 @@ def add_interlayers_constraint(model, NN, all_variables, layer_index):
                         model.addConstr(x_out[layer_index - 1][s][i, j] == x_in[layer_index][s][i, j])
         else:
             # add constraint for linear transformation between layers
-            print(type(x_out[layer_index - 1]))
+            # print(layer_index - 1)
+            # print(type(x_out[layer_index - 1]))
             for i in range(NN.layers[layer_index].output_dim[0]):
                 weight = np.reshape(NN.layers[layer_index].weight[:, i], (-1, 1))
                 weight_dic = {}
