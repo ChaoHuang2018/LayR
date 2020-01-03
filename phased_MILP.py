@@ -65,10 +65,9 @@ def global_robustness_analysis(NN, network_input_box, perturbation, output_index
     ))
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
-    heuristic_refinement_strategy(NN, network_input_box, input_range_all,
-                                  refinement_degree_all, output_index, 'VOLUME_FIRST')
+    # heuristic_refinement_strategy(NN, network_input_box, input_range_all, refinement_degree_all, output_index, 'VOLUME_FIRST')
 
-    distance_range = compute_global_robustness(NN, network_input_box, perturbation, refinement_degree_all, output_index, traceback=4)
+    distance_range = compute_global_robustness(NN, network_input_box, input_range_all, perturbation, refinement_degree_all, output_index, traceback=4)
 
     return distance_range
 
@@ -296,7 +295,7 @@ def update_neuron_input_range(NN, network_input_box, input_range_all, refinement
 
     return [neuron_min, neuron_max]
 
-def compute_global_robustness(NN, network_input_box, perturbation, refinement_degree_all, output_index, traceback = 100):
+def compute_global_robustness(NN, network_input_box, input_range_all, perturbation, refinement_degree_all, output_index, traceback = 100):
     model = gp.Model('global_robustness_update')
     # declare variables for two inputs xx1 and xx2. For each input variables, we need construct the LP/MILP relaxation
     # seperately with the same setting
@@ -624,8 +623,8 @@ def declare_variables(model, NN, v_name, refinement_degree_all, layer_index, tra
 
 # add perturbed input constraints
 def add_perturbed_input_constraints(model, NN, all_variables_NN1, all_variables_NN2, perturbation):
-    network_in_NN1 = all_variables_NN1[1]
-    network_in_NN2 = all_variables_NN2[1]
+    network_in_NN1 = all_variables_NN1[0]
+    network_in_NN2 = all_variables_NN2[0]
     if len(NN.layers[0].input_dim) == 3:
         for s in range(NN.layers[0].input_dim[2]):
             for i in range(NN.layers[0].input_dim[0]):
