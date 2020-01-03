@@ -57,7 +57,7 @@ def global_robustness_analysis(NN, network_input_box, perturbation, output_index
     refinement_degree_all = initialize_refinement_degree(NN)
 
     naive_input = input_range_all[-1][output_index]
-    print('Index: ' + str(neuron_index) + ' Input range naive of NN: {}'.format(naive_input))
+    print('Index: ' + str(output_index) + ' Input range naive of NN: {}'.format(naive_input))
     print('Global robustness: the difference between two inputs is [{}, {}]'.format(
         activate(NN.layers[-1].activation, naive_input[0]) - activate(NN.layers[-1].activation,
                                                                            naive_input[1]),
