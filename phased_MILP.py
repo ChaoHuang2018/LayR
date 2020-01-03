@@ -54,7 +54,7 @@ def global_robustness_analysis(NN, network_input_box, perturbation, output_index
     print('-------MILP based range analysis begins.----------')
 
     # Initialize the refinement degree
-    refinement_degree_all_NN = initialize_refinement_degree(NN)
+    refinement_degree_all = initialize_refinement_degree(NN)
 
     naive_input_NN = input_range_all_NN[-1][neuron_index]
     print(str(neuron_index) + 'Input range naive of NN: {}'.format(naive_input_NN))
