@@ -25,6 +25,7 @@ from phased_MILP import global_robustness_analysis, function_distance_analysis, 
 
 # test new approach for estimating sigmoid network's output range
 eps = 0.02
+perturbation = 0.02
 NN = nn_controller_details('model_sigmoid_2', keras=True)
 NN1 = nn_controller_details('model_sigmoid_2', keras=True)
 # the data, split between train and test sets
@@ -44,9 +45,8 @@ for i in range(input_dim[0]):
         input_range_row.append(input_range_channel)
     input_range.append(input_range_row)
 print(np.array(input_range).shape)
-# output_l, output_u = output_range_MILP_CNN(NN, np.array(input_range), 1)
-output_l, output_u = output_range_analysis(NN, np.array(input_range), 9)
-# output_l, output_u = function_distance_analysis(NN, NN1, np.array(input_range), 1)
+# output_l, output_u = output_range_analysis(NN, np.array(input_range), 9)
+output_l, output_u = global_robustness_analysis(NN, np.array(input_range), perturbation, 0)
 print("lower bound: {}; upper bound: {}".format(output_l, output_u))
 print("actual output of NN: {}".format(NN.keras_model(data.reshape(1, data.shape[0], data.shape[1], 1))))
 print("actual output: {}".format(NN.keras_model_pre_softmax(data.reshape(1, data.shape[0], data.shape[1], 1))))

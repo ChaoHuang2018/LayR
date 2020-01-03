@@ -56,17 +56,17 @@ def global_robustness_analysis(NN, network_input_box, perturbation, output_index
     # Initialize the refinement degree
     refinement_degree_all = initialize_refinement_degree(NN)
 
-    naive_input_NN = input_range_all_NN[-1][neuron_index]
-    print(str(neuron_index) + 'Input range naive of NN: {}'.format(naive_input_NN))
+    naive_input = input_range_all[-1][output_index]
+    print(str(output_index) + 'Input range naive of NN: {}'.format(naive_input))
     print('Global robustness: the difference between two inputs is [{}, {}]'.format(
-        activate(NN.layers[-1].activation, naive_input_NN[0]) - activate(NN.layers[-1].activation,
-                                                                           naive_input_NN[1]),
-        activate(NN.layers[-1].activation, naive_input_NN[1]) - activate(NN.layers[-1].activation, naive_input_NN[0])
+        activate(NN.layers[-1].activation, naive_input[0]) - activate(NN.layers[-1].activation,
+                                                                           naive_input[1]),
+        activate(NN.layers[-1].activation, naive_input[1]) - activate(NN.layers[-1].activation, naive_input[0])
     ))
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
     heuristic_refinement_strategy(NN, network_input_box, input_range_all,
-                                  refinement_degree_all, neuron_index, 'VOLUME_FIRST')
+                                  refinement_degree_all, output_index, 'VOLUME_FIRST')
 
     distance_range = compute_global_robustness(NN, network_input_box, perturbation, refinement_degree_all, output_index, traceback=4)
 
