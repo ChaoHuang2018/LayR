@@ -92,7 +92,7 @@ def function_distance_analysis(NN1, NN2, network_input_box_NN1, network_input_bo
     #     naive_input = input_range_all[layer_index][neuron_index]
     naive_input_NN1 = input_range_all_NN1[-1][neuron_index]
     naive_input_NN2 = input_range_all_NN2[-1][neuron_index]
-    print(str(neuron_index) + 'Input range naive of NN1: {}'.format(naive_input_NN1))
+    print('Index: ' + str(neuron_index) + ' Input range naive of NN1: {}'.format(naive_input_NN1))
     print(str(neuron_index) + 'Input range naive of NN2: {}'.format(naive_input_NN2))
     print('output range naive: [{}, {}]'.format(
         activate(NN1.layers[-1].activation, naive_input_NN1[0]) - activate(NN2.layers[-1].activation, naive_input_NN2[1]),
