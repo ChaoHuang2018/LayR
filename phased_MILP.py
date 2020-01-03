@@ -406,7 +406,6 @@ def declare_variables(model, NN, v_name, refinement_degree_all, layer_index, tra
     traceback = min(traceback, layer_index + 1)
     if layer_index - traceback == -1:
         if NN.type == 'Convolutional' or NN.type == 'Flatten':
-            print(str(0000000))
             network_in = []
             for s in range(NN.layers[0].input_dim[2]):
                 network_in.append(
@@ -642,7 +641,7 @@ def add_perturbed_input_constraints(model, NN, all_variables_NN1, all_variables_
 def add_input_constraint(model, NN, all_variables, network_input_box):
     network_in = all_variables[0]
     if network_in:
-        if NN.type == 'Convolutional':
+        if NN.type == 'Convolutional' or NN.type == 'Flatten':
             for s in range(NN.layers[0].input_dim[2]):
                 for i in range(NN.layers[0].input_dim[0]):
                     for j in range(NN.layers[0].input_dim[1]):
