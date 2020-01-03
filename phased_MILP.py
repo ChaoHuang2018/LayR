@@ -405,7 +405,8 @@ def declare_variables(model, NN, v_name, refinement_degree_all, layer_index, tra
     # variables in the input layer
     traceback = min(traceback, layer_index + 1)
     if layer_index - traceback == -1:
-        if NN.type == 'Convolutional':
+        if NN.type == 'Convolutional' or NN.type == 'Flatten':
+            print(str(0000000))
             network_in = []
             for s in range(NN.layers[0].input_dim[2]):
                 network_in.append(
