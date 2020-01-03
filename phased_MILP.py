@@ -565,7 +565,7 @@ def declare_variables(model, NN, v_name, refinement_degree_all, layer_index, tra
                 )
             x_in.append(x_in_layer)
             x_out_layer = model.addVars(
-                NN.layers[k].output_dim[0].item(),
+                NN.layers[k].output_dim[0],
                 lb=-GRB.INFINITY,
                 ub=GRB.INFINITY,
                 vtype=GRB.CONTINUOUS,
