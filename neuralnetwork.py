@@ -86,6 +86,8 @@ class NN(object):
             for class_name in self.config['config']['layers']:
                 if class_name['class_name'][:4] == 'Conv':
                     self.type = 'Convolutional'
+                elif class_name['class_name'] == 'Flatten':
+                    self.type = 'Flatten'
             if not self.type:
                 self.type = 'Fully_connected'
 
