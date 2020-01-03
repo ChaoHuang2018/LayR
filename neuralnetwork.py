@@ -10,12 +10,14 @@ class NN(object):
     """
     def __init__(
         self,
+        name=None,
         res=None,
         activation=None,
         keras=False,
         model=None,
         model_json=None
     ):
+        self.name = name
         if not keras:
             # activation type
             activations = activation.split('_')

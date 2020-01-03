@@ -49,36 +49,28 @@ Keep the original properties:
 
 ##############################################################
 def global_robustness_analysis(NN, network_input_box, perturbation, output_index):
-    input_range_all_NN1 = construct_naive_input_range(NN, network_input_box1)
-    input_range_all_NN2 = construct_naive_input_range(NN, network_input_box2)
+    input_range_all = construct_naive_input_range(NN, network_input_box)
 
     print('-------MILP based range analysis begins.----------')
 
     # Initialize the refinement degree
-    refinement_degree_all_NN1 = initialize_refinement_degree(NN)
-    refinement_degree_all_NN2 = initialize_refinement_degree(NN)
+    refinement_degree_all_NN = initialize_refinement_degree(NN)
+
+    naive_input_NN = input_range_all_NN[-1][neuron_index]
+    print(str(neuron_index) + 'Input range naive of NN: {}'.format(naive_input_NN))
+    print('Global robustness: the difference between two inputs is [{}, {}]'.format(
+        activate(NN.layers[-1].activation, naive_input_NN[0]) - activate(NN.layers[-1].activation,
+                                                                           naive_input_NN[1]),
+        activate(NN.layers[-1].activation, naive_input_NN[1]) - activate(NN.layers[-1].activation, naive_input_NN[0])
+    ))
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
-    model = gp.Model('global_robustness_analysis')
-    all_variables_NN1 = declare_variables(model, NN, refinement_degree_all_NN1, layer_index)
-    all_variables_NN2 = declare_variables(model, NN, refinement_degree_all_NN2, layer_index)
-    # add constraints for NN1
-    add_input_constraint(model, NN, all_variables_NN1, network_input_box)
-    for k in range(NN.num_of_hidden_layers):
-        add_interlayers_constraint(model, NN, all_variables_NN1, k)
-        add_innerlayer_constraint(model, NN, all_variables_NN1, input_range_all_NN1, refinement_degree_all_NN1, k)
-    add_last_neuron_constraint(model, NN, all_variables_NN1, input_range_all_NN1, NN1.num_of_hidden_layers - 1, output_index)
-    # add constraints for NN2
-    add_input_constraint(model, NN, all_variables_NN2, network_input_box)
-    for k in range(NN.num_of_hidden_layers):
-        add_interlayers_constraint(model, NN, all_variables_NN2, k)
-        add_innerlayer_constraint(model, NN, all_variables_NN2, input_range_all_NN2, refinement_degree_all_NN2, k)
-    add_last_neuron_constraint(model, NN, all_variables_NN2, input_range_all_NN2, NN2.num_of_hidden_layers - 1,
-                               output_index)
-    # obtain the function distance
-    [distance_min, distance_max] = compute_nn_distance(model, all_variables_NN1, all_variables_NN2)
+    heuristic_refinement_strategy(NN, network_input_box, input_range_all,
+                                  refinement_degree_all, neuron_index, 'VOLUME_FIRST')
 
-    return [distance_min, distance_max]
+    distance_range = compute_global_robustness(NN, network_input_box, perturbation, refinement_degree_all, output_index, traceback=4)
+
+    return distance_range
 
 ##############################################################
 def function_distance_analysis(NN1, NN2, network_input_box_NN1, network_input_box_NN2, neuron_index):
@@ -146,7 +138,8 @@ def output_range_analysis(NN, network_input_box, neuron_index):
 
     traceback = 4
 
-    input_range_last_neuron = heuristic_refinement_strategy(NN, network_input_box, input_range_all, refinement_degree_all, neuron_index, 'VOLUME_FIRST')
+    input_range_last_neuron = heuristic_refinement_strategy(NN, network_input_box, input_range_all,
+                                                            refinement_degree_all, neuron_index, 'VOLUME_FIRST')
 
     #input_range_last_neuron = update_neuron_input_range(NN, network_input_box, input_range_all, refinement_degree_all, layer_index, neuron_index, traceback)
 
@@ -273,7 +266,7 @@ def update_neuron_input_range(NN, network_input_box, input_range_all, refinement
     model = gp.Model('Input_range_update')
     traceback = min(traceback, layer_index + 1)
 
-    all_variables = declare_variables(model, NN, refinement_degree_all, layer_index, traceback)
+    all_variables = declare_variables(model, NN, 'NN', refinement_degree_all, layer_index, traceback)
     # add_input_constraint(model, NN, all_variables, network_input_box)
     # for k in range(layer_index):
     #     add_interlayers_constraint(model, NN, all_variables, k)
@@ -303,12 +296,52 @@ def update_neuron_input_range(NN, network_input_box, input_range_all, refinement
 
     return [neuron_min, neuron_max]
 
+def compute_global_robustness(NN, network_input_box, perturbation, refinement_degree_all, output_index, traceback = 100):
+    model = gp.Model('global_robustness_update')
+    # declare variables for two inputs xx1 and xx2. For each input variables, we need construct the LP/MILP relaxation
+    # seperately with the same setting
+    all_variables_NN1 = declare_variables(model, NN, 'xx1', refinement_degree_all, NN.num_of_hidden_layers - 1, traceback)
+    all_variables_NN2 = declare_variables(model, NN, 'xx2', refinement_degree_all, NN.num_of_hidden_layers - 1, traceback)
+    # add perturbation constraint
+    add_perturbed_input_constraints(model, NN, all_variables_NN1, all_variables_NN2, perturbation)
+    # add constraints for xx1 (NN1 constraints)
+    layer_index = NN.num_of_hidden_layers - 1
+    add_last_neuron_constraint(model, NN, all_variables_NN1, input_range_all, layer_index, output_index)
+    for k in range(layer_index - 1, layer_index - 1 - traceback, -1):
+        if k >= 0:
+            add_innerlayer_constraint(model, NN, all_variables_NN1, input_range_all, refinement_degree_all, k)
+        if k >= layer_index - 1 - traceback + 2:
+            add_interlayers_constraint(model, NN, all_variables_NN1, k)
+        if k == -1:
+            add_input_constraint(model, NN, all_variables_NN1, network_input_box)
+    # add constraints for xx2 (NN2 constraints)
+    add_last_neuron_constraint(model, NN, all_variables_NN2, input_range_all, layer_index, output_index)
+    for k in range(layer_index - 1, layer_index - 1 - traceback, -1):
+        if k >= 0:
+            add_innerlayer_constraint(model, NN, all_variables_NN2, input_range_all, refinement_degree_all, k)
+        if k >= layer_index - 1 - traceback + 2:
+            add_interlayers_constraint(model, NN, all_variables_NN2, k)
+        if k == -1:
+            add_input_constraint(model, NN, all_variables_NN2, network_input_box)
+
+    # define the objective
+    x_in_neuron_NN1 = all_variables_NN1[5]
+    x_in_neuron_NN2 = all_variables_NN2[5]
+
+    model.setObjective(x_in_neuron_NN1 - x_in_neuron_NN2, GRB.MINIMIZE)
+    distance_min = optimize_model(model, 0)
+
+    model.setObjective(x_in_neuron_NN1 - x_in_neuron_NN2, GRB.MAXIMIZE)
+    distance_max = optimize_model(model, 0)
+
+    return [distance_min, distance_max]
+
 def compute_nn_distance(NN1, network_input_box_NN1, input_range_all_NN1, refinement_degree_all_NN1, NN2, network_input_box_NN2, input_range_all_NN2, refinement_degree_all_NN2, output_index, traceback_NN1 = 100, traceback_NN2 = 100):
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
     model = gp.Model('Function_distance_update')
-    all_variables_NN1 = declare_variables(model, NN1, refinement_degree_all_NN1, NN1.num_of_hidden_layers - 1, traceback_NN1)
-    all_variables_NN2 = declare_variables(model, NN2, refinement_degree_all_NN2, NN2.num_of_hidden_layers - 1, traceback_NN2)
+    all_variables_NN1 = declare_variables(model, NN1, 'NN1', refinement_degree_all_NN1, NN1.num_of_hidden_layers - 1, traceback_NN1)
+    all_variables_NN2 = declare_variables(model, NN2, 'NN2', refinement_degree_all_NN2, NN2.num_of_hidden_layers - 1, traceback_NN2)
     # add constraints for NN1
     layer_index_NN1 = NN1.num_of_hidden_layers - 1
     add_last_neuron_constraint(model, NN1, all_variables_NN1, input_range_all_NN1, layer_index_NN1, output_index)
@@ -368,7 +401,7 @@ def initialize_refinement_degree(NN):
             refinement_degree_all.append(refinement_degree_layer)
     return refinement_degree_all
 
-def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=100):
+def declare_variables(model, NN, v_name, refinement_degree_all, layer_index, traceback=100):
     # variables in the input layer
     traceback = min(traceback, layer_index + 1)
     if layer_index - traceback == -1:
@@ -382,7 +415,7 @@ def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=1
                         lb=-GRB.INFINITY,
                         ub=GRB.INFINITY,
                         vtype=GRB.CONTINUOUS,
-                        name='inputs'
+                        name=v_name+'_inputs_'+str(s)
                     )
                 )
         else:
@@ -390,7 +423,8 @@ def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=1
                 NN.layers[0].input_dim[0],
                 lb=-GRB.INFINITY,
                 ub=GRB.INFINITY,
-                vtype=GRB.CONTINUOUS
+                vtype=GRB.CONTINUOUS,
+                name=v_name+'_inputs'
             )
     else:
         network_in = []
@@ -416,7 +450,7 @@ def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=1
                         lb=-GRB.INFINITY,
                         ub=GRB.INFINITY,
                         vtype=GRB.CONTINUOUS,
-                        name='in_layer_' + str(k) + '_channel_' + str(s)
+                        name=v_name+'_in_layer_' + str(k) + '_channel_' + str(s)
                     )
                 )
             x_in.append(x_in_layer)
@@ -429,7 +463,7 @@ def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=1
                         lb=-GRB.INFINITY,
                         ub=GRB.INFINITY,
                         vtype=GRB.CONTINUOUS,
-                        name='out_layer_' + str(k) + '_channel_' + str(s)
+                        name=v_name+'_out_layer_' + str(k) + '_channel_' + str(s)
                     )
                 )
             x_out.append(x_out_layer)
@@ -446,7 +480,7 @@ def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=1
                         lb=-GRB.INFINITY,
                         ub=GRB.INFINITY,
                         vtype=GRB.CONTINUOUS,
-                        name='in_layer_' + str(k) + '_channel_' + str(s)
+                        name=v_name+'_in_layer_' + str(k) + '_channel_' + str(s)
                     )
                 )
             x_in.append(x_in_layer)
@@ -459,7 +493,7 @@ def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=1
                         lb=-GRB.INFINITY,
                         ub=GRB.INFINITY,
                         vtype=GRB.CONTINUOUS,
-                        name='out_layer_' + str(k) + '_channel_' + str(s)
+                        name=v_name+'_out_layer_' + str(k) + '_channel_' + str(s)
                     )
                 )
             x_out.append(x_out_layer)
@@ -496,7 +530,7 @@ def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=1
                         lb=-GRB.INFINITY,
                         ub=GRB.INFINITY,
                         vtype=GRB.CONTINUOUS,
-                        name='in_layer_' + str(k) + '_channel_' + str(s)
+                        name=v_name+'_in_layer_' + str(k) + '_channel_' + str(s)
                     )
                 )
             x_in.append(x_in_layer)
@@ -509,7 +543,7 @@ def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=1
                         lb=-GRB.INFINITY,
                         ub=GRB.INFINITY,
                         vtype=GRB.CONTINUOUS,
-                        name='out_layer_' + str(k) + '_channel_' + str(s)
+                        name=v_name+'_out_layer_' + str(k) + '_channel_' + str(s)
                     )
                 )
             x_out.append(x_out_layer)
@@ -527,7 +561,7 @@ def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=1
                         lb=-GRB.INFINITY,
                         ub=GRB.INFINITY,
                         vtype=GRB.CONTINUOUS,
-                        name='in_layer_' + str(k) + '_channel_' + str(s))
+                        name=v_name+'_in_layer_' + str(k) + '_channel_' + str(s))
                 )
             x_in.append(x_in_layer)
             x_out_layer = model.addVars(
@@ -535,7 +569,7 @@ def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=1
                 lb=-GRB.INFINITY,
                 ub=GRB.INFINITY,
                 vtype=GRB.CONTINUOUS,
-                name='out_layer_' + str(k))
+                name=v_name+'_out_layer_' + str(k))
             x_out.append(x_out_layer)
 
             z.append([])
@@ -549,7 +583,7 @@ def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=1
                 lb=-GRB.INFINITY,
                 ub=GRB.INFINITY,
                 vtype=GRB.CONTINUOUS,
-                name='in_layer_' + str(k)
+                name=v_name+'_in_layer_' + str(k)
             )
             x_in.append(x_in_layer)
             x_out_layer = model.addVars(
@@ -557,7 +591,7 @@ def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=1
                 lb=-GRB.INFINITY,
                 ub=GRB.INFINITY,
                 vtype=GRB.CONTINUOUS,
-                name='out_layer_' + str(k)
+                name=v_name+'_out_layer_' + str(k)
             )
             x_out.append(x_out_layer)
             # define slack binary variables
@@ -580,7 +614,7 @@ def declare_variables(model, NN, refinement_degree_all, layer_index, traceback=1
         lb=-GRB.INFINITY,
         ub=GRB.INFINITY,
         vtype=GRB.CONTINUOUS,
-        name='output_neuron'
+        name=v_name+'_output_neuron'
     )
 
     all_variables = {0: network_in, 1: x_in, 2: x_out, 3: z, 5: x_in_neuron}

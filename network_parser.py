@@ -18,7 +18,7 @@ def nn_controller(filename, activation=None, keras=False):
             res[i] = eval(text)
 
         # Set the controller
-        NN_controller = NN(res, activation)
+        NN_controller = NN(filename, res, activation)
         controller = NN_controller.controller
     else:
         # load json and create model
@@ -31,6 +31,7 @@ def nn_controller(filename, activation=None, keras=False):
         loaded_model.load_weights('model/' + filename + '.h5')
         print("Loaded kera model from disk.")
         NN_controller = NN(
+            name=filename,
             keras=True,
             model=loaded_model,
             model_json=json_filename
