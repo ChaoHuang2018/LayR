@@ -99,7 +99,14 @@ class NN(object):
             layer_detail = layer_config['config']
             if layer_config['class_name'] == 'Flatten':
                 layer_tmp._type = 'Flatten'
-                layer_tmp._input_dim = layer.input_shape[1:]
+                flatten_input_shape = layer.input_shape[1:]
+                if len(flatten_input_shape) == 2:
+                    flatten_input_shape = list(flatten_input_shape)
+                    flatten_input_shape.append(1)
+                    flatten_input_shape = tuple(flatten_input_shape)
+                else:
+                    flatten_input_shape = layer.input_shape[1:]
+                layer_tmp._input_dim = flatten_input_shape
                 layer_tmp._output_dim = layer.output_shape[1:]
                 self.layers.append(layer_tmp)
             elif layer_config['class_name'] == 'Conv2D':
