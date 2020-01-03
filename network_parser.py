@@ -1,6 +1,6 @@
 import numpy as np
 from neuralnetwork import NN
-from keras.models import model_from_json
+from tensorflow.keras.models import model_from_json
 
 
 def nn_controller(filename, activation=None, keras=False):

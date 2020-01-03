@@ -83,7 +83,7 @@ class NN(object):
 
     def set_type(self):
         if self.config:
-            for class_name in self.config['config']:
+            for class_name in self.config['config']['layers']:
                 if class_name['class_name'][:4] == 'Conv':
                     self.type = 'Convolutional'
             if not self.type:
@@ -91,7 +91,7 @@ class NN(object):
 
     def set_layer(self):
         self.layers = []
-        layers_config = self.config['config']
+        layers_config = self.config['config']['layers']
         for idx, layer in enumerate(self.model.layers):
             layer_tmp = Layer()
             layer_activation = None
