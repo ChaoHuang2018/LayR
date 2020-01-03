@@ -24,10 +24,10 @@ from phased_MILP import global_robustness_analysis, function_distance_analysis, 
 
 
 # test new approach for estimating sigmoid network's output range
-eps = 0.02
-perturbation = 0.02
-NN = nn_controller_details('model_sigmoid_2', keras=True)
-NN1 = nn_controller_details('model_sigmoid_2', keras=True)
+eps = 0.1
+perturbation = 0.1
+NN = nn_controller_details('model_CNNA', keras=True)
+NN1 = nn_controller_details('model_CNNA', keras=True)
 # the data, split between train and test sets
 fashion_mnist = keras.datasets.fashion_mnist
 (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
