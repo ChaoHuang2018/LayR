@@ -65,7 +65,7 @@ def global_robustness_analysis(NN, network_input_box, perturbation, output_index
     ))
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
-    heuristic_refinement_strategy(NN, network_input_box, input_range_all, refinement_degree_all, output_index, 'RANDOM')
+    heuristic_refinement_strategy(NN, network_input_box, input_range_all, refinement_degree_all, output_index, 'VOLUME_FIRST')
 
     distance_range = compute_global_robustness(NN, network_input_box, input_range_all, perturbation, refinement_degree_all, output_index, traceback=100)
 
