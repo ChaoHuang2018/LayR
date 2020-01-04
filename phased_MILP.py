@@ -245,7 +245,7 @@ def heuristic_refinement_strategy(NN, network_input_box, input_range_all, refine
             input_range_network_output = update_neuron_input_range(NN, network_input_box, input_range_all,
                                                                    refinement_degree_all, layer_index,
                                                                    neuron_index, traceback)
-            print('After ' + str(i) + '-th refinement, output range of the neural network becomes: ' + str(
+            print('After ' + str(n) + '-th refinement, output range of the neural network becomes: ' + str(
                 input_range_network_output))
             if type(neuron_index) == list:
                 volume_all[layer_index,neuron_index[0],neuron_index[1],neuron_index[2]] = input_range_last_neuron[1] - input_range_last_neuron[0]
