@@ -305,12 +305,14 @@ def compute_global_robustness(NN, network_input_box, input_range_all, perturbati
     model = gp.Model('global_robustness_update')
     # declare variables for two inputs xx1 and xx2. For each input variables, we need construct the LP/MILP relaxation
     # seperately with the same setting
-    all_variables_NN1 = declare_variables(model, NN, 'xx1', refinement_degree_all, NN.num_of_hidden_layers - 1, traceback)
-    all_variables_NN2 = declare_variables(model, NN, 'xx2', refinement_degree_all, NN.num_of_hidden_layers - 1, traceback)
+    all_variables_NN1 = declare_variables(model, NN, 'xx1', refinement_degree_all, NN.num_of_hidden_layers - 1, output_index, traceback)
+    all_variables_NN2 = declare_variables(model, NN, 'xx2', refinement_degree_all, NN.num_of_hidden_layers - 1, output_index, traceback)
     # add perturbation constraint
     add_perturbed_input_constraints(model, NN, all_variables_NN1, all_variables_NN2, perturbation)
     # add constraints for xx1 (NN1 constraints)
     layer_index = NN.num_of_hidden_layers - 1
+    add_last_neuron_inout_constraint(model, NN, all_variables_NN1, input_range_all, refinement_degree_all, layer_index,
+                                     output_index)
     add_last_neuron_constraint(model, NN, all_variables_NN1, input_range_all, layer_index, output_index)
     for k in range(layer_index - 1, layer_index - 1 - traceback, -1):
         if k >= 0:
@@ -320,6 +322,8 @@ def compute_global_robustness(NN, network_input_box, input_range_all, perturbati
         if k == -1:
             add_input_constraint(model, NN, all_variables_NN1, network_input_box)
     # add constraints for xx2 (NN2 constraints)
+    add_last_neuron_inout_constraint(model, NN, all_variables_NN2, input_range_all, refinement_degree_all, layer_index,
+                                     output_index)
     add_last_neuron_constraint(model, NN, all_variables_NN2, input_range_all, layer_index, output_index)
     for k in range(layer_index - 1, layer_index - 1 - traceback, -1):
         if k >= 0:
@@ -330,13 +334,13 @@ def compute_global_robustness(NN, network_input_box, input_range_all, perturbati
             add_input_constraint(model, NN, all_variables_NN2, network_input_box)
 
     # define the objective
-    x_in_neuron_NN1 = all_variables_NN1[5]
-    x_in_neuron_NN2 = all_variables_NN2[5]
+    x_out_neuron_NN1 = all_variables_NN1[6]
+    x_out_neuron_NN2 = all_variables_NN2[6]
 
-    model.setObjective(x_in_neuron_NN1 - x_in_neuron_NN2, GRB.MINIMIZE)
+    model.setObjective(x_out_neuron_NN1 - x_out_neuron_NN2, GRB.MINIMIZE)
     distance_min = optimize_model(model, 0)
 
-    model.setObjective(x_in_neuron_NN1 - x_in_neuron_NN2, GRB.MAXIMIZE)
+    model.setObjective(x_out_neuron_NN1 - x_out_neuron_NN2, GRB.MAXIMIZE)
     distance_max = optimize_model(model, 0)
 
     return [distance_min, distance_max]
@@ -406,7 +410,7 @@ def initialize_refinement_degree(NN):
             refinement_degree_all.append(refinement_degree_layer)
     return refinement_degree_all
 
-def declare_variables(model, NN, v_name, refinement_degree_all, layer_index, traceback=100):
+def declare_variables(model, NN, v_name, refinement_degree_all, layer_index, neuron_index = 0, traceback=100):
     # variables in the input layer
     traceback = min(traceback, layer_index + 1)
     if layer_index - traceback == -1:
@@ -619,10 +623,27 @@ def declare_variables(model, NN, v_name, refinement_degree_all, layer_index, tra
         lb=-GRB.INFINITY,
         ub=GRB.INFINITY,
         vtype=GRB.CONTINUOUS,
-        name=v_name+'_output_neuron'
+        name=v_name+'_neuron_input'
     )
 
-    all_variables = {0: network_in, 1: x_in, 2: x_out, 3: z, 5: x_in_neuron}
+    x_out_neuron = model.addVar(
+        lb=-GRB.INFINITY,
+        ub=GRB.INFINITY,
+        vtype=GRB.CONTINUOUS,
+        name=v_name + '_neuron_output'
+    )
+
+    if NN.layers[layer_index].activation == 'ReLU' and refinement_degree_all[layer_index][neuron_index] > 2:
+        section = 2
+    else:
+        section = refinement_degree_all[layer_index][neuron_index]
+    z_neuron = model.addVars(
+            section,
+            vtype=GRB.BINARY
+        )
+
+
+    all_variables = {0: network_in, 1: x_in, 2: x_out, 3: z, 5: x_in_neuron, 6: x_out_neuron, 7: z_neuron}
 
     return all_variables
 
@@ -762,7 +783,7 @@ def add_last_neuron_constraint(model, NN, all_variables, input_range_all, layer_
     # add the constraint between the neuron and previous layer
     if NN.layers[layer_index].type == 'Activation' or NN.layers[layer_index].type == 'Flatten' or NN.layers[
         layer_index].type == 'Pooling' or NN.layers[layer_index].type == 'Convolutional':
-        model.addConstr(x_in_neuron == x_out[layer_index - 1][neuron_index[2]][neuron_index[0], neuron_index[1]], name='last_neuron')
+        model.addConstr(x_in_neuron == x_out[layer_index - 1][neuron_index[2]][neuron_index[0], neuron_index[1]], name='last_neuron_input')
     elif NN.layers[layer_index].type == 'Fully_connected':
         weight_neuron = np.reshape(NN.layers[layer_index].weight[:, neuron_index], (-1, 1))
         #print(weight_neuron)
@@ -771,12 +792,39 @@ def add_last_neuron_constraint(model, NN, all_variables, input_range_all, layer_
             weight_neuron_dic = {}
             for j in range(weight_neuron.shape[0]):
                 weight_neuron_dic[j] = weight_neuron[j][0]
-            model.addConstr(x_out[layer_index - 1].prod(weight_neuron_dic) + bias_neuron == x_in_neuron, name='last_neuron')
+            model.addConstr(x_out[layer_index - 1].prod(weight_neuron_dic) + bias_neuron == x_in_neuron, name='last_neuron_input')
         else:
             weight_neuron_dic = {}
             for j in range(weight_neuron.shape[0]):
                 weight_neuron_dic[j] = weight_neuron[j][0]
-            model.addConstr(network_in.prod(weight_neuron_dic) + bias_neuron == x_in_neuron, name='last_neuron')
+            model.addConstr(network_in.prod(weight_neuron_dic) + bias_neuron == x_in_neuron, name='last_neuron_input')
+
+# add last neuron input-output constraint
+def add_last_neuron_inout_constraint(model, NN, all_variables, input_range_all, refinement_degree_all, layer_index, neuron_index):
+    x_in_neuron = all_variables[5]
+    x_out_neuron = all_variables[6]
+    z_neuron = all_variables[7]
+
+    # add the constraint between the input and output of the last neuron
+    low = input_range_all[layer_index][neuron_index][0]
+    upp = input_range_all[layer_index][neuron_index][1]
+    activation = NN.layers[layer_index].activation
+
+    model.addConstr(z_neuron.sum() == 1)
+    # construct segmentation_list with respect to refinement_degree_layer[i]
+    if activation == 'ReLU' and refinement_degree_all[layer_index][neuron_index] == 2:
+        segmentations_list = [low, 0, upp]
+    else:
+        seg_length = (upp - low) / refinement_degree_all[layer_index][neuron_index]
+        segmentations_list = [low]
+        for k in range(refinement_degree_all[layer_index][neuron_index]):
+            segmentations_list.append(low + seg_length * (k + 1))
+    for k in range(len(segmentations_list) - 1):
+        seg_left = segmentations_list[k]
+        seg_right = segmentations_list[k + 1]
+        segment_relaxation_basic(model, x_in_neuron, x_out_neuron, z_neuron[k], seg_left, seg_right,
+                                 NN.layers[layer_index].activation,
+                                 neuron_index, layer_index)
 
 # optimize a model
 def optimize_model(model, DETAILS_FLAG):
