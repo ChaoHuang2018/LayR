@@ -65,7 +65,7 @@ def global_robustness_analysis(NN, network_input_box, perturbation, output_index
     ))
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
-    heuristic_refinement_strategy(NN, network_input_box, input_range_all, refinement_degree_all, output_index, 'VOLUME_FIRST')
+    heuristic_refinement_strategy(NN, network_input_box, input_range_all, refinement_degree_all, output_index, 'RANDOM')
 
     distance_range = compute_global_robustness(NN, network_input_box, input_range_all, perturbation, refinement_degree_all, output_index, traceback=100)
 
@@ -269,7 +269,7 @@ def update_neuron_input_range(NN, network_input_box, input_range_all, refinement
     model = gp.Model('Input_range_update')
     traceback = min(traceback, layer_index + 1)
 
-    all_variables = declare_variables(model, NN, 'NN', refinement_degree_all, layer_index, traceback)
+    all_variables = declare_variables(model, NN, 'NN', refinement_degree_all, layer_index, neuron_index, traceback)
     # add_input_constraint(model, NN, all_variables, network_input_box)
     # for k in range(layer_index):
     #     add_interlayers_constraint(model, NN, all_variables, k)
@@ -633,14 +633,24 @@ def declare_variables(model, NN, v_name, refinement_degree_all, layer_index, neu
         name=v_name + '_neuron_output'
     )
 
-    if NN.layers[layer_index].activation == 'ReLU' and refinement_degree_all[layer_index][neuron_index] > 2:
-        section = 2
+    if len(NN.layers[layer_index].input_dim) == 3:
+        if NN.layers[layer_index].activation == 'ReLU' and refinement_degree_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] > 2:
+            section = 2
+        else:
+            section = refinement_degree_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]]
+        z_neuron = model.addVars(
+                section,
+                vtype=GRB.BINARY
+            )
     else:
-        section = refinement_degree_all[layer_index][neuron_index]
-    z_neuron = model.addVars(
-            section,
-            vtype=GRB.BINARY
-        )
+        if NN.layers[layer_index].activation == 'ReLU' and refinement_degree_all[layer_index][neuron_index] > 2:
+            section = 2
+        else:
+            section = refinement_degree_all[layer_index][neuron_index]
+        z_neuron = model.addVars(
+                section,
+                vtype=GRB.BINARY
+            )
 
 
     all_variables = {0: network_in, 1: x_in, 2: x_out, 3: z, 5: x_in_neuron, 6: x_out_neuron, 7: z_neuron}
