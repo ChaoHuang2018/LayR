@@ -247,10 +247,10 @@ def heuristic_refinement_strategy(NN, network_input_box, input_range_all, refine
                                                                    neuron_index, traceback)
             print('After ' + str(n) + '-th refinement, output range of the neural network becomes: ' + str(
                 input_range_network_output))
-            # distance_range = compute_global_robustness(NN, network_input_box, input_range_all, perturbation,
-            #                                            refinement_degree_all, output_index, traceback=100)
-            # print('Now the output difference range of two inputs with bounded error is: ' + str(
-            #     distance_range))
+            #distance_range = compute_global_robustness(NN, network_input_box, input_range_all, perturbation,
+            #                                           refinement_degree_all, output_index, traceback=100)
+            #print('Now the output difference range of two inputs with bounded error is: ' + str(
+            #    distance_range))
             if type(neuron_index) == list:
                 volume_all[layer_index,neuron_index[0],neuron_index[1],neuron_index[2]] = input_range_last_neuron[1] - input_range_last_neuron[0]
             else:
