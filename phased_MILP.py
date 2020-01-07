@@ -214,6 +214,7 @@ def heuristic_refinement_strategy(NN, network_input_box, input_range_all, refine
             else:
                 for i in range(NN.layers[layer_index].input_dim[0]):
                     #print(str([layer_index, i]))
+                    print(NN.layers[layer_index].input_dim[0])
                     volume_all[layer_index, i] = input_range_all[layer_index][i][1] - input_range_all[layer_index][i][0]
         sorted_volume_all = sorted(volume_all.items(), key = lambda kv:(kv[1], kv[0]), reverse=True)
         for n in range(number):
