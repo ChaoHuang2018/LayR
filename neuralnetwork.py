@@ -18,6 +18,7 @@ class NN(object):
         model_json=None
     ):
         self.name = name
+        self.eran = False
         if not keras:
             # activation type
             activations = activation.split('_')
@@ -61,6 +62,18 @@ class NN(object):
             # self.weights
             # self.bias
             self.parse_w_b()
+        elif keras == 'eran':
+            self.eran = True
+            self.type = None
+            self.layers = None
+            params = []
+            self.weights = []
+            self.bias = []
+            self.model = model
+            self.config = open(model, 'r')
+            self.set_type()
+            self.set_layer()
+            print('Layer type: {}'.format(self.layers[0].type))
         else:
             self.type = None
             self.layers = None
@@ -82,7 +95,7 @@ class NN(object):
                     self.bias.append(param[1])
 
     def set_type(self):
-        if self.config:
+        if self.config and not self.eran:
             for class_name in self.config['config']['layers']:
                 if class_name['class_name'][:4] == 'Conv':
                     self.type = 'Convolutional'
@@ -93,79 +106,123 @@ class NN(object):
 
     def set_layer(self):
         self.layers = []
-        layers_config = self.config['config']['layers']
-        for idx, layer in enumerate(self.model.layers):
-            layer_tmp = Layer()
-            layer_activation = None
-            layer_config = layers_config[idx]
-            layer_detail = layer_config['config']
-            if layer_config['class_name'] == 'Flatten':
+        if not self.eran:
+            layers_config = self.config['config']['layers']
+            for idx, layer in enumerate(self.model.layers):
+                layer_tmp = Layer()
+                layer_activation = None
+                layer_config = layers_config[idx]
+                layer_detail = layer_config['config']
+                if layer_config['class_name'] == 'Flatten':
+                    layer_tmp._type = 'Flatten'
+                    flatten_input_shape = layer.input_shape[1:]
+                    if len(flatten_input_shape) == 2:
+                        flatten_input_shape = list(flatten_input_shape)
+                        flatten_input_shape.append(1)
+                        flatten_input_shape = tuple(flatten_input_shape)
+                    else:
+                        flatten_input_shape = layer.input_shape[1:]
+                    layer_tmp._input_dim = flatten_input_shape
+                    layer_tmp._output_dim = layer.output_shape[1:]
+                    self.layers.append(layer_tmp)
+                elif layer_config['class_name'] == 'Conv2D':
+                    layer_tmp._type = 'Convolutional'
+                    layer_tmp._input_dim = layer.input_shape[1:]
+                    layer_tmp._output_dim = layer.output_shape[1:]
+                    layer_tmp._kernal = layer.get_weights()[0]
+                    layer_tmp._bias = layer.get_weights()[1]
+                    layer_tmp._stride = layer.strides
+                    layer_tmp._activation = self.activation_function(
+                        layer_detail['activation']
+                    )
+                    layer_tmp._filter_size = layer.filters
+                    self.layers.append(layer_tmp)
+
+                    # Activation layer
+                    layer_activation = Layer()
+                    layer_activation._type = 'Activation'
+                    layer_activation._activation = layer_tmp.activation
+                    layer_activation._input_dim, layer_activation._output_dim = (
+                        layer_tmp.output_dim,
+                        layer_tmp.output_dim
+                    )
+                    self.layers.append(layer_activation)
+
+                elif (
+                    layer_config['class_name'] == 'Dense' and
+                    layer_detail['activation'] != 'softmax'
+                ):
+                    layer_tmp._type = 'Fully_connected'
+                    layer_tmp._input_dim = layer.output_shape[1:]
+                    layer_tmp._output_dim = layer.output_shape[1:]
+                    layer_tmp._activation = self.activation_function(
+                        layer_detail['activation']
+                    )
+                    params = layer.get_weights()
+                    layer_tmp._weight = params[0]
+                    layer_tmp._bias = params[1]
+                    self.layers.append(layer_tmp)
+
+                elif layer_config['class_name'] == 'MaxPooling2D':
+                    layer_tmp._type = 'Pooling'
+                    layer_tmp._activation = 'max'
+                    layer_tmp._stride = layer.strides
+                    layer_tmp._filter_size = layer.pool_size
+                    layer_tmp._input_dim = layer.input_shape[1:]
+                    layer_tmp._output_dim = layer.output_shape[1:]
+                    self.layers.append(layer_tmp)
+
+                elif layer_config['class_name'] == 'AveragePooling2D':
+                    layer_tmp._type = 'Pooling'
+                    layer_tmp._activation = 'average'
+                    layer_tmp._stride = layer.strides
+                    layer_tmp._filter_size = layer.pool_size
+                    layer_tmp._input_dim = layer.input_shape[1:]
+                    layer_tmp._output_dim = layer.output_shape[1:]
+                    self.layers.append(layer_tmp)
+        else:
+            self.type = 'Flatten'
+
+            while True:
+                curr_line = self.config.readline()[:-1]
+                if curr_line in ["ReLU", "Sigmoid", "Tanh", "Affine"]:
+                    layer_tmp = Layer()
+                    W = self.parseVec(self.config).T
+                    b = self.parseVec(self.config).T
+                    self.weights.append(W)
+                    self.bias.append(b)
+                    layer_tmp._type = 'Fully_connected'
+                    layer_tmp._input_dim = [W.shape[0]]
+                    layer_tmp._output_dim = [W.shape[1]]
+                    if (curr_line == 'ReLU'):
+                        layer_tmp._activation = 'ReLU'
+                    elif (curr_line == 'Sigmoid'):
+                        layer_tmp._activation = 'sigmoid'
+                    elif (curr_line == 'Tanh'):
+                        layer_tmp._activation = 'tanh'
+                    layer_tmp._weight = W
+                    layer_tmp._bias = b
+                    self.layers.append(layer_tmp)
+                elif curr_line == "Conv2D":
+                    self.type = 'Convolutional'
+                elif curr_line == "":
+                    break
+                last_line = curr_line
+
+            if self.type == 'Flatten':
+                layer_tmp = Layer()
                 layer_tmp._type = 'Flatten'
-                flatten_input_shape = layer.input_shape[1:]
+                image_size = 28
+                flatten_input_shape = (image_size, image_size)
                 if len(flatten_input_shape) == 2:
                     flatten_input_shape = list(flatten_input_shape)
                     flatten_input_shape.append(1)
                     flatten_input_shape = tuple(flatten_input_shape)
                 else:
-                    flatten_input_shape = layer.input_shape[1:]
+                    flatten_input_shape = self.weights[0].shape[1]
                 layer_tmp._input_dim = flatten_input_shape
-                layer_tmp._output_dim = layer.output_shape[1:]
-                self.layers.append(layer_tmp)
-            elif layer_config['class_name'] == 'Conv2D':
-                layer_tmp._type = 'Convolutional'
-                layer_tmp._input_dim = layer.input_shape[1:]
-                layer_tmp._output_dim = layer.output_shape[1:]
-                layer_tmp._kernal = layer.get_weights()[0]
-                layer_tmp._bias = layer.get_weights()[1]
-                layer_tmp._stride = layer.strides
-                layer_tmp._activation = self.activation_function(
-                    layer_detail['activation']
-                )
-                layer_tmp._filter_size = layer.filters
-                self.layers.append(layer_tmp)
-
-                # Activation layer
-                layer_activation = Layer()
-                layer_activation._type = 'Activation'
-                layer_activation._activation = layer_tmp.activation
-                layer_activation._input_dim, layer_activation._output_dim = (
-                    layer_tmp.output_dim,
-                    layer_tmp.output_dim
-                )
-                self.layers.append(layer_activation)
-
-            elif (
-                layer_config['class_name'] == 'Dense' and
-                layer_detail['activation'] != 'softmax'
-            ):
-                layer_tmp._type = 'Fully_connected'
-                layer_tmp._input_dim = layer.output_shape[1:]
-                layer_tmp._output_dim = layer.output_shape[1:]
-                layer_tmp._activation = self.activation_function(
-                    layer_detail['activation']
-                )
-                params = layer.get_weights()
-                layer_tmp._weight = params[0]
-                layer_tmp._bias = params[1]
-                self.layers.append(layer_tmp)
-
-            elif layer_config['class_name'] == 'MaxPooling2D':
-                layer_tmp._type = 'Pooling'
-                layer_tmp._activation = 'max'
-                layer_tmp._stride = layer.strides
-                layer_tmp._filter_size = layer.pool_size
-                layer_tmp._input_dim = layer.input_shape[1:]
-                layer_tmp._output_dim = layer.output_shape[1:]
-                self.layers.append(layer_tmp)
-
-            elif layer_config['class_name'] == 'AveragePooling2D':
-                layer_tmp._type = 'Pooling'
-                layer_tmp._activation = 'average'
-                layer_tmp._stride = layer.strides
-                layer_tmp._filter_size = layer.pool_size
-                layer_tmp._input_dim = layer.input_shape[1:]
-                layer_tmp._output_dim = layer.output_shape[1:]
-                self.layers.append(layer_tmp)
+                layer_tmp._output_dim = [self.weights[0].shape[1]]
+                self.layers = [layer_tmp] + self.layers
 
     def activation_function(self, activation_type):
         if activation_type == 'relu':
@@ -322,6 +379,9 @@ class NN(object):
     @property
     def num_of_hidden_layers(self):
         return len(self.layers)
+
+    def parseVec(self, net):
+        return np.array(eval(net.readline()[:-1]))
 
 
 class Layer(object):
