@@ -59,7 +59,7 @@ start_time = time.time()
 output_l, output_u = output_range_analysis(NN, np.array(input_range), 9)
 # output_l, output_u = global_robustness_analysis(NN, np.array(input_range), perturbation, 9)
 print("lower bound: {}; upper bound: {}".format(output_l, output_u))
-print("actual output of NN: {}".format(NN.keras_model(data.reshape(1, data.shape[0], data.shape[1], 1))))
+# print("actual output of NN: {}".format(NN.keras_model(data.reshape(1, data.shape[0], data.shape[1], 1))))
 print("--- %s seconds ---" % (time.time() - start_time))
 # print("actual output: {}".format(NN.keras_model_pre_softmax(data.reshape(1, data.shape[0], data.shape[1]))))
 

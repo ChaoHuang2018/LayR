@@ -192,7 +192,7 @@ class NN(object):
                     self.weights.append(W)
                     self.bias.append(b)
                     layer_tmp._type = 'Fully_connected'
-                    layer_tmp._input_dim = [W.shape[0]]
+                    layer_tmp._input_dim = [W.shape[1]]
                     layer_tmp._output_dim = [W.shape[1]]
                     if (curr_line == 'ReLU'):
                         layer_tmp._activation = 'ReLU'
