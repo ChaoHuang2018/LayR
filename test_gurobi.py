@@ -31,7 +31,7 @@ def get_tests(dataset):
 # test new approach for estimating sigmoid network's output range
 eps = 0.01
 perturbation = 0.1
-NN = nn_controller_details('mnist_relu_6_100.tf', keras='eran')
+NN = nn_controller_details('ffnnSIGMOID__PGDK_w_0.1_6_500.pyt', keras='eran')
 # NN1 = nn_controller_details('model_CNNA', keras=True)
 # the data, split between train and test sets
 # fashion_mnist = keras.datasets.fashion_mnist
@@ -55,6 +55,7 @@ for i in range(input_dim[0]):
         input_range_row.append(input_range_channel)
     input_range.append(input_range_row)
 print(np.array(input_range).shape)
+print("actual output of NN: {}".format(NN.controller(data)))
 start_time = time.time()
 output_l, output_u = output_range_analysis(NN, np.array(input_range), 9)
 # output_l, output_u = global_robustness_analysis(NN, np.array(input_range), perturbation, 9)

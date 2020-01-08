@@ -189,17 +189,23 @@ class NN(object):
                     layer_tmp = Layer()
                     W = self.parseVec(self.config).T
                     b = self.parseVec(self.config).T
-                    self.weights.append(W)
-                    self.bias.append(b)
+                    self.weights.append(W.T)
+                    self.bias.append(b.reshape(-1, 1))
                     layer_tmp._type = 'Fully_connected'
                     layer_tmp._input_dim = [W.shape[1]]
                     layer_tmp._output_dim = [W.shape[1]]
                     if (curr_line == 'ReLU'):
                         layer_tmp._activation = 'ReLU'
+                        self.activation = 'ReLU'
+                        self.last_layer_activation = 'ReLU'
                     elif (curr_line == 'Sigmoid'):
                         layer_tmp._activation = 'sigmoid'
+                        self.activation = 'sigmoid'
+                        self.last_layer_activation = 'ReLU'
                     elif (curr_line == 'Tanh'):
                         layer_tmp._activation = 'tanh'
+                    elif (curr_line == 'Affine'):
+                        layer_tmp._activation = 'ReLU'
                     layer_tmp._weight = W
                     layer_tmp._bias = b
                     self.layers.append(layer_tmp)
@@ -219,9 +225,9 @@ class NN(object):
                     flatten_input_shape.append(1)
                     flatten_input_shape = tuple(flatten_input_shape)
                 else:
-                    flatten_input_shape = self.weights[0].shape[1]
+                    flatten_input_shape = self.weights[0].shape[0]
                 layer_tmp._input_dim = flatten_input_shape
-                layer_tmp._output_dim = [self.weights[0].shape[1]]
+                layer_tmp._output_dim = [self.weights[0].shape[0]]
                 self.layers = [layer_tmp] + self.layers
 
     def activation_function(self, activation_type):
@@ -318,10 +324,10 @@ class NN(object):
         """
         # transform the input
         length = x.shape[0]
-        g = x.reshape([length, 1])
+        g = x.reshape([-1, 1])
 
         # pass input through each layer
-        for i in range(self.num_of_hidden_layers):
+        for i in range(self.num_of_hidden_layers - 2):
             # linear transformation
             g = self.weights[i] @ g
             g = g + self.bias[i]
@@ -332,22 +338,23 @@ class NN(object):
         # output layer
         if self.last_layer_activation is not None:
             # linear transformation
-            g = self.weights[self.num_of_hidden_layers] @ g
-            g = g + self.bias[self.num_of_hidden_layers]
+            g = self.weights[self.num_of_hidden_layers - 2] @ g
+            g = g + self.bias[self.num_of_hidden_layers - 2]
 
             # activation
             g = self.last_layer_activate(g)
         else:
             # linear transformation
-            g = self.weights[self.num_of_hidden_layers] @ g
-            g = g + self.bias[self.num_of_hidden_layers]
+            g = self.weights[self.num_of_hidden_layers - 2] @ g
+            g = g + self.bias[self.num_of_hidden_layers - 2]
 
             # activation
             g = self.activate(g)
 
         # affine transformation of output
-        y = g - self.offset
-        y = y * self.scale_factor
+        # y = g - self.offset
+        # y = y * self.scale_factor
+        y = g
 
         return y
 
