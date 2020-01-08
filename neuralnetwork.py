@@ -227,8 +227,9 @@ class NN(object):
                 else:
                     flatten_input_shape = self.weights[0].shape[0]
                 layer_tmp._input_dim = flatten_input_shape
-                layer_tmp._output_dim = [self.weights[0].shape[0]]
+                layer_tmp._output_dim = [self.weights[0].shape[1]]
                 self.layers = [layer_tmp] + self.layers
+            print(self.layers[0].output_dim)
 
     def activation_function(self, activation_type):
         if activation_type == 'relu':
