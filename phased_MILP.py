@@ -135,12 +135,12 @@ def output_range_analysis(NN, network_input_box, neuron_index):
         activate(NN.layers[layer_index].activation, naive_input[1])
     ))
 
-    traceback = 4
+    traceback = 7
 
     input_range_last_neuron = heuristic_refinement_strategy(NN, network_input_box, input_range_all,
                                                             refinement_degree_all, neuron_index, 'VOLUME_FIRST')
 
-    #input_range_last_neuron = update_neuron_input_range(NN, network_input_box, input_range_all, refinement_degree_all, layer_index, neuron_index, traceback)
+    # input_range_last_neuron = update_neuron_input_range(NN, network_input_box, input_range_all, refinement_degree_all, layer_index, neuron_index, traceback)
 
     lower_bound = activate(NN.layers[layer_index].activation,
                            input_range_last_neuron[0])
@@ -200,8 +200,8 @@ def heuristic_refinement_strategy(NN, network_input_box, input_range_all, refine
             print('After ' + str(i) + '-th refinement, output range of the neural network becomes: ' + str(input_range_network_output))
         return input_range_network_output
     if strategy_name == 'VOLUME_FIRST':
-        number = 1
-        traceback = 7
+        number = 40
+        traceback = 4
         # construct a dictionary to store the volume of each neuron's input
         volume_all = {}
         for layer_index in range(NN.num_of_hidden_layers):
@@ -1275,7 +1275,6 @@ def relaxation_flatten_layer(model, layer, layer_index, x_in, x_out):
     for s in range(layer.input_dim[2]):
         for i in range(layer.input_dim[0]):
             for j in range(layer.input_dim[1]):
-                print([i, j, s, k])
                 model.addConstr(x_in[s][i, j] == x_out[k], name='layer_' + str(layer_index) + '_' + str([i, j, s]) + '_flatten_layer_linear')
                 k = k + 1
 
@@ -1361,28 +1360,27 @@ def relaxation_activation_layer(model, layer, layer_index, x_in, x_out, z, input
             elif activate(activation, upp) - activate(activation, low) < 0:
                 raise ValueError('Error: Wrong sigmoid result!')
             else:
-                segment_relaxation_test(model, x_in[i], x_out[i], low, upp, activation, i,
-                                        layer_index)
+                # segment_relaxation_test(model, x_in[i], x_out[i], low, upp, activation, i,
+                #                         layer_index)
 
 
-                # # any neuron can only be within a region, thus sum of slack integers should be 1
-                # model.addConstr(z[i].sum() == 1)
-                # # construct segmentation_list with respect to refinement_degree_layer[i]
-                # if activation == 'ReLU' and refinement_degree_layer[i] == 2:
-                #     if low > 0 or upp < 0:
-                #         raise ValueError('Wrong relaxation with resepct to the refinement degree assignment!')
-                #     segmentations_list = [low, 0, upp]
-                # else:
-                #     seg_length = (upp - low) / refinement_degree_layer[i]
-                #     segmentations_list = [low]
-                #     for k in range(refinement_degree_layer[i]):
-                #         segmentations_list.append(low + seg_length * (k + 1))
-                # for k in range(len(segmentations_list) - 1):
-                #     seg_left = segmentations_list[k]
-                #     seg_right = segmentations_list[k + 1]
-                #     segment_relaxation_basic(model, x_in[i], x_out[i], z[i][k], seg_left, seg_right,
-                #                              activation,
-                #                              i, layer_index)
+                # any neuron can only be within a region, thus sum of slack integers should be 1
+                model.addConstr(z[i].sum() == 1)
+                # construct segmentation_list with respect to refinement_degree_layer[i]
+                if activation == 'ReLU' and refinement_degree_layer[i] == 2:
+                    if low > 0 or upp < 0:
+                        raise ValueError('Wrong relaxation with resepct to the refinement degree assignment!')
+                    segmentations_list = [low, 0, upp]
+                else:
+                    seg_length = (upp - low) / refinement_degree_layer[i]
+                    segmentations_list = [low]
+                    for k in range(refinement_degree_layer[i]):
+                        segmentations_list.append(low + seg_length * (k + 1))
+                for k in range(len(segmentations_list) - 1):
+                    seg_left = segmentations_list[k]
+                    seg_right = segmentations_list[k + 1]
+                    segment_relaxation_basic(model, x_in[i], x_out[i], z[i][k], seg_left, seg_right,
+                                             activation, i, layer_index)
 
 
 def segment_relaxation_test(model, x_in_neuron, x_out_neuron, seg_left, seg_right, activation, index, layer_index):
