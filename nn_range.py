@@ -23,15 +23,12 @@ class NNRange(object):
     ):
         # neural networks
         self.NN = NN
-
         # input space
         self.network_input_box = network_input_box
-
-        # initialize refinement degree
-        self.__initialize_refinement_degree()
-
         # initialize input range of each neuron
         self.__initialize_input_range()
+        # initialize refinement degree
+        self.__initialize_refinement_degree()
 
     # initialize refinement degree
     def __initialize_refinement_degree(self):
@@ -45,7 +42,7 @@ class NNRange(object):
                     for i in range(NN.layers[k].input_dim[0]):
                         refinement_degree_layer_row = []
                         for j in range(NN.layers[k].input_dim[1]):
-                            refinement_degree_layer_row.append(1)
+                            refinement_degree_layer_row.append(self._set_refinement_degree(k, [i, j, s], 1))
                         refinement_degree_layer_channel.append(
                             refinement_degree_layer_row
                         )
@@ -57,9 +54,30 @@ class NNRange(object):
                 )
             if len(NN.layers[k].input_dim) == 1:
                 for i in range(NN.layers[k].output_dim[0]):
-                    refinement_degree_layer.append(2)
+                    refinement_degree_layer.append(self._set_refinement_degree(k, i, 2))
                 refinement_degree_all.append(refinement_degree_layer)
         self.refinement_degree_all = refinement_degree_all
+
+    def _set_refinement_degree(self, layer_index, neuron_index, neuron_refinement_degree):
+        # check relu
+        if type(neuron_index) == list:
+            if self.NN.layers[layer_index].activation == 'ReLU':
+                if (self.input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]][0] > 0 or
+                        self.input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]][1] < 0):
+                    return min(1, neuron_refinement_degree)
+                else:
+                    return min(2, neuron_refinement_degree)
+            else:
+                return neuron_refinement_degree
+        else:
+            if self.NN.layers[layer_index].activation == 'ReLU':
+                if (self.input_range_all[layer_index][neuron_index][0] > 0 or
+                        self.input_range_all[layer_index][neuron_index][1] < 0):
+                    return min(1, neuron_refinement_degree)
+                else:
+                    return min(2, neuron_refinement_degree)
+            else:
+                return neuron_refinement_degree
 
     # initialize input range of each neuron by naive layer-by-layer propagation output range analysis
     # We may need a better approach to obtain the initial solution

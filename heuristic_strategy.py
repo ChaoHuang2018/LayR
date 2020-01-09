@@ -14,7 +14,7 @@ import copy
 
 
 def refine_by_heuristic(nn_refiner, strategy_name, output_index, number, check_output=False):
-    old_output_range = nn_refiner.input_range_all[-1][output_index]
+    old_input_range = nn_refiner.input_range_all[-1][output_index]
     print('-------' + strategy_name + 'refinement begins.----------')
     for i in range(number):
         print('Start to process neuron ' + str(i))
@@ -26,11 +26,11 @@ def refine_by_heuristic(nn_refiner, strategy_name, output_index, number, check_o
         if check_output == True:
             new_range = nn_refiner.update_neuron_input_range(nn_refiner.NN.num_of_hidden_layers - 1, output_index)
             print('Output range updates: ' + str(new_range))
-    new_output_range = nn_refiner.update_neuron_input_range(nn_refiner.NN.num_of_hidden_layers - 1, output_index)
+    new_input_range = nn_refiner.update_neuron_input_range(nn_refiner.NN.num_of_hidden_layers - 1, output_index)
     print('Refinement finishes.')
-    print('Initial range of the output is: ' + str(old_output_range))
-    print('New range after refinement process is: ' + str(new_output_range))
-    return new_output_range
+    print('Initial input range of the interested neuron is: ' + str(old_input_range))
+    print('New range after refinement process is: ' + str(new_input_range))
+    return new_input_range
 
 def strategy_purely_random(nn_refiner):
     NN = nn_refiner.NN
