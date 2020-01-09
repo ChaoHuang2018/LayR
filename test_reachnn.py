@@ -4,6 +4,8 @@ import time
 import keras
 import os
 import csv
+import copy
+import random
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID";
 
@@ -56,6 +58,18 @@ for i in range(input_dim[0]):
     input_range.append(input_range_row)
 print(np.array(input_range).shape)
 print("actual output of NN: {}".format(NN.controller(data)))
+print('Random samples:')
+low = NN.controller(data)[9][0]
+upp = NN.controller(data)[9][0]
+for n in range(1000):
+    perturbated_data = copy.deepcopy(data)
+    for i in range(28):
+        for j in range(28):
+            perturbated_data[i,j,0] = perturbated_data[i,j,0] + random.uniform(-eps, eps)
+    result = NN.controller(perturbated_data)
+    upp = max(upp, result[9][0])
+    low = min(low, result[9][0])
+print("Bound by sampling: {}".format([low, upp]))
 start_time = time.time()
 nn_analyzer = ReachNN(NN, np.array(input_range), 4)
 new_output_range = nn_analyzer.output_range_analysis('VOLUME_FIRST', 9, 1)
