@@ -88,12 +88,12 @@ class NNRangeRefiner(NNRange):
 
         self.model.setObjective(x_in_neuron, GRB.MINIMIZE)
         neuron_min = self._optimize_model(0)
-        network_in = self.all_variables[v_name + '_0']
-        min_input = np.zeros((self.NN.layers[0].input_dim[0], self.NN.layers[0].input_dim[1], self.NN.layers[0].input_dim[2]))
-        for s in range(NN.layers[0].input_dim[2]):
-            for i in range(self.NN.layers[0].input_dim[0]):
-                for j in range(self.NN.layers[0].input_dim[1]):
-                    min_input[i, j, s] = network_in[s][i,j].X
+        # network_in = self.all_variables[v_name + '_0']
+        # min_input = np.zeros((self.NN.layers[0].input_dim[0], self.NN.layers[0].input_dim[1], self.NN.layers[0].input_dim[2]))
+        # for s in range(NN.layers[0].input_dim[2]):
+        #     for i in range(self.NN.layers[0].input_dim[0]):
+        #         for j in range(self.NN.layers[0].input_dim[1]):
+        #             min_input[i, j, s] = network_in[s][i,j].X
         # print(min_input)
         self.model.setObjective(x_in_neuron, GRB.MAXIMIZE)
         neuron_max = self._optimize_model(0)
@@ -110,7 +110,7 @@ class NNRangeRefiner(NNRange):
             input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]] = new_range
         print('Finish Updating.')
         print('New input range: {}'.format(new_range))
-        return new_range, min_input
+        return new_range
 
     def _declare_variables(self, v_name, layer_index):
         # variables in the input layer

@@ -54,7 +54,7 @@ class NNRange(object):
                 )
             if len(NN.layers[k].input_dim) == 1:
                 for i in range(NN.layers[k].output_dim[0]):
-                    refinement_degree_layer.append(self._set_refinement_degree(k, i, 2))
+                    refinement_degree_layer.append(self._set_refinement_degree(k, i, 1))
                 refinement_degree_all.append(refinement_degree_layer)
         self.refinement_degree_all = refinement_degree_all
 

@@ -53,7 +53,7 @@ for i in range(input_dim[0]):
     for j in range(input_dim[1]):
         input_range_channel = []
         for k in range(input_dim[2]):
-            input_range_channel.append([data[i][j][k] - eps, data[i][j][k] + eps])
+            input_range_channel.append([max(0, data[i][j][k] - eps), min(1, data[i][j][k] + eps)])
         input_range_row.append(input_range_channel)
     input_range.append(input_range_row)
 print(np.array(input_range).shape)
@@ -72,8 +72,9 @@ for n in range(1000):
 print("Bound by sampling: {}".format([low, upp]))
 start_time = time.time()
 nn_analyzer = ReachNN(NN, np.array(input_range), 4)
-new_output_range, min_input = nn_analyzer.output_range_analysis('VOLUME_FIRST', 9, 1)
-print('Reach lower bound on the neuron:' + str(NN.controller(min_input)[9][0]))
+new_output_range = nn_analyzer.output_range_analysis('VOLUME_FIRST', 9, 1)
+# print('Reach lower bound on the neuron:' + str(min_input))
+# print('The output on the neuron:' + str(NN.controller(min_input)[9][0]))
 # output_l, output_u = global_robustness_analysis(NN, np.array(input_range), perturbation, 9)
 # print("lower bound: {}; upper bound: {}".format(new_output_range))
 # print("actual output of NN: {}".format(NN.keras_model(data.reshape(1, data.shape[0], data.shape[1], 1))))
