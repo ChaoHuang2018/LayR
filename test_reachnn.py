@@ -17,7 +17,7 @@ import cvxpy as cp
 from network_parser import nn_controller, nn_controller_details
 from numpy import pi, tanh, array, dot
 from gurobipy import *
-from phased_MILP import global_robustness_analysis, function_distance_analysis, output_range_analysis
+from reachnn import ReachNN
 #import controller_approximation_lib as cal
 
 #import tensorflow as tf
@@ -57,9 +57,10 @@ for i in range(input_dim[0]):
 print(np.array(input_range).shape)
 print("actual output of NN: {}".format(NN.controller(data)))
 start_time = time.time()
-output_l, output_u = output_range_analysis(NN, np.array(input_range), 9)
+nn_analyzer = ReachNN(NN, np.array(input_range), 4)
+new_output_range = nn_analyzer.output_range_analysis('VOLUME_FIRST', 9, 40)
 # output_l, output_u = global_robustness_analysis(NN, np.array(input_range), perturbation, 9)
-print("lower bound: {}; upper bound: {}".format(output_l, output_u))
+print("lower bound: {}; upper bound: {}".format(new_output_range))
 # print("actual output of NN: {}".format(NN.keras_model(data.reshape(1, data.shape[0], data.shape[1], 1))))
 print("--- %s seconds ---" % (time.time() - start_time))
 # print("actual output: {}".format(NN.keras_model_pre_softmax(data.reshape(1, data.shape[0], data.shape[1]))))

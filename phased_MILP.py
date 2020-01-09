@@ -135,12 +135,12 @@ def output_range_analysis(NN, network_input_box, neuron_index):
         activate(NN.layers[layer_index].activation, naive_input[1])
     ))
 
-    traceback = 7
+    traceback = 4
 
-    input_range_last_neuron = heuristic_refinement_strategy(NN, network_input_box, input_range_all,
-                                                            refinement_degree_all, neuron_index, 'VOLUME_FIRST')
+    # input_range_last_neuron = heuristic_refinement_strategy(NN, network_input_box, input_range_all,
+    #                                                         refinement_degree_all, neuron_index, 'VOLUME_FIRST')
 
-    # input_range_last_neuron = update_neuron_input_range(NN, network_input_box, input_range_all, refinement_degree_all, layer_index, neuron_index, traceback)
+    input_range_last_neuron = update_neuron_input_range(NN, network_input_box, input_range_all, refinement_degree_all, layer_index, neuron_index, traceback)
 
     lower_bound = activate(NN.layers[layer_index].activation,
                            input_range_last_neuron[0])
@@ -419,7 +419,7 @@ def adapt_refinement_degree(NN, input_range_all, refinement_degree_all):
                 for s in range(NN.layers[k].input_dim[2]):
                     for i in range(NN.layers[k].input_dim[0]):
                         for j in range(NN.layers[k].input_dim[1]):
-                            if input_range_all[i][j][s][0] > 0 or input_range_all[i][j][s][1] < 0:
+                            if input_range_all[k][i][j][s][0] > 0 or input_range_all[k][i][j][s][1] < 0:
                                 refinement_degree_all[k][s][i][j] = 1
             if len(NN.layers[k].input_dim) == 1:
                 for i in range(NN.layers[k].output_dim[0]):

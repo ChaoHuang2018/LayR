@@ -1,5 +1,7 @@
-from gurobipy import Model, GRB
-from MILP import MILP
+import gurobipy as gp
+from gurobipy import GRB
+from nn_range_refiner import NNRangeRefiner
+from heuristic_strategy import refine_by_heuristic
 
 import numpy as np
 import sympy as sp
@@ -37,11 +39,12 @@ class ReachNN(object):
     def __init__(
         self,
         NN1,
+        network_input_box1,
+        traceback1,
         NN2=None,
-        network_input_box1=None,
         network_input_box2=None,
-        perturbation_bound=None,
-        output_index=0,
+        traceback2=None,
+        perturbation_bound=None
     ):
         # neural networks
         self.NN1 = NN1
@@ -52,65 +55,11 @@ class ReachNN(object):
         self.network_input_box2 = network_input_box2
         self.perturbation_bound = perturbation_bound
 
-        # output index
-        self.output_index = output_index
+        # traceback
+        self.traceback1 = traceback1
+        self.traceback2 = traceback2
 
-        # input dim
-        self.input_dim = self.NN1.layers[0].input_dim
-
-    def global_robustness_analysis(self):
-        # handle perturbation
-        if self.network_input_box2 is None:
-            self.network_input_box2 = self.network_input_box1.copy()
-            perturbation_set = np.ones(self.network_input_box1.shape)
-
-            # perturbed input set
-            self.network_input_box2[:, :, :, 0] -= self.perturbation_bound
-            self.network_input_box2[:, :, :, 1] += self.perturbation_bound
-
-            # perturbation set
-            perturbation_set[:, :, :, 0] *= -self.perturbation_bound
-            perturbation_set[:, :, :, 1] *= self.perturbation_bound
-
-        # naive range for the original input set
-        intput_range_all_NN1 = construct_naive_input_range(
-            self.NN1, self.network_input_box1, self.output_index
-        )
-        # naive range for the perturbed input set
-        input_range_all_NN2 = construct_naive_input_range(
-            self.NN1, self.network_input_box2, self.output_index
-        )
-
-        print('-------MILP global robustness analysis begins.----------')
-
-        # refinement
-        refinement_degrees_NN1 = self.initialize_refinement_degree(self.NN1)
-        refinement_degrees_NN2 = self.initialize_refinement_degree(self.NN1)
-
-        # MILP formulation
-        model = Model('Global_robustness_certification')
-        MILP_NN1 = MILP(
-            model,
-            self.NN1,
-            refinement_degrees_NN1,
-            self.NN1.num_of_hidden_layers,
-            self.output_index
-        )
-        MILP_NN2 = MILP(
-            model,
-            self.NN1,
-            refinement_degrees_NN2,
-            self.NN1.num_of_hidden_layers,
-            self.output_index
-        )
-
-
-    def initialize_refinement_degree(self, NN):
-        refinement_degrees = []
-        for idxLayer in range(NN.num_of_hidden_layers):
-            output_dim = NN.layers[idxLayer].output_dim
-            if len(output_dim) == 3:
-                refinement_degrees.append(np.zeros(output_dim))
-            elif len(output_dim) == 1:
-                refinement_degrees.append(np.zeros(output_dim))
-        return refinement_degrees
+    def output_range_analysis(self, strategy_name, output_index, number=40):
+        nn_refiner = NNRangeRefiner(self.NN1, self.network_input_box1, self.traceback1)
+        new_output_range = refine_by_heuristic(nn_refiner, strategy_name, output_index, number, check_output=False)
+        return new_output_range
