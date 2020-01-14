@@ -13,7 +13,6 @@ os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID";
 os.environ["CUDA_VISIBLE_DEVICES"]="0";
 
 import numpy as np
-import sympy as sp
 import cvxpy as cp
 
 from network_parser import nn_controller, nn_controller_details
@@ -48,14 +47,14 @@ image= np.float64(test[1:len(test)])/np.float64(255)
 data = image.reshape(28, 28, 1)
 input_dim = NN.layers[0].input_dim
 print(input_dim)
-for i in range(input_dim[0]):
-    input_range_row = []
-    for j in range(input_dim[1]):
-        input_range_channel = []
-        for k in range(input_dim[2]):
-            input_range_channel.append([max(0, data[i][j][k] - eps), min(1, data[i][j][k] + eps)])
-        input_range_row.append(input_range_channel)
-    input_range.append(input_range_row)
+for k in range(input_dim[2]):
+    input_range_channel = []
+    for i in range(input_dim[0]):
+        input_range_row = []
+        for j in range(input_dim[1]):
+            input_range_row.append([max(0, data[i][j][k] - eps), min(1, data[i][j][k] + eps)])
+        input_range_channel.append(input_range_row)
+    input_range.append(input_range_channel)
 print(np.array(input_range).shape)
 print("actual output of NN: {}".format(NN.controller(data)))
 print('Random samples:')
@@ -71,8 +70,8 @@ for n in range(1000):
     low = min(low, result[9][0])
 print("Bound by sampling: {}".format([low, upp]))
 start_time = time.time()
-nn_analyzer = ReachNN(NN, np.array(input_range), 4)
-new_output_range = nn_analyzer.output_range_analysis('VOLUME_FIRST', 9, 1)
+nn_analyzer = ReachNN(NN, np.array(input_range), 4, 'ERAN')
+new_output_range = nn_analyzer.output_range_analysis('RANDOM', 9, 40)
 # print('Reach lower bound on the neuron:' + str(min_input))
 # print('The output on the neuron:' + str(NN.controller(min_input)[9][0]))
 # output_l, output_u = global_robustness_analysis(NN, np.array(input_range), perturbation, 9)

@@ -1,5 +1,4 @@
 import numpy as np
-import sympy as sp
 import tensorflow as tf
 import itertools
 import math

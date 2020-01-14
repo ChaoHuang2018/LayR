@@ -4,14 +4,12 @@ from nn_range_refiner import NNRangeRefiner
 from heuristic_strategy import refine_by_heuristic
 
 import numpy as np
-import sympy as sp
 import tensorflow as tf
 import itertools
 import math
 import random
 import time
 import copy
-
 
 class ReachNN(object):
     """
@@ -41,10 +39,12 @@ class ReachNN(object):
         NN1,
         network_input_box1,
         traceback1,
+        initialize_approach1,
         NN2=None,
         network_input_box2=None,
         traceback2=None,
-        perturbation_bound=None
+        perturbation_bound=None,
+        initialize_approach2=None,
     ):
         # neural networks
         self.NN1 = NN1
@@ -55,12 +55,15 @@ class ReachNN(object):
         self.network_input_box2 = network_input_box2
         self.perturbation_bound = perturbation_bound
 
+        self.initialize_approach1 = initialize_approach1
+        self.initialize_approach2 = initialize_approach2
+
         # traceback
         self.traceback1 = traceback1
         self.traceback2 = traceback2
 
     def output_range_analysis(self, strategy_name, output_index, number=40):
-        nn_refiner = NNRangeRefiner(self.NN1, self.network_input_box1, self.traceback1)
-        #new_output_range = refine_by_heuristic(nn_refiner, strategy_name, output_index, number, check_output=False)
-        new_output_range = nn_refiner.update_neuron_input_range(self.NN1.num_of_hidden_layers - 1, output_index)
+        nn_refiner = NNRangeRefiner(self.NN1, self.network_input_box1, self.initialize_approach1, self.traceback1)
+        new_output_range = refine_by_heuristic(nn_refiner, strategy_name, output_index, number, check_output=False)
+        # new_output_range = nn_refiner.update_neuron_input_range(self.NN1.num_of_hidden_layers - 1, output_index)
         return new_output_range

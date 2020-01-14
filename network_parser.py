@@ -59,6 +59,7 @@ def nn_controller_details(filename, activation=None, keras=False):
     elif keras == 'eran':
         model = 'model/' + filename + '.txt'
         NN_controller = NN(
+            name=filename,
             keras=keras,
             model=model,
             model_json=None

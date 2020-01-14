@@ -1,0 +1,94 @@
+import numpy as np
+import tensorflow as tf
+import itertools
+import math
+import random
+import time
+import copy
+import os
+import copy
+
+from ERAN.tf_verify.eran import ERAN
+from ERAN.tf_verify.read_net_file import *
+from ERAN.tf_verify.read_zonotope_file import read_zonotope
+import tensorflow as tf
+import csv
+import time
+from tqdm import tqdm
+from ERAN.tf_verify.ai_milp import *
+import argparse
+from ERAN.tf_verify.config import config
+
+class ERANModel(object):
+    def __init__(
+        self,
+        NN
+    ):
+        # neural networks
+        self.NN = NN
+        netfolder = 'ERAN/nets'
+        filename, file_extension = os.path.splitext(self.NN.name)
+        num_pixels = 784 # for mnist
+
+        if file_extension == ".meta" or file_extension == ".pb":
+            sess = tf.Session()
+            saver = tf.train.import_meta_graph(netfolder + '/' + self.NN.name)
+            saver.restore(sess, tf.train.latest_checkpoint(netfolder + '/'))
+            ops = sess.graph.get_operations()
+            last_layer_index = -1
+            while ops[last_layer_index].type in non_layer_operation_types:
+                last_layer_index -= 1
+            self.eran = ERAN(sess.graph.get_tensor_by_name(ops[last_layer_index].name + ':0'), sess)
+        elif file_extension == '.pyt':
+            model, is_conv, means, stds = read_tensorflow_net(netfolder + '/' + self.NN.name, num_pixels, True)
+            self.eran = ERAN(model, is_onnx=is_onnx)
+        elif file_extension == '.tf':
+            model, is_conv, means, stds = read_tensorflow_net(netfolder + '/' + self.NN.name, num_pixels, False)
+            self.eran = ERAN(model, is_onnx=False)
+
+    def output_range_eran(self, network_in):
+        NN = self.NN
+        network_in_lower_bound, network_in_upper_bound = self.network_in_split(network_in)
+        label,_,nlb,nub = self.eran.analyze_box(network_in_lower_bound, network_in_upper_bound, 'deepzono', 1, 1, False)
+        output_range_all = []
+        i = 0
+        j = 0
+        while i < self.NN.num_of_hidden_layers:
+            if NN.layers[i].type == 'Activation' or NN.layers[i].type == 'Fully_connected':
+                output_range_layer_i = self.eran_range_reashape(i, nlb[j], nub[j])
+                print(output_range_layer_i)
+                j += 1
+                output_range_all.append(output_range_layer_i)
+            i += 1
+        return output_range_all
+
+    def network_in_split(self, network_in):
+        network_in_lower_bound = []
+        network_in_upper_bound = []
+        if self.NN.type == 'Convolutional' or self.NN.type == 'Flatten':
+            for s in range(self.NN.layers[0].input_dim[2]):
+                for i in range(self.NN.layers[0].input_dim[0]):
+                    for j in range(self.NN.layers[0].input_dim[1]):
+                        network_in_lower_bound.append(network_in[s][i][j][0])
+                        network_in_upper_bound.append(network_in[s][i][j][1])
+        else:
+            for i in range(self.NN.layers[0].input_dim[0]):
+                network_in_lower_bound.append(network_in[i][0])
+                network_in_upper_bound.append(network_in[i][1])
+        return network_in_lower_bound, network_in_upper_bound
+
+    def eran_range_reashape(self, layer_index, nlb_layer, nub_layer):
+        layer = self.NN.layers[layer_index]
+        if layer.type == 'Activation':
+            nlb_3d = np.reshape(nlb_layer, (layer.output_dim[2], layer.output_dim[0], layer.output_dim[1]))
+            nub_3d = np.reshape(nub_layer, (layer.output_dim[2], layer.output_dim[0], layer.output_dim[1]))
+            output_range_layer = copy.deepcopy(nlb_3d)
+            for s in range(layer.output_dim[2]):
+                for i in range(layer.output_dim[0]):
+                    for j in range(layer.output_dim[1]):
+                        output_range_layer[s][i][j] = [nlb_3d[s][i][j], nub_3d[s][i][j]]
+        else:
+            output_range_layer = copy.deepcopy(nlb_layer)
+            for i in range(layer.output_dim[0]):
+                output_range_layer[i] = [nlb_layer[i], nub_layer[i]]
+        return output_range_layer

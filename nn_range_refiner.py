@@ -4,7 +4,6 @@ from nn_range import NNRange
 from nn_activation import Activation
 
 import numpy as np
-import sympy as sp
 import tensorflow as tf
 import itertools
 import math
@@ -16,14 +15,14 @@ import copy
 class NNRangeRefiner(NNRange):
 
     def __init__(
-            self,
-            NN,
-            network_input_box,
-            traceback=None
+        self,
+        NN,
+        network_input_box,
+        initialize_approach,
+        traceback=None
     ):
-        NNRange.__init__(self, NN, network_input_box)
+        NNRange.__init__(self, NN, network_input_box, initialize_approach)
         self.traceback = traceback
-        self.model = gp.Model('Input_range_update')
         self.all_variables = {}
 
     def refine_neuron(self, layer_index, neuron_index):
@@ -39,8 +38,8 @@ class NNRangeRefiner(NNRange):
         # need to carefully handle ReLU
         if type(neuron_index) == list:
             if self.NN.layers[layer_index].activation == 'ReLU':
-                if (self.input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]][0] > 0 or
-                        self.input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]][1] < 0):
+                if (self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][0] > 0 or
+                        self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][1] < 0):
                     print('No need to add more slack binary variables for this neuron!')
                 elif self.refinement_degree_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] == 2:
                     print('No need to add more slack binary variables for this neuron!')
@@ -65,6 +64,7 @@ class NNRangeRefiner(NNRange):
                 print('Add a slack integer variables.')
 
     def update_neuron_input_range(self, layer_index, neuron_index):
+        self.model = gp.Model('Input_range_update')
         NN = self.NN
         input_range_all = self.input_range_all
         traceback = min(self.traceback, layer_index + 1)
@@ -82,7 +82,7 @@ class NNRangeRefiner(NNRange):
 
         x_in = self.all_variables[v_name + '_1']
         if type(neuron_index) == list:
-            x_in_neuron = x_in[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]]
+            x_in_neuron = x_in[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]]
         else:
             x_in_neuron = x_in[layer_index][neuron_index]
 
@@ -99,7 +99,7 @@ class NNRangeRefiner(NNRange):
         neuron_max = self._optimize_model(0)
 
         if type(neuron_index) == list:
-            old_range = input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]]
+            old_range = input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]]
         else:
             old_range = input_range_all[layer_index][neuron_index]
         print('Old input range: {}'.format(old_range))
@@ -107,7 +107,7 @@ class NNRangeRefiner(NNRange):
         if NN.layers[layer_index].type == 'Fully_connected':
             input_range_all[layer_index][neuron_index] = new_range
         else:
-            input_range_all[layer_index][neuron_index[0]][neuron_index[1]][neuron_index[2]] = new_range
+            input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] = new_range
         print('Finish Updating.')
         print('New input range: {}'.format(new_range))
         return new_range
@@ -342,11 +342,11 @@ class NNRangeRefiner(NNRange):
                         for j in range(NN.layers[0].input_dim[1]):
                             network_in[s][i, j].setAttr(
                                 GRB.Attr.LB,
-                                network_input_box[i][j][s][0]
+                                network_input_box[s][i][j][0]
                             )
                             network_in[s][i, j].setAttr(
                                 GRB.Attr.UB,
-                                network_input_box[i][j][s][1]
+                                network_input_box[s][i][j][1]
                             )
             else:
                 for i in range(NN.layers[0].input_dim[0]):
@@ -414,28 +414,40 @@ class NNRangeRefiner(NNRange):
         NN = self.NN
         layer = NN.layers[layer_index]
         input_range_layer = self.input_range_all[layer_index]
+        output_range_layer = self.output_range_all[layer_index]
         model = self.model
         x_in = self.all_variables[v_name + '_1'][layer_index]
         x_out = self.all_variables[v_name + '_2'][layer_index]
         kernel = layer.kernel
         bias = layer.bias
         stride = layer.stride
-        # assign bound of each neuron input
-        for i in range(layer.input_dim[0]):
-            for j in range(layer.input_dim[1]):
-                for s in range(layer.input_dim[2]):
+        # assign input and output bound of each neuron input
+        for s in range(layer.input_dim[2]):
+            for i in range(layer.input_dim[0]):
+                for j in range(layer.input_dim[1]):
                     x_in[s][i, j].setAttr(
                         GRB.Attr.LB,
-                        input_range_layer[i][j][s][0]
+                        input_range_layer[s][i][j][0]
                     )
                     x_in[s][i, j].setAttr(
                         GRB.Attr.UB,
-                        input_range_layer[i][j][s][1]
+                        input_range_layer[s][i][j][1]
                     )
+        # for s in range(layer.output_dim[2]):
+        #     for i in range(layer.output_dim[0]):
+        #         for j in range(layer.output_dim[1]):
+        #             x_out[s][i, j].setAttr(
+        #                 GRB.Attr.LB,
+        #                 output_range_layer[s][i][j][0]
+        #             )
+        #             x_out[s][i, j].setAttr(
+        #                 GRB.Attr.UB,
+        #                 output_range_layer[s][i][j][1]
+        #             )
         # assign the relation between input and output
-        for i in range(layer.output_dim[0]):
-            for j in range(layer.output_dim[1]):
-                for k in range(layer.output_dim[2]):
+        for k in range(layer.output_dim[2]):
+            for i in range(layer.output_dim[0]):
+                for j in range(layer.output_dim[1]):
                     sum_expr = 0
                     for s in range(layer.input_dim[2]):
                         for p in range(kernel.shape[0]):
@@ -451,6 +463,7 @@ class NNRangeRefiner(NNRange):
         NN = self.NN
         layer = NN.layers[layer_index]
         input_range_layer = self.input_range_all[layer_index]
+        output_range_layer = self.output_range_all[layer_index]
         model = self.model
         x_in = self.all_variables[v_name + '_1'][layer_index]
         x_out = self.all_variables[v_name + '_2'][layer_index]
@@ -458,17 +471,28 @@ class NNRangeRefiner(NNRange):
         pooling_type = layer.activation
         stride = layer.stride
         # assign bound of each neuron input
-        for i in range(layer.input_dim[0]):
-            for j in range(layer.input_dim[1]):
-                for s in range(layer.input_dim[2]):
+        for s in range(layer.input_dim[2]):
+            for i in range(layer.input_dim[0]):
+                for j in range(layer.input_dim[1]):
                     x_in[s][i, j].setAttr(
                         GRB.Attr.LB,
-                        input_range_layer[i][j][s][0]
+                        input_range_layer[s][i][j][0]
                     )
                     x_in[s][i, j].setAttr(
                         GRB.Attr.UB,
-                        input_range_layer[i][j][s][1]
+                        input_range_layer[s][i][j][1]
                     )
+        # for s in range(layer.output_dim[2]):
+        #     for i in range(layer.output_dim[0]):
+        #         for j in range(layer.output_dim[1]):
+        #             x_out[s][i, j].setAttr(
+        #                 GRB.Attr.LB,
+        #                 output_range_layer[s][i][j][0]
+        #             )
+        #             x_out[s][i, j].setAttr(
+        #                 GRB.Attr.UB,
+        #                 output_range_layer[s][i][j][1]
+        #             )
         # assign the relation between input and output
         if pooling_type == 'max':
             for s in range(layer.input_dim[2]):
@@ -499,20 +523,21 @@ class NNRangeRefiner(NNRange):
         NN = self.NN
         layer = NN.layers[layer_index]
         input_range_layer = self.input_range_all[layer_index]
+        # output_range_layer = self.output_range_all[layer_index]
         model = self.model
         x_in = self.all_variables[v_name + '_1'][layer_index]
         x_out = self.all_variables[v_name + '_2'][layer_index]
         # assign bound of each neuron input
-        for i in range(layer.input_dim[0]):
-            for j in range(layer.input_dim[1]):
-                for s in range(layer.input_dim[2]):
+        for s in range(layer.input_dim[2]):
+            for i in range(layer.input_dim[0]):
+                for j in range(layer.input_dim[1]):
                     x_in[s][i, j].setAttr(
                         GRB.Attr.LB,
-                        input_range_layer[i][j][s][0]
+                        input_range_layer[s][i][j][0]
                     )
                     x_in[s][i, j].setAttr(
                         GRB.Attr.UB,
-                        input_range_layer[i][j][s][1]
+                        input_range_layer[s][i][j][1]
                     )
         # assign the relation between input and output
         k = 0
@@ -530,6 +555,7 @@ class NNRangeRefiner(NNRange):
         NN = self.NN
         layer = NN.layers[layer_index]
         input_range_layer = self.input_range_all[layer_index]
+        output_range_layer = self.output_range_all[layer_index]
         refinement_degree_layer = self.refinement_degree_all[layer_index]
         model = self.model
         x_in = self.all_variables[v_name + '_1'][layer_index]
@@ -542,11 +568,19 @@ class NNRangeRefiner(NNRange):
             for s in range(layer.input_dim[2]):
                 for i in range(layer.input_dim[0]):
                     for j in range(layer.input_dim[1]):
-                        low = input_range_layer[i][j][s][0]
-                        upp = input_range_layer[i][j][s][1]
+                        low = input_range_layer[s][i][j][0]
+                        upp = input_range_layer[s][i][j][1]
                         # set range of the neuron
                         x_in[s][i, j].setAttr(GRB.Attr.LB, low)
                         x_in[s][i, j].setAttr(GRB.Attr.UB, upp)
+                        x_out[s][i, j].setAttr(
+                            GRB.Attr.LB,
+                            output_range_layer[s][i][j][0]
+                        )
+                        x_out[s][i, j].setAttr(
+                            GRB.Attr.UB,
+                            output_range_layer[s][i][j][1]
+                        )
                         # Stay inside one and only one region, thus sum of slack integers should be 1
                         model.addConstr(z[s][i][j].sum() == 1)
                         # construct segmentation_list with respect to refinement_degree_layer[s][i][j]
@@ -570,6 +604,14 @@ class NNRangeRefiner(NNRange):
                 # set range of the neuron
                 x_in[i].setAttr(GRB.Attr.LB, low)
                 x_in[i].setAttr(GRB.Attr.UB, upp)
+                x_out[i].setAttr(
+                    GRB.Attr.LB,
+                    output_range_layer[i][0]
+                )
+                x_out[i].setAttr(
+                    GRB.Attr.UB,
+                    output_range_layer[i][1]
+                )
                 # any neuron can only be within a region, thus sum of slack integers should be 1
                 model.addConstr(z[i].sum() == 1)
                 if activation == 'ReLU' and refinement_degree_layer[i] == 2:
@@ -717,12 +759,13 @@ class NNRangeRefiner(NNRange):
     # optimize a model
     def _optimize_model(self, DETAILS_FLAG):
         self.model.setParam('OutputFlag', DETAILS_FLAG)
-        self.model.setParam('BarHomogeneous', 1)
-        self.model.setParam('DualReductions', 0)
+        # self.model.setParam('BarHomogeneous', 1)
+        self.model.setParam('DualReductions', 1)
         self.model.optimize()
+        # print(self.model.status)
 
         if self.model.status == GRB.OPTIMAL:
-            self.model.write("model.lp")
+            #self.model.write("model.lp")
             opt = self.model.objVal
             return opt
         else:
