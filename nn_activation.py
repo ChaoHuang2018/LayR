@@ -24,8 +24,8 @@ class Activation(object):
             return self.sigmoid(x)
         elif self.activation == 'tanh':
             return self.tanh(x)
-        elif self.activation == 'identity':
-            return self.identity(x)
+        elif self.activation == 'Affine':
+            return self.affine(x)
 
     def activate_de_left(self, x):
         if self.activation == 'ReLU':
@@ -34,8 +34,8 @@ class Activation(object):
             return self.sigmoid_de_left(x)
         elif self.activation == 'tanh':
             return self.tanh_de_left(x)
-        elif self.activation == 'identity':
-            return self.identity_de_left(x)
+        elif self.activation == 'Affine':
+            return self.affine_de_left(x)
 
     def activate_de_right(self, x):
         if self.activation == 'ReLU':
@@ -44,8 +44,8 @@ class Activation(object):
             return self.sigmoid_de_right(x)
         elif self.activation == 'tanh':
             return self.tanh_de_right(x)
-        elif self.activation == 'identity':
-            return self.identity_de_right(x)
+        elif self.activation == 'Affine':
+            return self.affine_de_right(x)
 
     # define relu activation function and its left/right derivative
     @staticmethod
@@ -113,13 +113,13 @@ class Activation(object):
 
     # define Indentity activation function and its left/right derivative
     @staticmethod
-    def identity(x):
+    def affine(x):
         return x
 
     @staticmethod
-    def identity_de_left(x):
+    def affine_de_left(x):
         return 1
 
     @staticmethod
-    def identity_de_right(x):
+    def affine_de_right(x):
         return 1

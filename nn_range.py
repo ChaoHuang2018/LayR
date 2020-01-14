@@ -64,7 +64,7 @@ class NNRange(object):
     def _set_refinement_degree(self, layer_index, neuron_index, neuron_refinement_degree):
         # check relu
         if type(neuron_index) == list:
-            if self.NN.layers[layer_index].activation == 'identity':
+            if self.NN.layers[layer_index].activation == 'Affine':
                 return 1
             elif self.NN.layers[layer_index].activation == 'ReLU':
                 if (self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][0] > 0 or
@@ -75,7 +75,7 @@ class NNRange(object):
             else:
                 return neuron_refinement_degree
         else:
-            if self.NN.layers[layer_index].activation == 'identity':
+            if self.NN.layers[layer_index].activation == 'Affine':
                 return 1
             elif self.NN.layers[layer_index].activation == 'ReLU':
                 if (self.input_range_all[layer_index][neuron_index][0] > 0 or
