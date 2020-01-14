@@ -421,7 +421,7 @@ class NNRangeRefiner(NNRange):
         kernel = layer.kernel
         bias = layer.bias
         stride = layer.stride
-        # assign input and output bound of each neuron input
+        # assign input bound of each neuron input
         for s in range(layer.input_dim[2]):
             for i in range(layer.input_dim[0]):
                 for j in range(layer.input_dim[1]):
@@ -433,17 +433,6 @@ class NNRangeRefiner(NNRange):
                         GRB.Attr.UB,
                         input_range_layer[s][i][j][1]
                     )
-        # for s in range(layer.output_dim[2]):
-        #     for i in range(layer.output_dim[0]):
-        #         for j in range(layer.output_dim[1]):
-        #             x_out[s][i, j].setAttr(
-        #                 GRB.Attr.LB,
-        #                 output_range_layer[s][i][j][0]
-        #             )
-        #             x_out[s][i, j].setAttr(
-        #                 GRB.Attr.UB,
-        #                 output_range_layer[s][i][j][1]
-        #             )
         # assign the relation between input and output
         for k in range(layer.output_dim[2]):
             for i in range(layer.output_dim[0]):
@@ -482,17 +471,6 @@ class NNRangeRefiner(NNRange):
                         GRB.Attr.UB,
                         input_range_layer[s][i][j][1]
                     )
-        # for s in range(layer.output_dim[2]):
-        #     for i in range(layer.output_dim[0]):
-        #         for j in range(layer.output_dim[1]):
-        #             x_out[s][i, j].setAttr(
-        #                 GRB.Attr.LB,
-        #                 output_range_layer[s][i][j][0]
-        #             )
-        #             x_out[s][i, j].setAttr(
-        #                 GRB.Attr.UB,
-        #                 output_range_layer[s][i][j][1]
-        #             )
         # assign the relation between input and output
         if pooling_type == 'max':
             for s in range(layer.input_dim[2]):
@@ -570,17 +548,9 @@ class NNRangeRefiner(NNRange):
                     for j in range(layer.input_dim[1]):
                         low = input_range_layer[s][i][j][0]
                         upp = input_range_layer[s][i][j][1]
-                        # set range of the neuron
+                        # set input range of the neuron
                         x_in[s][i, j].setAttr(GRB.Attr.LB, low)
                         x_in[s][i, j].setAttr(GRB.Attr.UB, upp)
-                        x_out[s][i, j].setAttr(
-                            GRB.Attr.LB,
-                            output_range_layer[s][i][j][0]
-                        )
-                        x_out[s][i, j].setAttr(
-                            GRB.Attr.UB,
-                            output_range_layer[s][i][j][1]
-                        )
                         # Stay inside one and only one region, thus sum of slack integers should be 1
                         model.addConstr(z[s][i][j].sum() == 1)
                         # construct segmentation_list with respect to refinement_degree_layer[s][i][j]
@@ -604,14 +574,6 @@ class NNRangeRefiner(NNRange):
                 # set range of the neuron
                 x_in[i].setAttr(GRB.Attr.LB, low)
                 x_in[i].setAttr(GRB.Attr.UB, upp)
-                x_out[i].setAttr(
-                    GRB.Attr.LB,
-                    output_range_layer[i][0]
-                )
-                x_out[i].setAttr(
-                    GRB.Attr.UB,
-                    output_range_layer[i][1]
-                )
                 # any neuron can only be within a region, thus sum of slack integers should be 1
                 model.addConstr(z[i].sum() == 1)
                 if activation == 'ReLU' and refinement_degree_layer[i] == 2:

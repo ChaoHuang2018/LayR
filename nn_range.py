@@ -95,7 +95,7 @@ class NNRange(object):
 
         if method == 'ERAN':
             eran = ERANModel(NN)
-            output_range_eran = eran.output_range_eran(network_input_box)
+            input_range_eran = eran.input_range_eran(network_input_box)
 
         i = 0
         j = 0
@@ -111,6 +111,12 @@ class NNRange(object):
                     i,
                     output_range_layer
                 )
+
+            if (NN.layers[i].type == 'Fully_connected' or NN.layers[i].type == 'Activation') and method == 'ERAN':
+                print(input_range_eran[j])
+                input_range_layer = copy.deepcopy(self.merge_range(i, input_range_layer, input_range_eran[j]))
+                j += 1
+
             input_range_all.append(input_range_layer)
 
             print('The dimension of input range of layer ' + str(i) + ' :')
@@ -129,9 +135,6 @@ class NNRange(object):
                     i,
                     input_range_layer
                 )
-                if method == 'ERAN':
-                    output_range_layer = copy.deepcopy(self.merge_range(i, output_range_layer, output_range_eran[j]))
-                    j += 1
             if NN.layers[i].type == 'Pooling':
                 output_range_layer = self.__output_range_pooling_layer_naive(
                     i,
@@ -147,9 +150,6 @@ class NNRange(object):
                     i,
                     input_range_layer
                 )
-                if method == 'ERAN':
-                    output_range_layer = copy.deepcopy(self.merge_range(i, output_range_layer, output_range_eran[j]))
-                    j += 1
             output_range_all.append(output_range_layer)
             i += 1
 
@@ -414,22 +414,20 @@ class NNRange(object):
         return np.array(output_range_layer)
 
     def merge_range(self, layer_index, range_a, range_b):
-        print(range_a)
-        print(range_b)
         layer = self.NN.layers[layer_index]
         range_new = copy.deepcopy(range_a)
         if len(range_a) == 0:
             return range_b
         if len(range_b) == 0:
             return range_a
-        if len(layer.output_dim) == 3:
-            for s in range(layer.output_dim[2]):
-                for i in range(layer.output_dim[0]):
-                    for j in range(layer.output_dim[1]):
+        if len(layer.input_dim) == 3:
+            for s in range(layer.input_dim[2]):
+                for i in range(layer.input_dim[0]):
+                    for j in range(layer.input_dim[1]):
                         range_new[s][i][j] = [max(range_a[s][i][j][0], range_b[s][i][j][0]), min(range_a[s][i][j][1], range_b[s][i][j][1])]
         else:
             print(len(range_a))
             print(len(range_b))
-            for i in range(layer.output_dim[0]):
+            for i in range(layer.input_dim[0]):
                 range_new[i] = [max(range_a[i][0], range_b[i][0]), min(range_a[i][1], range_b[i][1])]
         return range_new

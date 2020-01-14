@@ -46,21 +46,20 @@ class ERANModel(object):
             model, is_conv, means, stds = read_tensorflow_net(netfolder + '/' + self.NN.name, num_pixels, False)
             self.eran = ERAN(model, is_onnx=False)
 
-    def output_range_eran(self, network_in):
+    def input_range_eran(self, network_in):
         NN = self.NN
         network_in_lower_bound, network_in_upper_bound = self.network_in_split(network_in)
         label,_,nlb,nub = self.eran.analyze_box(network_in_lower_bound, network_in_upper_bound, 'deepzono', 1, 1, False)
-        output_range_all = []
+        input_range_all = []
         i = 0
         j = 0
         while i < self.NN.num_of_hidden_layers:
             if NN.layers[i].type == 'Activation' or NN.layers[i].type == 'Fully_connected':
-                output_range_layer_i = self.eran_range_reashape(i, nlb[j], nub[j])
-                print(output_range_layer_i)
+                input_range_layer = self.eran_range_reashape(i, nlb[j], nub[j])
                 j += 1
-                output_range_all.append(output_range_layer_i)
+                input_range_all.append(input_range_layer)
             i += 1
-        return output_range_all
+        return input_range_all
 
     def network_in_split(self, network_in):
         network_in_lower_bound = []
@@ -80,15 +79,15 @@ class ERANModel(object):
     def eran_range_reashape(self, layer_index, nlb_layer, nub_layer):
         layer = self.NN.layers[layer_index]
         if layer.type == 'Activation':
-            nlb_3d = np.reshape(nlb_layer, (layer.output_dim[2], layer.output_dim[0], layer.output_dim[1]))
-            nub_3d = np.reshape(nub_layer, (layer.output_dim[2], layer.output_dim[0], layer.output_dim[1]))
-            output_range_layer = copy.deepcopy(nlb_3d)
-            for s in range(layer.output_dim[2]):
-                for i in range(layer.output_dim[0]):
-                    for j in range(layer.output_dim[1]):
-                        output_range_layer[s][i][j] = [nlb_3d[s][i][j], nub_3d[s][i][j]]
+            nlb_3d = np.reshape(nlb_layer, (layer.input_dim[2], layer.input_dim[0], layer.input_dim[1]))
+            nub_3d = np.reshape(nub_layer, (layer.input_dim[2], layer.input_dim[0], layer.input_dim[1]))
+            input_range_layer = copy.deepcopy(nlb_3d)
+            for s in range(layer.input_dim[2]):
+                for i in range(layer.input_dim[0]):
+                    for j in range(layer.input_dim[1]):
+                        input_range_layer[s][i][j] = [nlb_3d[s][i][j], nub_3d[s][i][j]]
         else:
-            output_range_layer = copy.deepcopy(nlb_layer)
-            for i in range(layer.output_dim[0]):
-                output_range_layer[i] = [nlb_layer[i], nub_layer[i]]
-        return output_range_layer
+            input_range_layer = copy.deepcopy(nlb_layer)
+            for i in range(layer.input_dim[0]):
+                input_range_layer[i] = [nlb_layer[i], nub_layer[i]]
+        return input_range_layer
