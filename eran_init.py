@@ -41,7 +41,7 @@ class ERANModel(object):
             self.eran = ERAN(sess.graph.get_tensor_by_name(ops[last_layer_index].name + ':0'), sess)
         elif file_extension == '.pyt':
             model, is_conv, means, stds = read_tensorflow_net(netfolder + '/' + self.NN.name, num_pixels, True)
-            self.eran = ERAN(model, is_onnx=is_onnx)
+            self.eran = ERAN(model, is_onnx=False)
         elif file_extension == '.tf':
             model, is_conv, means, stds = read_tensorflow_net(netfolder + '/' + self.NN.name, num_pixels, False)
             self.eran = ERAN(model, is_onnx=False)
@@ -49,6 +49,7 @@ class ERANModel(object):
     def input_range_eran(self, network_in):
         NN = self.NN
         network_in_lower_bound, network_in_upper_bound = self.network_in_split(network_in)
+        operations = self.eran.optimizer.operations
         label,_,nlb,nub = self.eran.analyze_box(network_in_lower_bound, network_in_upper_bound, 'deepzono', 1, 1, False)
         input_range_all = []
         i = 0

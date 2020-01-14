@@ -37,7 +37,10 @@ class NNRangeRefiner(NNRange):
             neuron_index))
         # need to carefully handle ReLU
         if type(neuron_index) == list:
-            if self.NN.layers[layer_index].activation == 'ReLU':
+            if self.NN.layers[layer_index].activation == 'identity':
+                print('No need to add more slack binary variables for this neuron!')
+                return
+            elif self.NN.layers[layer_index].activation == 'ReLU':
                 if (self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][0] > 0 or
                         self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][1] < 0):
                     print('No need to add more slack binary variables for this neuron!')
@@ -50,7 +53,10 @@ class NNRangeRefiner(NNRange):
                 self.refinement_degree_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] += 1
                 print('Add a slack integer variables.')
         else:
-            if self.NN.layers[layer_index].activation == 'ReLU':
+            if self.NN.layers[layer_index].activation == 'identity':
+                print('No need to add more slack binary variables for this neuron!')
+                return
+            elif self.NN.layers[layer_index].activation == 'ReLU':
                 if (self.input_range_all[layer_index][neuron_index][0] > 0 or
                         self.input_range_all[layer_index][neuron_index][1] < 0):
                     print('No need to add more slack binary variables for this neuron!')
@@ -599,7 +605,10 @@ class NNRangeRefiner(NNRange):
         temp_x_diff = M * (seg_right - seg_left)
         temp_y_diff = M * (act.activate(seg_right) - act.activate(seg_left))
         der = temp_y_diff / temp_x_diff
-        if seg_left < 0 < seg_right:
+        if activation == 'identity':
+            model.addConstr((z_seg == 1) >> (x_in_neuron == x_out_neuron),
+                            name='layer_' + str(layer_index) + '_' + str(index).replace(" ","_") + '_identity')
+        elif seg_left < 0 < seg_right:
             if activation == 'ReLU':
                 model.addConstr((z_seg == 1) >> (x_in_neuron >= seg_left),
                                 name='layer_' + str(layer_index) + '_' + str(index).replace(" ",

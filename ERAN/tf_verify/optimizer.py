@@ -49,13 +49,16 @@ class Optimizer:
         i = 0
         while i < nbr_op:
             if self.operations[i] == "Placeholder":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 input_names, output_name, output_shape = self.resources[i][domain]
                 if specUB is None:
                     execute_list.append(DeepzonoInputZonotope(specLB, input_names, output_name, output_shape))
                 else:
                     execute_list.append(DeepzonoInput(specLB, specUB, input_names, output_name, output_shape))
                 i += 1
+                print(len(execute_list))
             elif self.operations[i] == "MatMul":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 if i != nbr_op-1 and self.operations[i+1] in ["Add", "BiasAdd"]:
                     matrix,  m_input_names, _, _           = self.resources[i][domain]
                     bias, _, output_name, b_output_shape = self.resources[i+1][domain]
@@ -70,7 +73,9 @@ class Optimizer:
                     #self.resources[i][domain].append(refine)
                     execute_list.append(DeepzonoMatmul(*self.resources[i][domain]))
                     i += 1
+                print(len(execute_list))
             elif self.operations[i] == "Gemm":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 matrix, bias, m_input_names, b_output_name, b_output_shape = self.resources[i][domain]
 
                 nn.weights.append(matrix)
@@ -79,7 +84,9 @@ class Optimizer:
                 nn.numlayer+= 1
                 execute_list.append(DeepzonoAffine(matrix, bias, m_input_names, b_output_name, b_output_shape))
                 i += 1
+                print(len(execute_list))
             elif self.operations[i] == "Conv2D":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 if i != nbr_op-1 and self.operations[i+1] == "BiasAdd":
                     filters, image_shape, strides, pad_top, pad_left, c_input_names, _, _ = self.resources[i][domain]
                     bias, _, b_output_name, b_output_shape = self.resources[i+1][domain]
@@ -108,7 +115,9 @@ class Optimizer:
                     i += 1
                 nn.layertypes.append('Conv2DNoReLU')
                 nn.numlayer+=1
+                print(len(execute_list))
             elif self.operations[i] == "Conv":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 filters, bias, image_shape, strides, pad_top, pad_left, c_input_names, output_name, b_output_shape = self.resources[i][domain]
                 nn.numfilters.append(filters.shape[3])
                 nn.filter_size.append([filters.shape[0], filters.shape[1]])
@@ -123,25 +132,33 @@ class Optimizer:
                 nn.numlayer+=1
                 execute_list.append(DeepzonoConvbias(image_shape, filters, bias, strides, pad_top, pad_left, c_input_names, output_name, b_output_shape))
                 i += 1
+                print(len(execute_list))
             elif self.operations[i] == "Add":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 #self.resources[i][domain].append(refine)
                 execute_list.append(DeepzonoAdd(*self.resources[i][domain]))
                 nn.layertypes.append('Add')
                 nn.numlayer += 1
                 i += 1
+                print(len(execute_list))
             elif self.operations[i] == "Sub":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 #self.resources[i][domain].append(refine)
                 execute_list.append(DeepzonoSub(*self.resources[i][domain]))
                 nn.layertypes.append('Sub')
                 nn.numlayer += 1
                 i += 1
+                print(len(execute_list))
             elif self.operations[i] == "Mul":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 #self.resources[i][domain].append(refine)
                 execute_list.append(DeepzonoMul(*self.resources[i][domain]))
                 nn.layertypes.append('Mul')
                 nn.numlayer += 1
                 i += 1
+                print(len(execute_list))
             elif self.operations[i] == "MaxPool":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 image_shape, window_size, strides, pad_top, pad_left, input_names, output_name, output_shape = self.resources[i][domain]
                 nn.pool_size.append(window_size)
                 nn.input_shape.append([image_shape[0],image_shape[1],image_shape[2]])
@@ -152,13 +169,17 @@ class Optimizer:
                 nn.numlayer+=1
                 execute_list.append(DeepzonoMaxpool(image_shape, window_size, strides, pad_top, pad_left, input_names, output_name, output_shape))
                 i += 1
+                print(len(execute_list))
             elif self.operations[i] == "Resadd":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 #self.resources[i][domain].append(refine)
                 execute_list.append(DeepzonoResadd(*self.resources[i][domain]))
                 nn.layertypes.append('Resaddnorelu')
                 nn.numlayer += 1
                 i += 1
+                print(len(execute_list))
             elif self.operations[i] == "Relu":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 #self.resources[i][domain].append(refine)
                 if nn.layertypes[-1]=='Affine':
                     nn.layertypes[-1] = 'ReLU'
@@ -166,28 +187,37 @@ class Optimizer:
                     nn.layertypes[-1] = nn.layertypes[-1][:-6]
                 execute_list.append(DeepzonoRelu(*self.resources[i][domain]))
                 i += 1
+                print(len(execute_list))
             elif self.operations[i] == "Sigmoid":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 execute_list.append(DeepzonoSigmoid(*self.resources[i][domain]))
                 nn.layertypes.append('Sigmoid')
                 nn.numlayer += 1
                 i += 1
+                print(len(execute_list))
             elif self.operations[i] == "Tanh":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 execute_list.append(DeepzonoTanh(*self.resources[i][domain]))
                 nn.layertypes.append('Tanh')
                 nn.numlayer += 1
                 i += 1
+                print(len(execute_list))
             elif self.operations[i] == "Gather":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 image_shape, indexes, axis,  input_names, output_name, output_shape = self.resources[i][domain]
                 calculated_indexes = self.get_gather_indexes(image_shape, indexes, axis)
                 execute_list.append(DeepzonoGather(calculated_indexes, input_names, output_name, output_shape))
                 nn.layertypes.append('Gather')
                 nn.numlayer += 1
                 i += 1
+                print(len(execute_list))
             elif self.operations[i] == "Reshape":
+                print(str(i) + '-th operation: ' + str(self.operations[i]))
                 execute_list.append(DeepzonoGather(*self.resources[i][domain]))
                 nn.layertypes.append('Gather')
                 nn.numlayer += 1
                 i += 1
+                print(len(execute_list))
             else:
                 assert 0, "the optimizer for Deepzono doesn't know of the operation type " + self.operations[i]
 

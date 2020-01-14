@@ -64,7 +64,9 @@ class NNRange(object):
     def _set_refinement_degree(self, layer_index, neuron_index, neuron_refinement_degree):
         # check relu
         if type(neuron_index) == list:
-            if self.NN.layers[layer_index].activation == 'ReLU':
+            if self.NN.layers[layer_index].activation == 'identity':
+                return 1
+            elif self.NN.layers[layer_index].activation == 'ReLU':
                 if (self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][0] > 0 or
                         self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][1] < 0):
                     return min(1, neuron_refinement_degree)
@@ -73,7 +75,9 @@ class NNRange(object):
             else:
                 return neuron_refinement_degree
         else:
-            if self.NN.layers[layer_index].activation == 'ReLU':
+            if self.NN.layers[layer_index].activation == 'identity':
+                return 1
+            elif self.NN.layers[layer_index].activation == 'ReLU':
                 if (self.input_range_all[layer_index][neuron_index][0] > 0 or
                         self.input_range_all[layer_index][neuron_index][1] < 0):
                     return min(1, neuron_refinement_degree)
@@ -113,7 +117,6 @@ class NNRange(object):
                 )
 
             if (NN.layers[i].type == 'Fully_connected' or NN.layers[i].type == 'Activation') and method == 'ERAN':
-                print(input_range_eran[j])
                 input_range_layer = copy.deepcopy(self.merge_range(i, input_range_layer, input_range_eran[j]))
                 j += 1
 
@@ -291,6 +294,7 @@ class NNRange(object):
     def __output_range_activation_layer_naive(self, layer_index, input_range_layer):
         layer = self.NN.layers[layer_index]
         activation = self.NN.layers[layer_index].activation
+        act = Activation(activation)
 
         if len(layer.input_dim) == 3:
             # for convolutional layer
@@ -302,9 +306,9 @@ class NNRange(object):
                     output_range_layer_row = []
                     for j in range(input_range_layer.shape[1]):
                         # compute the minimal output
-                        neuron_min = activate(activation, input_range_layer[i][j][s][0])
+                        neuron_min = act.activate(input_range_layer[i][j][s][0])
                         # compute the maximal output
-                        neuron_max = activate(activation, input_range_layer[i][j][s][1])
+                        neuron_max = act.actactivate(input_range_layer[i][j][s][1])
                         output_range_layer_row.append([neuron_min, neuron_max])
                     output_range_layer_channel.append(output_range_layer_row)
                 output_range_layer.append(output_range_layer_channel)
@@ -314,9 +318,9 @@ class NNRange(object):
             output_range_layer = []
             for i in range(input_range_layer.shape[0]):
                 # compute the minimal output
-                neuron_min = activate(activation, input_range_layer[i][0])
+                neuron_min = act.activate(input_range_layer[i][0])
                 # compute the maximal output
-                neuron_max = activate(activation, input_range_layer[i][1])
+                neuron_max = act.activate(input_range_layer[i][1])
                 output_range_layer.append([neuron_min, neuron_max])
 
         return np.array(output_range_layer)
@@ -380,39 +384,6 @@ class NNRange(object):
                     output_range_layer.append(input_range_layer[s][i][j])
         return np.array(output_range_layer)
 
-    def __output_range_activation_layer_naive(self, layer_index, input_range_layer):
-        layer = self.NN.layers[layer_index]
-        activation = self.NN.layers[layer_index].activation
-        act = Activation(activation)
-
-        if len(layer.input_dim) == 3:
-            # for convolutional layer
-            # compute the out range of each neuron by activation function
-            output_range_layer = []
-            for s in range(input_range_layer.shape[2]):
-                output_range_layer_channel = []
-                for i in range(input_range_layer.shape[0]):
-                    output_range_layer_row = []
-                    for j in range(input_range_layer.shape[1]):
-                        # compute the minimal output
-                        neuron_min = act.activate(input_range_layer[i][j][s][0])
-                        # compute the maximal output
-                        neuron_max = act.activate(input_range_layer[i][j][s][1])
-                        output_range_layer_row.append([neuron_min, neuron_max])
-                    output_range_layer_channel.append(output_range_layer_row)
-                output_range_layer.append(output_range_layer_channel)
-        else:
-            # for fully connected layer
-            # compute the out range of each neuron by activation function
-            output_range_layer = []
-            for i in range(input_range_layer.shape[0]):
-                # compute the minimal output
-                neuron_min = act.activate(input_range_layer[i][0])
-                # compute the maximal output
-                neuron_max = act.activate(input_range_layer[i][1])
-                output_range_layer.append([neuron_min, neuron_max])
-        return np.array(output_range_layer)
-
     def merge_range(self, layer_index, range_a, range_b):
         layer = self.NN.layers[layer_index]
         range_new = copy.deepcopy(range_a)
@@ -426,8 +397,6 @@ class NNRange(object):
                     for j in range(layer.input_dim[1]):
                         range_new[s][i][j] = [max(range_a[s][i][j][0], range_b[s][i][j][0]), min(range_a[s][i][j][1], range_b[s][i][j][1])]
         else:
-            print(len(range_a))
-            print(len(range_b))
             for i in range(layer.input_dim[0]):
                 range_new[i] = [max(range_a[i][0], range_b[i][0]), min(range_a[i][1], range_b[i][1])]
         return range_new
