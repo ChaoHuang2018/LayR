@@ -37,33 +37,32 @@ class ReachNN(object):
     def __init__(
         self,
         NN1,
-        network_input_box1,
-        traceback1,
-        initialize_approach1,
-        NN2=None,
-        network_input_box2=None,
-        traceback2=None,
+        network_input_box,
+        traceback,
+        initialize_approach,
+        global_robustness_type=None,
         perturbation_bound=None,
-        initialize_approach2=None,
+        NN2=None
     ):
         # neural networks
         self.NN1 = NN1
         self.NN2 = NN2
 
         # input space
-        self.network_input_box1 = network_input_box1
-        self.network_input_box2 = network_input_box2
+        self.network_input_box = network_input_box
         self.perturbation_bound = perturbation_bound
 
-        self.initialize_approach1 = initialize_approach1
-        self.initialize_approach2 = initialize_approach2
+        self.initialize_approach = initialize_approach
+
+        self.global_robustness_type = global_robustness_type
+
+        self.perturbation_bound = perturbation_bound
 
         # traceback
-        self.traceback1 = traceback1
-        self.traceback2 = traceback2
+        self.traceback = traceback
 
     def output_range_analysis(self, strategy_name, output_index, number=40):
-        nn_refiner = NNRangeRefiner(self.NN1, self.network_input_box1, self.initialize_approach1, self.traceback1)
+        nn_refiner = NNRangeRefiner(self.NN1, self.network_input_box, self.initialize_approach, self.traceback)
         new_output_range = refine_by_heuristic(nn_refiner, strategy_name, output_index, number, check_output=False)
         # new_output_range = nn_refiner.update_neuron_input_range(self.NN1.num_of_hidden_layers - 1, output_index)
         return new_output_range

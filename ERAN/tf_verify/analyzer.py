@@ -89,14 +89,9 @@ class Analyzer:
         print('Chao_testing -- the length of ir_list: ' + str(len(self.ir_list)))
         for i in range(1, len(self.ir_list)):
             if self.domain == 'deepzono' or self.domain == 'refinezono':
-                element_test_bounds = self.ir_list[i].transformer(self.nn, self.man, element, nlb, nub, self.relu_groups, self.domain=='refinezono', self.timeout_lp, self.timeout_milp, self.testing)
                 print()
-                print('Chao_testing -- the length of lower bound list: ' + str(len(nlb)))
-                for i in range(len(nlb)):
-                    print(len(nlb[i]))
-                print('Chao_testing -- the length of upper bound list: ' + str(len(nub)))
-                for i in range(len(nlb)):
-                    print(len(nub[i]))
+                print('ERAN is processing Layer ' + str(i))
+                element_test_bounds = self.ir_list[i].transformer(self.nn, self.man, element, nlb, nub, self.relu_groups, self.domain=='refinezono', self.timeout_lp, self.timeout_milp, self.testing)
             else:
                 element_test_bounds = self.ir_list[i].transformer(self.nn, self.man, element, nlb, nub, self.relu_groups, self.domain=='refinepoly', self.timeout_lp, self.timeout_milp, self.use_area_heuristic, self.testing)
 

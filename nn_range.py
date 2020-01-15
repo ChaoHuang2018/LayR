@@ -399,4 +399,11 @@ class NNRange(object):
         else:
             for i in range(layer.input_dim[0]):
                 range_new[i] = [max(range_a[i][0], range_b[i][0]), min(range_a[i][1], range_b[i][1])]
+                if range_new[i][0] > range_new[i][1]:
+                    print(layer_index)
+                    print(i)
+                    print(range_new[i])
+                    print(range_a[i])
+                    print(range_b[i])
+                    raise ValueError('ERROR range after merging!')
         return range_new

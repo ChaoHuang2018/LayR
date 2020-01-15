@@ -32,7 +32,7 @@ def get_tests(dataset):
 # test new approach for estimating sigmoid network's output range
 eps = 0.01
 perturbation = 0.1
-NN = nn_controller_details('ffnnTANH__Point_6_500.pyt', keras='eran')
+NN = nn_controller_details('ffnnSIGMOID__Point_6_500.pyt', keras='eran')
 # NN1 = nn_controller_details('model_CNNA', keras=True)
 # the data, split between train and test sets
 # fashion_mnist = keras.datasets.fashion_mnist
@@ -56,19 +56,19 @@ for k in range(input_dim[2]):
         input_range_channel.append(input_range_row)
     input_range.append(input_range_channel)
 print(np.array(input_range).shape)
-print("actual output of NN: {}".format(NN.controller(data)))
-print('Random samples:')
-low = NN.controller(data)[9][0]
-upp = NN.controller(data)[9][0]
-for n in range(1000):
-    perturbated_data = copy.deepcopy(data)
-    for i in range(28):
-        for j in range(28):
-            perturbated_data[i,j,0] = perturbated_data[i,j,0] + random.uniform(-eps, eps)
-    result = NN.controller(perturbated_data)
-    upp = max(upp, result[9][0])
-    low = min(low, result[9][0])
-print("Bound by sampling: {}".format([low, upp]))
+# print("actual output of NN: {}".format(NN.controller(data)))
+# print('Random samples:')
+# low = NN.controller(data)[9][0]
+# upp = NN.controller(data)[9][0]
+# for n in range(1000):
+#     perturbated_data = copy.deepcopy(data)
+#     for i in range(28):
+#         for j in range(28):
+#             perturbated_data[i,j,0] = perturbated_data[i,j,0] + random.uniform(-eps, eps)
+#     result = NN.controller(perturbated_data)
+#     upp = max(upp, result[9][0])
+#     low = min(low, result[9][0])
+# print("Bound by sampling: {}".format([low, upp]))
 start_time = time.time()
 nn_analyzer = ReachNN(NN, np.array(input_range), 4, 'ERAN')
 new_output_range = nn_analyzer.output_range_analysis('RANDOM', 9, 40)

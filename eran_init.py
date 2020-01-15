@@ -49,14 +49,38 @@ class ERANModel(object):
     def input_range_eran(self, network_in):
         NN = self.NN
         network_in_lower_bound, network_in_upper_bound = self.network_in_split(network_in)
+        label, _, nlb, nub = self.eran.analyze_box(network_in_lower_bound, network_in_upper_bound, 'deepzono', 1, 1,
+                                                   False)
         operations = self.eran.optimizer.operations
-        label,_,nlb,nub = self.eran.analyze_box(network_in_lower_bound, network_in_upper_bound, 'deepzono', 1, 1, False)
+        # operation 0 is 'Placeholder'
+        i = 1
+        j = 0
+        nlb_eran_raw = []
+        nub_eran_raw = []
+        while i < len(operations):
+            if (operations[i] == 'MatMul') and (operations[i+1] in ['Add', 'BiasAdd']):
+                if i < len(operations) - 2:
+                    if operations[i+2] == 'Relu':
+                        nlb_eran_raw.append(nlb[j])
+                        nub_eran_raw.append(nub[j])
+                        j = j + 1
+                    if operations[i+2] == 'Tanh' or operations[i+2] == 'Sigmoid':
+                        nlb_eran_raw.append(nlb[j])
+                        nub_eran_raw.append(nub[j])
+                        j = j + 2
+                    i += 3
+                else:
+                    nlb_eran_raw.append(nlb[-1])
+                    nub_eran_raw.append(nub[-1])
+                    i += 1
+            else:
+                i += 1
         input_range_all = []
         i = 0
         j = 0
         while i < self.NN.num_of_hidden_layers:
             if NN.layers[i].type == 'Activation' or NN.layers[i].type == 'Fully_connected':
-                input_range_layer = self.eran_range_reashape(i, nlb[j], nub[j])
+                input_range_layer = self.eran_range_reashape(i, nlb_eran_raw[j], nub_eran_raw[j])
                 j += 1
                 input_range_all.append(input_range_layer)
             i += 1
