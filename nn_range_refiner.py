@@ -26,11 +26,21 @@ class NNRangeRefiner(NNRange):
         self.v_name = v_name
         self.traceback = traceback
 
-    def refine_neuron(self, layer_index, neuron_index):
+    def refine_neuron(self, layer_index, neuron_index, approach='BOTH'):
         print('Start to refine neuron with index:')
         print('layer_index: ' + str(layer_index) + ', neuron_index: ' + str(neuron_index))
-        self.add_neuron_slack_integer(layer_index, neuron_index)
-        new_range = self.update_neuron_input_range(layer_index, neuron_index)
+        if approach == 'ADD_INTEGER':
+            self.add_neuron_slack_integer(layer_index, neuron_index)
+            if isinstance(neuron_index, list):
+                old_range = self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]]
+            else:
+                old_range = self.input_range_all[layer_index][neuron_index]
+            new_range = old_range
+        elif approach == 'UPDATE_RANGE':
+            new_range = self.update_neuron_input_range(layer_index, neuron_index)
+        else:
+            self.add_neuron_slack_integer(layer_index, neuron_index)
+            new_range = self.update_neuron_input_range(layer_index, neuron_index)
         return new_range
 
     def add_neuron_slack_integer(self, layer_index, neuron_index):
@@ -321,6 +331,7 @@ class NNRangeRefiner(NNRange):
                     )
                 z.append(z_layer)
 
+        all_variables = {}
         all_variables[v_name + '_0'] = network_in
         all_variables[v_name + '_1'] = x_in
         all_variables[v_name + '_2'] = x_out
@@ -329,7 +340,7 @@ class NNRangeRefiner(NNRange):
 
     #############################################################################################
     # add constraints for the input layer
-    def _add_input_constraint(self, model, v_name, all_variables):
+    def _add_input_constraint(self, model, all_variables, v_name):
         NN = self.NN
         network_input_box = self.network_input_box
         network_in = all_variables[v_name + '_0']
@@ -447,6 +458,7 @@ class NNRangeRefiner(NNRange):
     def _relaxation_pooling_layer(self, model, all_variables, v_name, layer_index):
         NN = self.NN
         layer = NN.layers[layer_index]
+        refinement_degree_layer = self.refinement_degree_all[layer_index]
         input_range_layer = self.input_range_all[layer_index]
         x_in = all_variables[v_name + '_1'][layer_index]
         x_out = all_variables[v_name + '_2'][layer_index]
@@ -470,11 +482,17 @@ class NNRangeRefiner(NNRange):
             for s in range(layer.input_dim[2]):
                 for i in range(layer.output_dim[0]):
                     for j in range(layer.output_dim[1]):
-                        temp_list = []
-                        for p in range(filter_size[0]):
-                            for q in range(filter_size[1]):
-                                temp_list.append(x_in[s][i * stride[0] + p, j * stride[1] + q])
-                        model.addConstr(max_(temp_list) == x_out[s][i, j])
+                        if refinement_degree_layer[s][i][j] == 1:
+                            for p in range(filter_size[0]):
+                                for q in range(filter_size[1]):
+                                    model.addConstr(x_out[s][i, j] >= x_in[s][i * stride[0] + p, j * stride[1] + q])
+                                    model.addConstr(x_out[s][i, j] <= x_in[s][i * stride[0] + p, j * stride[1] + q].ub)
+                        else:
+                            temp_list = []
+                            for p in range(filter_size[0]):
+                                for q in range(filter_size[1]):
+                                    temp_list.append(x_in[s][i * stride[0] + p, j * stride[1] + q])
+                            model.addConstr(max_(temp_list) == x_out[s][i, j])
         if pooling_type == 'average':
             for s in range(layer.input_dim[2]):
                 for i in range(layer.output_dim[0]):
@@ -554,7 +572,7 @@ class NNRangeRefiner(NNRange):
                         for k in range(len(segmentations_list) - 1):
                             seg_left = segmentations_list[k]
                             seg_right = segmentations_list[k + 1]
-                            self.segment_relaxation_basic(x_in[s][i, j], x_out[s][i, j], z[s][i][j][k], seg_left,
+                            self.segment_relaxation_basic(model, x_in[s][i, j], x_out[s][i, j], z[s][i][j][k], seg_left,
                                                      seg_right, activation, [i, j, s], layer_index)
         else:
             # if x_in is one-dimensional, which means this is a fc layer
@@ -576,12 +594,11 @@ class NNRangeRefiner(NNRange):
                 for k in range(len(segmentations_list) - 1):
                     seg_left = segmentations_list[k]
                     seg_right = segmentations_list[k + 1]
-                    self.segment_relaxation_basic(x_in[i], x_out[i], z[i][k], seg_left, seg_right,
+                    self.segment_relaxation_basic(model, x_in[i], x_out[i], z[i][k], seg_left, seg_right,
                                              activation, i, layer_index)
 
-    def segment_relaxation_basic(self, x_in_neuron, x_out_neuron, z_seg, seg_left, seg_right, activation, index,
+    def segment_relaxation_basic(self, model, x_in_neuron, x_out_neuron, z_seg, seg_left, seg_right, activation, index,
                                  layer_index):
-        model = self.model
         act = Activation(activation)
 
         M = 10e6

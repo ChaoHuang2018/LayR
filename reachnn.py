@@ -1,7 +1,8 @@
 import gurobipy as gp
 from gurobipy import GRB
 from nn_range_refiner import NNRangeRefiner
-from heuristic_strategy import refine_by_heuristic
+from nn_robustness_evaluator import NNRobusnessEvaluator
+from heuristic_strategy import HeuristicSeachingStrategy
 
 import numpy as np
 import tensorflow as tf
@@ -62,7 +63,17 @@ class ReachNN(object):
         self.traceback = traceback
 
     def output_range_analysis(self, strategy_name, output_index, number=40):
-        nn_refiner = NNRangeRefiner(self.NN1, self.network_input_box, self.initialize_approach, self.traceback)
-        new_output_range = refine_by_heuristic(nn_refiner, strategy_name, output_index, number, check_output=False)
+        nn_refiner = NNRangeRefiner(self.NN1, self.network_input_box, self.initialize_approach, traceback=self.traceback)
+        heuristic_search = HeuristicSeachingStrategy(strategy_name, number, if_check_output=False)
+        new_output_range = heuristic_search.refine_by_heuristic(nn_refiner, output_index)
         # new_output_range = nn_refiner.update_neuron_input_range(self.NN1.num_of_hidden_layers - 1, output_index)
         return new_output_range
+
+    def global_robustness_analysis(self, strategy_name, output_index, number=40):
+        nn_robustness = NNRobusnessEvaluator(self.NN1, self.network_input_box, self.initialize_approach,
+                                             self.perturbation_bound, type='L-INFINITY', traceback=self.traceback)
+        nn_robustness.evaluate_global_robustness(output_index)
+        heuristic_search = HeuristicSeachingStrategy(strategy_name, number, if_check_output=False)
+        heuristic_search.refine_by_heuristic(nn_robustness, output_index)
+        distance_range = nn_robustness.evaluate_global_robustness(output_index)
+        return distance_range

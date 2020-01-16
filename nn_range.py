@@ -20,7 +20,6 @@ class NNRange(object):
         network_input_box,
         initialize_approach,
         input_range_all=None,
-        output_range_all=None,
         refinement_degree_all=None
     ):
         # neural networks

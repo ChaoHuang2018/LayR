@@ -32,7 +32,7 @@ def get_tests(dataset):
 # test new approach for estimating sigmoid network's output range
 eps = 0.01
 perturbation = 0.1
-NN = nn_controller_details('ffnnSIGMOID__Point_6_500.pyt', keras='eran')
+NN = nn_controller_details('mnist_relu_3_50.tf', keras='eran')
 # NN1 = nn_controller_details('model_CNNA', keras=True)
 # the data, split between train and test sets
 # fashion_mnist = keras.datasets.fashion_mnist
@@ -70,8 +70,8 @@ print(np.array(input_range).shape)
 #     low = min(low, result[9][0])
 # print("Bound by sampling: {}".format([low, upp]))
 start_time = time.time()
-nn_analyzer = ReachNN(NN, np.array(input_range), 4, 'ERAN')
-new_output_range = nn_analyzer.output_range_analysis('RANDOM', 9, 40)
+nn_analyzer = ReachNN(NN, np.array(input_range), 4, 'ERAN', global_robustness_type='L-INFINITY', perturbation_bound=0.01)
+new_output_range = nn_analyzer.global_robustness_analysis('METRIC', 9, 20)
 # print('Reach lower bound on the neuron:' + str(min_input))
 # print('The output on the neuron:' + str(NN.controller(min_input)[9][0]))
 # output_l, output_u = global_robustness_analysis(NN, np.array(input_range), perturbation, 9)
