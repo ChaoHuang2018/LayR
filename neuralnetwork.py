@@ -540,11 +540,11 @@ class Layer(object):
 
     @property
     def input_dim(self):
-        return int(self._input_dim)
+        return tuple(int(ele) for ele in self._input_dim)
 
     @property
     def output_dim(self):
-        return int(self._output_dim)
+        return tuple(int(ele) for ele in self._output_dim)
 
 
 def extract_mean(text):
