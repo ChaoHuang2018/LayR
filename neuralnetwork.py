@@ -285,7 +285,7 @@ class NN(object):
                     ])
                     layer_tmp._kernal = W
                     layer_tmp._bias = b
-                    layer_tmp._stride = args["output_shape"]
+                    layer_tmp._stride = args["stride"]
                     layer_tmp._filter_size = args["filters"]
                     self.layers.append(layer_tmp)
 
