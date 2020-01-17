@@ -43,9 +43,11 @@ class NNRobusnessEvaluator(NNRangeRefiner):
         all_variables = self._declare_variables(model, v_name, -1, layer_index)
         all_variables_NN2 = self._declare_variables(model, v_name2, -1, layer_index)
 
-        # add perturbation constraint
+        # add Infinity constraint
         if self.type == 'L-INFINITY':
             self._add_linfinity_perturbedt_constraints(model, all_variables, all_variables_NN2, v_name, v_name2)
+        elif self.type == 'BLUR':
+            self._add_blur_perturbedt_constraints(model, all_variables, all_variables_NN2, v_name, v_name2)
 
         # add constraints for NN
         for k in range(layer_index, -2, -1):
@@ -75,7 +77,7 @@ class NNRobusnessEvaluator(NNRangeRefiner):
 
         return [distance_min, distance_max]
 
-    # add perturbed input constraints
+    # for L-Infinity robustness input specification
     def _add_linfinity_perturbedt_constraints(self, model, all_variables, all_variables_NN2, v_name, v_name2):
         NN = self.NN
         perturbation = self.perturbation
@@ -91,3 +93,24 @@ class NNRobusnessEvaluator(NNRangeRefiner):
             for i in range(NN.layers[0].output_dim[0]):
                 model.addConstr(network_in[i] - network_in_NN2[i] <= perturbation)
                 model.addConstr(network_in[i] - network_in_NN2[i] >= -perturbation)
+
+    # for Blurring by spartial lowpass specification
+    def _add_blur_perturbedt_constraints(self, model, all_variables, all_variables_NN2, v_name, v_name2):
+        NN = self.NN
+        blur_r = 3
+        network_in = all_variables[v_name + '_0']
+        network_in_NN2 = all_variables_NN2[v_name2 + '_0']
+        if len(NN.layers[0].input_dim) == 3:
+            for s in range(NN.layers[0].input_dim[2]):
+                for i in range(NN.layers[0].input_dim[0]):
+                    for j in range(NN.layers[0].input_dim[1]):
+                        # compute the sum of blur region
+                        sum = 0
+                        count = 0
+                        for p in range(i - blur_r, i + blur_r + 1):
+                            if 0 <= p <= NN.layers[0].input_dim[0] - 1:
+                                for q in range(j - blur_r, j + blur_r + 1):
+                                    if 0 <= q <= NN.layers[0].input_dim[1] - 1:
+                                        sum += network_in[s][p, q]
+                                        count += count
+                        model.addConstr(sum / count == network_in_NN2[s][i, j])
