@@ -130,7 +130,7 @@ class NN(object):
                     layer_tmp._type = 'Convolutional'
                     layer_tmp._input_dim = layer.input_shape[1:]
                     layer_tmp._output_dim = layer.output_shape[1:]
-                    layer_tmp._kernal = layer.get_weights()[0]
+                    layer_tmp._kernel = layer.get_weights()[0]
                     layer_tmp._bias = layer.get_weights()[1]
                     layer_tmp._stride = layer.strides
                     layer_tmp._activation = self.activation_function(
@@ -283,7 +283,7 @@ class NN(object):
                     layer_tmp._output_dim = tuple([
                         output_height, output_width, args["filters"]
                     ])
-                    layer_tmp._kernal = W
+                    layer_tmp._kernel = W
                     layer_tmp._bias = b
                     layer_tmp._stride = args["stride"]
                     layer_tmp._filter_size = args["filters"]
@@ -490,7 +490,7 @@ class Layer(object):
         type
         weight
         bias
-        kernal
+        kernel
         stride
         activation
         filter_size
@@ -502,7 +502,7 @@ class Layer(object):
         self._type = None
         self._weight = None
         self._bias = None
-        self._kernal = None
+        self._kernel = None
         self._stride = None
         self._activation = None
         self._filter_size = None
@@ -523,8 +523,8 @@ class Layer(object):
         return self._bias
 
     @property
-    def kernal(self):
-        return self._kernal
+    def kernel(self):
+        return self._kernel
 
     @property
     def stride(self):
