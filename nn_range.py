@@ -117,6 +117,7 @@ class NNRange(object):
 
             if (NN.layers[i].type == 'Fully_connected' or NN.layers[i].type == 'Activation') and method == 'ERAN':
                 input_range_layer = copy.deepcopy(self.merge_range(i, input_range_layer, input_range_eran[j]))
+                # input_range_layer = copy.deepcopy(np.array(input_range_eran[j]))
                 j += 1
 
             input_range_all.append(input_range_layer)

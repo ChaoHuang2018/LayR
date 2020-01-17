@@ -205,7 +205,7 @@ class NN(object):
                     elif (curr_line == 'Tanh'):
                         layer_tmp._activation = 'tanh'
                     elif (curr_line == 'Affine'):
-                        layer_tmp._activation = 'ReLU'
+                        layer_tmp._activation = 'Affine'
                     layer_tmp._weight = W
                     layer_tmp._bias = b
                     self.layers.append(layer_tmp)

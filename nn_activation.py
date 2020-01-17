@@ -81,8 +81,8 @@ def tanh(x):
 
 def tanh_de_left(x):
     de_l = 1 - (tanh(x)) ** 2
-    if abs(de_l) <= 10e-4:
-        de_l = 0
+    # if abs(de_l) <= 10e-4:
+    #     de_l = 0
     return de_l
 
 
@@ -106,16 +106,20 @@ def sigmoid_de_left(x):
     #     de_l = 0
     return de_l
 
+
 def sigmoid_de_right(x):
     de_r = sigmoid_de_left(x)
     return de_r
+
 
 # define Indentity activation function and its left/right derivative
 def affine(x):
     return x
 
+
 def affine_de_left(x):
     return 1
+
 
 def affine_de_right(x):
     return 1

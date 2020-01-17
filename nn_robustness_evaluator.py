@@ -40,8 +40,8 @@ class NNRobusnessEvaluator(NNRangeRefiner):
         print('Update global robustness result of the ' + str(output_index) + '-th output.')
         # declare variables for two inputs NN and NN2. For each input variables, we need construct the LP/MILP relaxation
         # seperately with the same setting
-        all_variables = self._declare_variables(model, v_name, layer_index)
-        all_variables_NN2 = self._declare_variables(model, v_name2, layer_index)
+        all_variables = self._declare_variables(model, v_name, -1, layer_index)
+        all_variables_NN2 = self._declare_variables(model, v_name2, -1, layer_index)
 
         # add perturbation constraint
         if self.type == 'L-INFINITY':
@@ -89,5 +89,5 @@ class NNRobusnessEvaluator(NNRangeRefiner):
                         model.addConstr(network_in[s][i, j] - network_in_NN2[s][i, j] >= -perturbation)
         if len(NN.layers[0].input_dim) == 1:
             for i in range(NN.layers[0].output_dim[0]):
-                model.addConstr(network_in_NN1[i] - network_in_NN2[i] <= perturbation)
-                model.addConstr(network_in_NN1[i] - network_in_NN2[i] >= -perturbation)
+                model.addConstr(network_in[i] - network_in_NN2[i] <= perturbation)
+                model.addConstr(network_in[i] - network_in_NN2[i] >= -perturbation)

@@ -37,10 +37,12 @@ class NNRangeRefiner(NNRange):
                 old_range = self.input_range_all[layer_index][neuron_index]
             new_range = old_range
         elif approach == 'UPDATE_RANGE':
-            new_range = self.update_neuron_input_range(layer_index, neuron_index)
+            start_layer = layer_index - min(self.traceback, layer_index + 1)
+            new_range = self.update_neuron_input_range(start_layer, layer_index, neuron_index)
         else:
+            start_layer = layer_index - min(self.traceback, layer_index + 1)
             self.add_neuron_slack_integer(layer_index, neuron_index)
-            new_range = self.update_neuron_input_range(layer_index, neuron_index)
+            new_range = self.update_neuron_input_range(start_layer, layer_index, neuron_index)
         return new_range
 
     def add_neuron_slack_integer(self, layer_index, neuron_index):
@@ -80,19 +82,18 @@ class NNRangeRefiner(NNRange):
                 self.refinement_degree_all[layer_index][neuron_index] += 1
                 print('Add a slack integer variables.')
 
-    def update_neuron_input_range(self, layer_index, neuron_index):
+    def update_neuron_input_range(self, start_layer, layer_index, neuron_index):
         model = gp.Model('Input_range_update')
         NN = self.NN
         input_range_all = self.input_range_all
-        traceback = min(self.traceback, layer_index + 1)
         v_name = self.v_name
 
         print('Update range of neuron :' + 'layer_index: ' + str(layer_index) + ', neuron_index: ' + str(neuron_index))
-        all_variables = self._declare_variables(model, v_name, layer_index)
-        for k in range(layer_index, layer_index - 1 - traceback, -1):
+        all_variables = self._declare_variables(model, v_name, start_layer, layer_index)
+        for k in range(layer_index, start_layer - 1, -1):
             if k >= 0:
                 self._add_innerlayer_constraint(model, all_variables, v_name, k)
-            if k >= layer_index - 1 - traceback + 2:
+            if k >= start_layer + 1:
                 self._add_interlayers_constraint(model, all_variables, v_name, k)
             if k == -1:
                 self._add_input_constraint(model, all_variables, v_name)
@@ -122,13 +123,12 @@ class NNRangeRefiner(NNRange):
         print('New input range: {}'.format(new_range))
         return new_range
 
-    def _declare_variables(self, model, v_name, layer_index):
+    def _declare_variables(self, model, v_name, start_layer, end_layer):
         # variables in the input layer
-        traceback = min(self.traceback, layer_index + 1)
         NN = self.NN
         refinement_degree_all = self.refinement_degree_all
 
-        if layer_index - traceback == -1:
+        if start_layer == -1:
             if NN.type == 'Convolutional' or NN.type == 'Flatten':
                 network_in = []
                 for s in range(NN.layers[0].input_dim[2]):
@@ -158,8 +158,8 @@ class NNRangeRefiner(NNRange):
         x_out = []
         z = []
 
-        for k in range(layer_index + 1):
-            if k < layer_index - traceback:
+        for k in range(end_layer + 1):
+            if k < start_layer:
                 x_in.append([])
                 x_out.append([])
                 z.append([])
@@ -743,7 +743,7 @@ class NNRangeRefiner(NNRange):
         else:
             model.write("model.lp")
             print(model.printStats())
-            self.model.computeIIS()
+            model.computeIIS()
             if model.IISMinimal:
                 print('IIS is minimal\n')
             else:
