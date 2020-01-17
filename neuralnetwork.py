@@ -540,11 +540,11 @@ class Layer(object):
 
     @property
     def input_dim(self):
-        return self._input_dim
+        return int(self._input_dim)
 
     @property
     def output_dim(self):
-        return self._output_dim
+        return int(self._output_dim)
 
 
 def extract_mean(text):
@@ -560,6 +560,7 @@ def extract_mean(text):
          mean_array[i] = np.float64(mean_str[i])
     return mean_array
 
+
 def extract_std(text):
     std = ''
     m = re.search('std=\[(.+?)\]', text)
@@ -571,6 +572,7 @@ def extract_std(text):
     for i in range(num_std):
         std_array[i] = np.float64(std_str[i])
     return std_array
+
 
 def runRepl(arg, repl):
     for a in repl:
