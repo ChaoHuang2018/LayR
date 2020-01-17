@@ -1,4 +1,5 @@
 import json
+import re
 import numpy as np
 from numpy import linalg as LA
 from keras import backend as K
@@ -182,10 +183,29 @@ class NN(object):
                     self.layers.append(layer_tmp)
         else:
             self.type = 'Flatten'
+            mean = 0.0
+            std = 0.0
+            last_line = None
 
             while True:
                 curr_line = self.config.readline()[:-1]
-                if curr_line in ["ReLU", "Sigmoid", "Tanh", "Affine"]:
+                if 'Normalize' in curr_line:
+                    mean = extract_mean(curr_line)
+                    std = extract_std(curr_line)
+                elif curr_line in ["ReLU", "Sigmoid", "Tanh", "Affine"]:
+                    if last_line in ["Conv2D"]:
+                        layer_tmp = Layer()
+                        layer_tmp._type = 'Flatten'
+                        flatten_input_shape = self.layers[-1].input_dim
+                        if len(flatten_input_shape) == 2:
+                            flatten_input_shape = list(flatten_input_shape)
+                            flatten_input_shape.append(1)
+                            flatten_input_shape = tuple(flatten_input_shape)
+                        layer_tmp._input_dim = flatten_input_shape
+                        layer_tmp._output_dim = (np.prod(flatten_input_shape),
+                                                 1)
+                        self.layers.append(layer_tmp)
+
                     layer_tmp = Layer()
                     W = self.parseVec(self.config).T
                     b = self.parseVec(self.config).T
@@ -201,9 +221,11 @@ class NN(object):
                     elif (curr_line == 'Sigmoid'):
                         layer_tmp._activation = 'sigmoid'
                         self.activation = 'sigmoid'
-                        self.last_layer_activation = 'ReLU'
+                        self.last_layer_activation = 'Affine'
                     elif (curr_line == 'Tanh'):
                         layer_tmp._activation = 'tanh'
+                        self.activation = 'tanh'
+                        self.last_layer_activation = 'Affine'
                     elif (curr_line == 'Affine'):
                         layer_tmp._activation = 'Affine'
                     layer_tmp._weight = W
@@ -211,6 +233,72 @@ class NN(object):
                     self.layers.append(layer_tmp)
                 elif curr_line == "Conv2D":
                     self.type = 'Convolutional'
+                    line = self.config.readline()
+                    layer_tmp = Layer()
+                    start = 0
+                    if("ReLU" in line):
+                        start = 5
+                        layer_tmp._activation = "ReLU"
+                    elif("Sigmoid" in line):
+                        start = 8
+                        layer_tmp._activation = "sigmoid"
+                    elif("Tanh" in line):
+                        start = 5
+                        layer_tmp._activation = "tanh"
+                    elif("Affine" in line):
+                        start = 7
+                        layer_tmp._activation = "Affine"
+                    if 'padding' in line:
+                        args =  runRepl(line[start:-1], [
+                            "filters", "input_shape", "kernel_size",
+                            "stride", "padding"
+                        ])
+                        output_height = (
+                            args["input_shape"][0] -
+                            args["kernel_size"][0] +
+                            2 * args["padding"]
+                        ) / args["stride"][0] + 1
+                        output_width = (
+                            args["input_shape"][1] -
+                            args["kernel_size"][1] +
+                            2 * args["padding"]
+                        ) / args["stride"][1] + 1
+                    else:
+                        args = runRepl(line[start:-1], [
+                            "filters", "input_shape", "kernel_size"
+                        ])
+                        output_height = (
+                            args["input_shape"][0] -
+                            args["kernel_size"][0]
+                        ) / args["stride"][0] + 1
+                        output_width = (
+                            args["input_shape"][1] -
+                            args["kernel_size"][1]
+                        ) / args["stride"][1] + 1
+
+                    W = self.parseVec(self.config)
+                    b = self.parseVec(self.config)
+                    layer_tmp._type = 'Convolutional'
+                    layer_tmp._input_dim = tuple(args["input_shape"])
+                    layer_tmp._output_dim = tuple([
+                        output_height, output_width, args["filters"]
+                    ])
+                    layer_tmp._kernal = W
+                    layer_tmp._bias = b
+                    layer_tmp._stride = args["output_shape"]
+                    layer_tmp._filter_size = args["filters"]
+                    self.layers.append(layer_tmp)
+
+                    # Activation layer
+                    layer_activation = Layer()
+                    layer_activation._type = 'Activation'
+                    layer_activation._activation = layer_tmp.activation
+                    layer_activation._input_dim, layer_activation._output_dim = (
+                        layer_tmp.output_dim,
+                        layer_tmp.output_dim
+                    )
+                    self.layers.append(layer_activation)
+
                 elif curr_line == "":
                     break
                 last_line = curr_line
@@ -258,6 +346,8 @@ class NN(object):
             x = np.tanh(x)
         elif self.activation == 'sigmoid':
             x = 1/(1 + np.exp(-x))
+        elif self.activation == 'Affine':
+            return x
         return x
 
     def last_layer_activate(self, x):
@@ -270,6 +360,8 @@ class NN(object):
             x = np.tanh(x)
         elif self.last_layer_activation == 'sigmoid':
             x = 1/(1 + np.exp(-x))
+        elif self.activation == 'Affine':
+            return x
         return x
 
     def parse_w_b(self):
@@ -453,3 +545,34 @@ class Layer(object):
     @property
     def output_dim(self):
         return self._output_dim
+
+
+def extract_mean(text):
+    mean = ''
+    m = re.search('mean=\[(.+?)\]', text)
+
+    if m:
+        means = m.group(1)
+    mean_str = means.split(',')
+    num_means = len(mean_str)
+    mean_array = np.zeros(num_means)
+    for i in range(num_means):
+         mean_array[i] = np.float64(mean_str[i])
+    return mean_array
+
+def extract_std(text):
+    std = ''
+    m = re.search('std=\[(.+?)\]', text)
+    if m:
+        stds = m.group(1)
+    std_str =stds.split(',')
+    num_std = len(std_str)
+    std_array = np.zeros(num_std)
+    for i in range(num_std):
+        std_array[i] = np.float64(std_str[i])
+    return std_array
+
+def runRepl(arg, repl):
+    for a in repl:
+        arg = arg.replace(a+"=", "'"+a+"':")
+    return eval("{"+arg+"}")
