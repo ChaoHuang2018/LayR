@@ -243,6 +243,7 @@ class NNRange(object):
                     x_out = model_out_neuron.addVar(lb=-GRB.INFINITY, ub=GRB.INFINITY)
                     constraints = []
                     sum_expr = 0
+                    min_test = 0
                     for s in range(kernel.shape[2]):
                         for p in range(kernel.shape[0]):
                             for q in range(kernel.shape[1]):
@@ -250,8 +251,20 @@ class NNRange(object):
                                     i * stride[0] + p][j * stride[1] + q][0])
                                 x_in[s][p, q].setAttr(GRB.Attr.UB, input_range_layer[s][
                                     i * stride[0] + p][j * stride[1] + q][1])
+                                if k == 0 and i == 0:
+                                    print([i * stride[0] + p, j * stride[1] + q, s])
+                                    print(input_range_layer[s][i * stride[0] + p][j * stride[1] + q])
                                 sum_expr = sum_expr + x_in[s][p, q] * kernel[p, q, s, k]
+                                if kernel[p, q, s, k] >= 0:
+                                    min_test += input_range_layer[s][i * stride[0] + p][j * stride[1] + q][0] * kernel[
+                                        p, q, s, k]
+                                else:
+                                    min_test += input_range_layer[s][i * stride[0] + p][j * stride[1] + q][1] * kernel[
+                                        p, q, s, k]
                         sum_expr = sum_expr + bias[k]
+                        min_test = min_test + bias[k]
+                    if k == 0 and i == 0:
+                        print(min_test)
                     model_out_neuron.addConstr(sum_expr == x_out)
 
                     # define objective: smallest output
@@ -291,7 +304,6 @@ class NNRange(object):
                     output_range_layer_row.append([neuron_min, neuron_max])
                 output_range_layer_channel.append(output_range_layer_row)
             output_range_layer.append(output_range_layer_channel)
-
         return np.array(output_range_layer)
 
     def __output_range_activation_layer_naive(self, layer_index, input_range_layer):
@@ -393,8 +405,8 @@ class NNRange(object):
 
     def merge_range(self, layer_index, range_a, range_b):
         if layer_index == 1:
-            print(range_a[0][0][1])
-            print(range_b[0][0][1])
+            print(range_a[0][0][:])
+            print(range_b[0][0][:])
         layer = self.NN.layers[layer_index]
         range_new = copy.deepcopy(range_a)
         if len(range_a) == 0:
