@@ -73,6 +73,12 @@ class ERANModel(object):
                     nlb_eran_raw.append(nlb[-1])
                     nub_eran_raw.append(nub[-1])
                     i += 1
+            elif (operations[i] == 'Conv2D') and (operations[i+1] in ['Add', 'BiasAdd']):
+                if operations[i + 2] == 'Relu':
+                    nlb_eran_raw.append(nlb[j])
+                    nub_eran_raw.append(nub[j])
+                    j = j + 1
+                i += 3
             else:
                 i += 1
         input_range_all = []
@@ -103,10 +109,12 @@ class ERANModel(object):
 
     def eran_range_reashape(self, layer_index, nlb_layer, nub_layer):
         layer = self.NN.layers[layer_index]
+        print(layer_index)
+        print(self.NN.layers[layer_index].type)
         if layer.type == 'Activation':
-            nlb_3d = np.reshape(nlb_layer, (layer.input_dim[2], layer.input_dim[0], layer.input_dim[1]))
-            nub_3d = np.reshape(nub_layer, (layer.input_dim[2], layer.input_dim[0], layer.input_dim[1]))
-            input_range_layer = copy.deepcopy(nlb_3d)
+            nlb_3d = np.reshape(np.array(nlb_layer), (layer.input_dim[2], round(layer.input_dim[0]), round(layer.input_dim[1])))
+            nub_3d = np.reshape(np.array(nub_layer), (layer.input_dim[2], round(layer.input_dim[0]), round(layer.input_dim[1])))
+            input_range_layer = copy.deepcopy(nlb_3d).tolist()
             for s in range(layer.input_dim[2]):
                 for i in range(layer.input_dim[0]):
                     for j in range(layer.input_dim[1]):

@@ -124,6 +124,7 @@ class NNRange(object):
 
             print('The dimension of input range of layer ' + str(i) + ' :')
             print(input_range_layer.shape)
+            print(NN.layers[i].input_dim)
 
 
             # Compute the output range of each layer
@@ -225,6 +226,7 @@ class NNRange(object):
 
         output_range_layer = []
         print('The size of bias is: ' + str(bias.shape))
+        print(layer.output_dim)
 
         for k in range(layer.output_dim[2]):
             output_range_layer_channel = []
@@ -233,7 +235,7 @@ class NNRange(object):
                 for j in range(layer.output_dim[1]):
                     model_out_neuron = gp.Model()
                     x_in = []
-                    for s in range(layer.input_dim[2]):
+                    for s in range(kernel.shape[2]):
                         x_in.append(
                             model_out_neuron.addVars(kernel.shape[0], kernel.shape[1], lb=-GRB.INFINITY,
                                                      ub=GRB.INFINITY,
@@ -241,19 +243,13 @@ class NNRange(object):
                     x_out = model_out_neuron.addVar(lb=-GRB.INFINITY, ub=GRB.INFINITY)
                     constraints = []
                     sum_expr = 0
-                    for s in range(layer.input_dim[2]):
+                    for s in range(kernel.shape[2]):
                         for p in range(kernel.shape[0]):
                             for q in range(kernel.shape[1]):
-                                x_in[s][p, q].setAttr(GRB.Attr.LB, input_range_layer[
-                                    i * stride[0] + p,
-                                    j * stride[1] + q,
-                                    s,
-                                    0])
-                                x_in[s][p, q].setAttr(GRB.Attr.UB, input_range_layer[
-                                    i * stride[0] + p,
-                                    j * stride[1] + q,
-                                    s,
-                                    1])
+                                x_in[s][p, q].setAttr(GRB.Attr.LB, input_range_layer[s][
+                                    i * stride[0] + p][j * stride[1] + q][0])
+                                x_in[s][p, q].setAttr(GRB.Attr.UB, input_range_layer[s][
+                                    i * stride[0] + p][j * stride[1] + q][1])
                                 sum_expr = sum_expr + x_in[s][p, q] * kernel[p, q, s, k]
                         sum_expr = sum_expr + bias[k]
                     model_out_neuron.addConstr(sum_expr == x_out)
@@ -300,15 +296,19 @@ class NNRange(object):
             # for convolutional layer
             # compute the out range of each neuron by activation function
             output_range_layer = []
-            for s in range(input_range_layer.shape[2]):
+            for s in range(layer.input_dim[2]):
                 output_range_layer_channel = []
-                for i in range(input_range_layer.shape[0]):
+                for i in range(layer.input_dim[0]):
                     output_range_layer_row = []
-                    for j in range(input_range_layer.shape[1]):
+                    for j in range(layer.input_dim[1]):
                         # compute the minimal output
-                        neuron_min = act.activate(input_range_layer[i][j][s][0])
+                        neuron_min = act.activate(input_range_layer[s][i][j][0])
                         # compute the maximal output
-                        neuron_max = act.actactivate(input_range_layer[i][j][s][1])
+                        neuron_max = act.activate(input_range_layer[s][i][j][1])
+                        if neuron_min > neuron_max:
+                            print(input_range_layer[s][i][j][0])
+                            print(input_range_layer[s][i][j][1])
+                            raise ValueError("Wrong bound " + str([i, j, s]))
                         output_range_layer_row.append([neuron_min, neuron_max])
                     output_range_layer_channel.append(output_range_layer_row)
                 output_range_layer.append(output_range_layer_channel)
@@ -316,7 +316,7 @@ class NNRange(object):
             # for fully connected layer
             # compute the out range of each neuron by activation function
             output_range_layer = []
-            for i in range(input_range_layer.shape[0]):
+            for i in range(layer.input_dim[0]):
                 # compute the minimal output
                 neuron_min = act.activate(input_range_layer[i][0])
                 # compute the maximal output
@@ -385,6 +385,9 @@ class NNRange(object):
         return np.array(output_range_layer)
 
     def merge_range(self, layer_index, range_a, range_b):
+        if layer_index == 1:
+            print(range_a[0][0][1])
+            print(range_b[0][0][1])
         layer = self.NN.layers[layer_index]
         range_new = copy.deepcopy(range_a)
         if len(range_a) == 0:

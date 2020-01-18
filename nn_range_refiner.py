@@ -445,7 +445,7 @@ class NNRangeRefiner(NNRange):
             for i in range(layer.output_dim[0]):
                 for j in range(layer.output_dim[1]):
                     sum_expr = 0
-                    for s in range(layer.input_dim[2]):
+                    for s in range(kernel.shape[2]):
                         for p in range(kernel.shape[0]):
                             for q in range(kernel.shape[1]):
                                 sum_expr = sum_expr + x_in[s][i * stride[0] + p, j * stride[1] + q] * kernel[p, q, s, k]
