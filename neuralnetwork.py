@@ -20,6 +20,8 @@ class NN(object):
     ):
         self.name = name
         self.eran = False
+        self.mean = 0.0
+        self.std = 1.0
         if not keras:
             # activation type
             activations = activation.split('_')
@@ -183,15 +185,14 @@ class NN(object):
                     self.layers.append(layer_tmp)
         else:
             self.type = 'Flatten'
-            mean = 0.0
-            std = 0.0
+
             last_line = None
 
             while True:
                 curr_line = self.config.readline()[:-1]
                 if 'Normalize' in curr_line:
-                    mean = extract_mean(curr_line)
-                    std = extract_std(curr_line)
+                    self.mean = extract_mean(curr_line)
+                    self.std = extract_std(curr_line)
                 elif curr_line in ["ReLU", "Sigmoid", "Tanh", "Affine"]:
                     if last_line in ["Conv2D"]:
                         layer_tmp = Layer()

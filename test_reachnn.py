@@ -33,6 +33,10 @@ def get_tests(dataset):
 eps = 0.01
 perturbation = 0.1
 NN = nn_controller_details('convSmallRELU__Point.pyt', keras='eran')
+
+# Normalize
+mean = NN.mean
+std = NN.std
 # NN1 = nn_controller_details('model_CNNA', keras=True)
 # the data, split between train and test sets
 # fashion_mnist = keras.datasets.fashion_mnist
