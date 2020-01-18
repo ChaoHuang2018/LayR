@@ -266,6 +266,13 @@ class NNRange(object):
                         #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
                     else:
                         print('prob_min.status: ' + str(model_out_neuron.status))
+                        model_out_neuron.write("model_out_neuron.lp")
+                        model_out_neuron.computeIIS()
+                        if model_out_neuron.IISMinimal:
+                            print('IIS is minimal\n')
+                        else:
+                            print('IIS is not minimal\n')
+                        model_out_neuron.write("model_out_neuron.ilp")
                         raise ValueError("Error: No result for lower bound for " + str([i, j, s, k]))
 
                     # define objective: biggest output

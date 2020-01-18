@@ -56,7 +56,11 @@ for k in range(input_dim[2]):
     for i in range(input_dim[0]):
         input_range_row = []
         for j in range(input_dim[1]):
-            input_range_row.append([max(0, data[i][j][k] - eps), min(1, data[i][j][k] + eps)])
+            # input_range_row.append([max(0, (data[i][j][k]-NN.mean)/NN.std - eps), min(1, (data[i][j][k]-NN.mean)/NN.std + eps)])
+            # input_range_row.append(
+            #    [(data[i][j][k] - NN.mean) / NN.std - eps, (data[i][j][k] - NN.mean) / NN.std + eps])
+            input_range_row.append(
+                [(max(0, data[i][j][k] - eps) - NN.mean) / NN.std, (min(1, data[i][j][k] + eps)- NN.mean) / NN.std])
         input_range_channel.append(input_range_row)
     input_range.append(input_range_channel)
 print(np.array(input_range).shape)

@@ -42,9 +42,15 @@ class ERANModel(object):
         elif file_extension == '.pyt':
             model, is_conv, means, stds = read_tensorflow_net(netfolder + '/' + self.NN.name, num_pixels, True)
             self.eran = ERAN(model, is_onnx=False)
+            self.is_conv = is_conv
+            self.means = means
+            self.stds = stds
         elif file_extension == '.tf':
             model, is_conv, means, stds = read_tensorflow_net(netfolder + '/' + self.NN.name, num_pixels, False)
             self.eran = ERAN(model, is_onnx=False)
+            self.is_conv = is_conv
+            self.means = means
+            self.stds = stds
 
     def input_range_eran(self, network_in):
         NN = self.NN
@@ -124,3 +130,19 @@ class ERANModel(object):
             for i in range(layer.input_dim[0]):
                 input_range_layer[i] = [nlb_layer[i], nub_layer[i]]
         return input_range_layer
+
+    def normalize(self, image, dataset):
+        if dataset == 'mnist' or dataset == 'fashion':
+            for i in range(len(image)):
+                image[i] = (image[i] - self.means[0]) / self.stds[0]
+        elif (dataset == 'cifar10'):
+            tmp = np.zeros(3072)
+            for i in range(3072):
+                tmp[i] = (image[i] - self.means[i % 3]) / self.stds[i % 3]
+
+            if not self.is_conv:
+                for i in range(3072):
+                    image[i] = tmp[i]
+            else:
+                for i in range(3072):
+                    image[i] = tmp[i % 1024 + (i % 3) * 1024]
