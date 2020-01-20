@@ -56,14 +56,11 @@ for k in range(input_dim[2]):
     for i in range(input_dim[0]):
         input_range_row = []
         for j in range(input_dim[1]):
-            # input_range_row.append([max(0, (data[i][j][k]-NN.mean)/NN.std - eps), min(1, (data[i][j][k]-NN.mean)/NN.std + eps)])
+            input_range_row.append([max(0, data[i][j][k] - eps), min(1, data[i][j][k] + eps)])
             # input_range_row.append(
             #    [(data[i][j][k] - NN.mean) / NN.std - eps, (data[i][j][k] - NN.mean) / NN.std + eps])
-            input_range_row.append(
-                [(max(0, data[i][j][k] - eps) - NN.mean) / NN.std, (min(1, data[i][j][k] + eps)- NN.mean) / NN.std])
-            if k == 0 and (i == 1 or i == 2 or i == 3 or i == 4):
-                print([i,j,k])
-                print([(max(0, data[i][j][k] - eps) - NN.mean) / NN.std, (min(1, data[i][j][k] + eps)- NN.mean) / NN.std])
+            # input_range_row.append(
+            #     [(max(0, data[i][j][k] - eps) - NN.mean) / NN.std, (min(1, data[i][j][k] + eps)- NN.mean) / NN.std])
         input_range_channel.append(input_range_row)
     input_range.append(input_range_channel)
 print(np.array(input_range).shape)
@@ -81,8 +78,9 @@ print(np.array(input_range).shape)
 #     low = min(low, result[9][0])
 # print("Bound by sampling: {}".format([low, upp]))
 start_time = time.time()
-nn_analyzer = ReachNN(NN, np.array(input_range), 2, 'ERAN', global_robustness_type='L-INFINITY', perturbation_bound=0.01)
-new_output_range = nn_analyzer.global_robustness_analysis('METRIC', 9, number=10)
+nn_analyzer = ReachNN(NN, np.array(input_range), 2, 'BASIC', global_robustness_type='L-INFINITY', perturbation_bound=0.01)
+new_output_range = nn_analyzer.output_range_analysis('METRIC', 9, number=10)
+# new_output_range = nn_analyzer.global_robustness_analysis('RANDOM', 9, number=10)
 # print('Reach lower bound on the neuron:' + str(min_input))
 # print('The output on the neuron:' + str(NN.controller(min_input)[9][0]))
 # output_l, output_u = global_robustness_analysis(NN, np.array(input_range), perturbation, 9)

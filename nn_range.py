@@ -96,9 +96,14 @@ class NNRange(object):
         output_range_layer = network_input_box
         print('-----------Start to construct the initial input range of each neuron for further analysis.------------')
 
-        if method == 'ERAN':
+        if method == 'ERAN' or method == 'BASIC':
             eran = ERANModel(NN)
             input_range_eran = eran.input_range_eran(network_input_box)
+
+        # print('ERAN:' + str(input_range_eran[0][0][0]))
+        # print('ERAN:' + str(input_range_eran[1][0][0]))
+        # print('ERAN:' + str(input_range_eran[2][0:10]))
+        # print('ERAN:' + str(input_range_eran[3]))
 
         i = 0
         j = 0
@@ -121,6 +126,10 @@ class NNRange(object):
                 j += 1
 
             input_range_all.append(input_range_layer)
+            if (NN.layers[i].type != 'Fully_connected'):
+                print('BASIC:' + str(input_range_layer[0][0]))
+            else:
+                print('BASIC:' + str(input_range_layer[0:10]))
 
             print('The dimension of input range of layer ' + str(i) + ' :')
             print(input_range_layer.shape)
@@ -168,7 +177,7 @@ class NNRange(object):
         # compute the input range of each neuron by solving LPs
         input_range_layer = []
 
-        for i in range(weight.shape[1]):
+        for i in range(self.NN.layers[layer_index].input_dim[0]):
             model_in_neuron = gp.Model()
 
             x_out = model_in_neuron.addVars(weight.shape[0], lb=-GRB.INFINITY, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
@@ -233,75 +242,80 @@ class NNRange(object):
             for i in range(layer.output_dim[0]):
                 output_range_layer_row = []
                 for j in range(layer.output_dim[1]):
-                    model_out_neuron = gp.Model()
-                    x_in = []
-                    for s in range(kernel.shape[2]):
-                        x_in.append(
-                            model_out_neuron.addVars(kernel.shape[0], kernel.shape[1], lb=-GRB.INFINITY,
-                                                     ub=GRB.INFINITY,
-                                                     vtype=GRB.CONTINUOUS))
-                    x_out = model_out_neuron.addVar(lb=-GRB.INFINITY, ub=GRB.INFINITY)
-                    constraints = []
-                    sum_expr = 0
-                    min_test = 0
-                    for s in range(kernel.shape[2]):
-                        for p in range(kernel.shape[0]):
-                            for q in range(kernel.shape[1]):
-                                x_in[s][p, q].setAttr(GRB.Attr.LB, input_range_layer[s][
-                                    i * stride[0] + p][j * stride[1] + q][0])
-                                x_in[s][p, q].setAttr(GRB.Attr.UB, input_range_layer[s][
-                                    i * stride[0] + p][j * stride[1] + q][1])
-                                if k == 0 and i == 0:
-                                    print([i * stride[0] + p, j * stride[1] + q, s])
-                                    print(input_range_layer[s][i * stride[0] + p][j * stride[1] + q])
-                                sum_expr = sum_expr + x_in[s][p, q] * kernel[p, q, s, k]
-                                if kernel[p, q, s, k] >= 0:
-                                    min_test += input_range_layer[s][i * stride[0] + p][j * stride[1] + q][0] * kernel[
-                                        p, q, s, k]
-                                else:
-                                    min_test += input_range_layer[s][i * stride[0] + p][j * stride[1] + q][1] * kernel[
-                                        p, q, s, k]
-                        sum_expr = sum_expr + bias[k]
-                        min_test = min_test + bias[k]
-                    if k == 0 and i == 0:
-                        print(min_test)
-                    model_out_neuron.addConstr(sum_expr == x_out)
+                    solver = 'NAIVE'
+                    if solver == 'GUROBI':
+                        model_out_neuron = gp.Model()
+                        x_in = []
+                        for s in range(kernel.shape[2]):
+                            x_in.append(
+                                model_out_neuron.addVars(kernel.shape[0], kernel.shape[1], lb=-GRB.INFINITY,
+                                                         ub=GRB.INFINITY,
+                                                         vtype=GRB.CONTINUOUS))
+                        x_out = model_out_neuron.addVar(lb=-GRB.INFINITY, ub=GRB.INFINITY)
+                        sum_expr = 0
+                        for s in range(kernel.shape[2]):
+                            for p in range(kernel.shape[0]):
+                                for q in range(kernel.shape[1]):
+                                    x_in[s][p, q].setAttr(GRB.Attr.LB, input_range_layer[s][
+                                        i * stride[0] + p][j * stride[1] + q][0])
+                                    x_in[s][p, q].setAttr(GRB.Attr.UB, input_range_layer[s][
+                                        i * stride[0] + p][j * stride[1] + q][1])
+                                    sum_expr = sum_expr + x_in[s][p, q] * kernel[p, q, s, k]
+                            sum_expr = sum_expr + bias[k]
+                        model_out_neuron.addConstr(sum_expr == x_out)
 
-                    # define objective: smallest output
-                    model_out_neuron.setObjective(x_out, GRB.MINIMIZE)
-                    model_out_neuron.setParam('OutputFlag', 0)
-                    model_out_neuron.optimize()
+                        # define objective: smallest output
+                        model_out_neuron.setObjective(x_out, GRB.MINIMIZE)
+                        model_out_neuron.setParam('OutputFlag', 0)
+                        model_out_neuron.optimize()
 
-                    if model_out_neuron.status == GRB.OPTIMAL:
-                        neuron_min = model_out_neuron.objVal
-                        # print('lower bound: ' + str(l_neuron))
-                        # for variable in prob_min.variables():
-                        #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
-                    else:
-                        print('prob_min.status: ' + str(model_out_neuron.status))
-                        model_out_neuron.write("model_out_neuron.lp")
-                        model_out_neuron.computeIIS()
-                        if model_out_neuron.IISMinimal:
-                            print('IIS is minimal\n')
+                        if model_out_neuron.status == GRB.OPTIMAL:
+                            neuron_min = model_out_neuron.objVal
                         else:
-                            print('IIS is not minimal\n')
-                        model_out_neuron.write("model_out_neuron.ilp")
-                        raise ValueError("Error: No result for lower bound for " + str([i, j, s, k]))
+                            print('prob_min.status: ' + str(model_out_neuron.status))
+                            model_out_neuron.write("model_out_neuron.lp")
+                            model_out_neuron.computeIIS()
+                            if model_out_neuron.IISMinimal:
+                                print('IIS is minimal\n')
+                            else:
+                                print('IIS is not minimal\n')
+                            model_out_neuron.write("model_out_neuron.ilp")
+                            raise ValueError("Error: No result for lower bound for " + str([i, j, s, k]))
 
-                    # define objective: biggest output
-                    model_out_neuron.setObjective(x_out, GRB.MAXIMIZE)
-                    model_out_neuron.setParam('OutputFlag', 0)
-                    model_out_neuron.optimize()
+                        # define objective: biggest output
+                        model_out_neuron.setObjective(x_out, GRB.MAXIMIZE)
+                        model_out_neuron.setParam('OutputFlag', 0)
+                        model_out_neuron.optimize()
 
-                    if model_out_neuron.status == GRB.OPTIMAL:
-                        neuron_max = model_out_neuron.objVal
-                        # print('lower bound: ' + str(l_neuron))
-                        # for variable in prob_min.variables():
-                        #    print ('Variable ' + str(variable.name()) + ' value: ' + str(variable.value))
+                        if model_out_neuron.status == GRB.OPTIMAL:
+                            neuron_max = model_out_neuron.objVal
+                        else:
+                            print('prob_max.status: ' + str(model_out_neuron.status))
+                            print('Error: No result for upper bound!')
+                        output_range_layer_row.append([neuron_min, neuron_max])
                     else:
-                        print('prob_max.status: ' + str(model_out_neuron.status))
-                        print('Error: No result for upper bound!')
-                    output_range_layer_row.append([neuron_min, neuron_max])
+                        min_test = 0
+                        max_test = 0
+                        for s in range(kernel.shape[2]):
+                            for p in range(kernel.shape[0]):
+                                for q in range(kernel.shape[1]):
+                                    if kernel[p, q, s, k] >= 0:
+                                        min_test += input_range_layer[s][i * stride[0] + p][j * stride[1] + q][0] * \
+                                                    kernel[
+                                                        p, q, s, k]
+                                        max_test += input_range_layer[s][i * stride[0] + p][j * stride[1] + q][1] * \
+                                                    kernel[
+                                                        p, q, s, k]
+                                    else:
+                                        min_test += input_range_layer[s][i * stride[0] + p][j * stride[1] + q][1] * \
+                                                    kernel[
+                                                        p, q, s, k]
+                                        max_test += input_range_layer[s][i * stride[0] + p][j * stride[0] + q][1] * \
+                                                    kernel[
+                                                        p, q, s, k]
+                            min_test = min_test + bias[k]
+                            max_test = max_test + bias[k]
+                        output_range_layer_row.append([min_test, max_test])
                 output_range_layer_channel.append(output_range_layer_row)
             output_range_layer.append(output_range_layer_channel)
         return np.array(output_range_layer)
@@ -404,9 +418,6 @@ class NNRange(object):
         return np.array(output_range_layer)
 
     def merge_range(self, layer_index, range_a, range_b):
-        if layer_index == 1:
-            print(range_a[0][0][:])
-            print(range_b[0][0][:])
         layer = self.NN.layers[layer_index]
         range_new = copy.deepcopy(range_a)
         if len(range_a) == 0:

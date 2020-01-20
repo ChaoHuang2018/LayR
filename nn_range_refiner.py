@@ -100,7 +100,7 @@ class NNRangeRefiner(NNRange):
 
         x_in = all_variables[v_name + '_1']
         if type(neuron_index) == list:
-            x_in_neuron = x_in[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]]
+            x_in_neuron = x_in[layer_index][neuron_index[2]][neuron_index[0], neuron_index[1]]
         else:
             x_in_neuron = x_in[layer_index][neuron_index]
 
@@ -109,6 +109,7 @@ class NNRangeRefiner(NNRange):
         model.setObjective(x_in_neuron, GRB.MAXIMIZE)
         neuron_max = self._optimize_model(model, 0)
 
+        print([start_layer,layer_index])
         if type(neuron_index) == list:
             old_range = input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]]
         else:
@@ -548,6 +549,7 @@ class NNRangeRefiner(NNRange):
         x_out = all_variables[v_name + '_2'][layer_index]
         z = all_variables[v_name + '_3'][layer_index]
         activation = layer.activation
+        act = Activation(activation)
 
         if layer.type == 'Activation':
             # if x_in is three-dimensional, which means this is a convolutional layer
@@ -559,6 +561,11 @@ class NNRangeRefiner(NNRange):
                         # set input range of the neuron
                         x_in[s][i, j].setAttr(GRB.Attr.LB, low)
                         x_in[s][i, j].setAttr(GRB.Attr.UB, upp)
+                        if act.activate(upp) - act.activate(low) <= 10e5:
+                            model.addConstr(z[s][i][j].sum() == 0)
+                            x_out[s][i, j].setAttr(GRB.Attr.LB, act.activate(low))
+                            x_out[s][i, j].setAttr(GRB.Attr.UB, act.activate(upp))
+                            continue
                         # Stay inside one and only one region, thus sum of slack integers should be 1
                         model.addConstr(z[s][i][j].sum() == 1)
                         # construct segmentation_list with respect to refinement_degree_layer[s][i][j]
@@ -582,6 +589,11 @@ class NNRangeRefiner(NNRange):
                 # set range of the neuron
                 x_in[i].setAttr(GRB.Attr.LB, low)
                 x_in[i].setAttr(GRB.Attr.UB, upp)
+                if act.activate(upp) - act.activate(low) <= 10e5:
+                    model.addConstr(z[i].sum() == 0)
+                    x_out[i].setAttr(GRB.Attr.LB, act.activate(low))
+                    x_out[i].setAttr(GRB.Attr.UB, act.activate(upp))
+                    continue
                 # any neuron can only be within a region, thus sum of slack integers should be 1
                 model.addConstr(z[i].sum() == 1)
                 if activation == 'ReLU' and refinement_degree_layer[i] == 2:
@@ -600,13 +612,17 @@ class NNRangeRefiner(NNRange):
     def segment_relaxation_basic(self, model, x_in_neuron, x_out_neuron, z_seg, seg_left, seg_right, activation, index,
                                  layer_index):
         act = Activation(activation)
+        if isinstance(seg_left, np.ndarray):
+            seg_left = seg_left[0]
+        if isinstance(seg_right, np.ndarray):
+            seg_right = seg_right[0]
 
         M = 10e6
 
         temp_x_diff = M * (seg_right - seg_left)
         temp_y_diff = M * (act.activate(seg_right) - act.activate(seg_left))
         der = temp_y_diff / temp_x_diff
-        if activation == 'identity':
+        if activation == 'Affine':
             model.addConstr((z_seg == 1) >> (x_in_neuron == x_out_neuron),
                             name='layer_' + str(layer_index) + '_' + str(index).replace(" ","_") + '_identity')
         elif seg_left < 0 < seg_right:
@@ -731,13 +747,11 @@ class NNRangeRefiner(NNRange):
     # optimize a model
     def _optimize_model(self, model, DETAILS_FLAG):
         model.setParam('OutputFlag', DETAILS_FLAG)
-        # self.model.setParam('BarHomogeneous', 1)
-        model.setParam('DualReductions', 1)
+        model.setParam('BarHomogeneous', 1)
+        # model.setParam('DualReductions', 0)
         model.optimize()
-        # print(self.model.status)
 
         if model.status == GRB.OPTIMAL:
-            #self.model.write("model.lp")
             opt = model.objVal
             return opt
         else:
