@@ -96,7 +96,7 @@ class NNRange(object):
         output_range_layer = network_input_box
         print('-----------Start to construct the initial input range of each neuron for further analysis.------------')
 
-        if method == 'ERAN' or method == 'BASIC':
+        if method == 'ERAN':
             eran = ERANModel(NN)
             input_range_eran = eran.input_range_eran(network_input_box)
 
@@ -242,7 +242,7 @@ class NNRange(object):
             for i in range(layer.output_dim[0]):
                 output_range_layer_row = []
                 for j in range(layer.output_dim[1]):
-                    solver = 'NAIVE'
+                    solver = 'GUROBI'
                     if solver == 'GUROBI':
                         model_out_neuron = gp.Model()
                         x_in = []
@@ -310,7 +310,7 @@ class NNRange(object):
                                         min_test += input_range_layer[s][i * stride[0] + p][j * stride[1] + q][1] * \
                                                     kernel[
                                                         p, q, s, k]
-                                        max_test += input_range_layer[s][i * stride[0] + p][j * stride[0] + q][1] * \
+                                        max_test += input_range_layer[s][i * stride[0] + p][j * stride[1] + q][0] * \
                                                     kernel[
                                                         p, q, s, k]
                         min_test = min_test + bias[k]

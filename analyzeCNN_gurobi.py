@@ -7,7 +7,8 @@ from scipy.special import expit
 from multiprocessing import Pool
 from functools import partial
 from operator import itemgetter
-from gurobipy import *
+import gurobipy as gp
+from gurobipy import GRB
 import cvxpy as cp
 
 import numpy as np
@@ -29,7 +30,7 @@ New properties:
                'Fully_connected', 'Flatten', 'Activation'}
  layer.weight = weight if type = 'Fully_connected', None otherwise
  layer.bias = bias if type = 'Fully_connected' or 'Convolutional'
- layer.kernal: only for type = 'Convolutional'
+ layer.kernel: only for type = 'Convolutional'
  layer.stride: only for type = 'Convolutional'
  layer.activation = {'ReLU', 'tanh', 'sigmoid'} if type = 'Fully_connected',
                      'Convolutional' if type = 'Convolutional',
@@ -58,7 +59,7 @@ def global_robustness_analysis(NN, network_input_box, perturbation, output_index
     refinement_degree_all_NN2 = initialize_refinement_degree(NN)
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
-    model = Model('Function_distance_update')
+    gp.model = Model('Function_distance_update')
     all_variables_NN1 = declare_variables(model, NN, refinement_degree_all_NN1, layer_index)
     all_variables_NN2 = declare_variables(model, NN, refinement_degree_all_NN2, layer_index)
     # add constraints for NN1
@@ -123,7 +124,7 @@ def output_range_analysis(NN, network_input_box, output_index):
     layer_index = NN.num_of_hidden_layers - 1
 
     # We can use different strategies to interatively update the refinement_degree_all and input_range_all
-    model = Model('Input_range_update')
+    model = gp.Model('Input_range_update')
     all_variables = declare_variables(model, NN, refinement_degree_all, layer_index)
     add_input_constraint(model, NN, all_variables, network_input_box)
     for k in range(NN.num_of_hidden_layers - 1):
@@ -179,7 +180,7 @@ def output_range_MILP_CNN(NN, network_input_box, output_index):
             output_range_layer_i = output_range_convolutional_layer_naive_v1(
                 NN.layers[i],
                 input_range_layer_i,
-                NN.layers[i].kernal,
+                NN.layers[i].kernel,
                 NN.layers[i].bias,
                 NN.layers[i].stride
             )
@@ -594,7 +595,7 @@ def neuron_input_range_cnn(
                 NN.layers[k],
                 x_in[k],
                 x_out[k],
-                NN.layers[k].kernal,
+                NN.layers[k].kernel,
                 NN.layers[k].bias,
                 NN.layers[k].stride
             )
@@ -959,7 +960,7 @@ def declare_variables(model, NN, refinement_degree_all, layer_index):
                 )
             x_in.append(x_in_layer)
             x_out_layer = model.addVars(
-                NN.layers[k].output_dim[0].item(),
+                NN.layers[k].output_dim[0],
                 lb=-GRB.INFINITY,
                 ub=GRB.INFINITY,
                 vtype=GRB.CONTINUOUS,
@@ -1039,10 +1040,12 @@ def add_perturbed_input_constraints(model, NN, all_variables_NN1, all_variables_
 # add constraints for the input layer
 def add_input_constraint(model, NN, all_variables, network_input_box):
     network_in = all_variables[0]
+    NN.type = 'Convolutional'
     if NN.type == 'Convolutional':
         for s in range(NN.layers[0].input_dim[2]):
             for i in range(NN.layers[0].input_dim[0]):
                 for j in range(NN.layers[0].input_dim[1]):
+
                     network_in[s][i, j].setAttr(
                         GRB.Attr.LB,
                         network_input_box[i][j][s][0]
@@ -1061,8 +1064,8 @@ def add_input_constraint(model, NN, all_variables, network_input_box):
                         raise ValueError('Error: No bound setting!')
     else:
         for i in range(NN.layers[0].input_dim[0]):
-            network_in[s][i].setAttr(GRB.Attr.LB, network_input_box[i][0])
-            network_in[s][i].setAttr(GRB.Attr.UB, network_input_box[i][1])
+            network_in[i].setAttr(GRB.Attr.LB, network_input_box[i][0])
+            network_in[i].setAttr(GRB.Attr.UB, network_input_box[i][1])
 
 
 # add interlayer constraints between layer_index-1 and layer_index
@@ -1116,7 +1119,7 @@ def add_innerlayer_constraint(model, NN, all_variables, input_range_all, refinem
             NN.layers[layer_index],
             x_in[layer_index],
             x_out[layer_index],
-            NN.layers[layer_index].kernal,
+            NN.layers[layer_index].kernel,
             NN.layers[layer_index].bias,
             NN.layers[layer_index].stride
         )
@@ -1265,7 +1268,7 @@ def construct_naive_input_range(NN, network_input_box, output_index):
             output_range_layer_i = output_range_convolutional_layer_naive_v1(
                 NN.layers[i],
                 input_range_layer_i,
-                NN.layers[i].kernal,
+                NN.layers[i].kernel,
                 NN.layers[i].bias,
                 NN.layers[i].stride
             )
@@ -1320,7 +1323,7 @@ def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
     input_range_layer = []
 
     for i in range(weight.shape[1]):
-        model_in_neuron = Model()
+        model_in_neuron = gp.Model()
 
         x_out = model_in_neuron.addVars(weight.shape[0], lb=-GRB.INFINITY, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS)
         # define constraints: output range of the last layer
@@ -1386,7 +1389,7 @@ def input_range_fc_layer_naive_v1(weight, bias, output_range_last_layer):
 ## Derive the output ranges of different layers
 
 # Convolutional layer
-def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, bias, stride):
+def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernel, bias, stride):
     output_range_layer = []
     print('The size of bias is: ' + str(bias.shape))
 
@@ -1395,18 +1398,18 @@ def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, 
         for j in range(layer.output_dim[1]):
             output_range_layer_col = []
             for k in range(layer.output_dim[2]):
-                model_out_neuron = Model()
+                model_out_neuron = gp.Model()
                 x_in = []
                 for s in range(layer.input_dim[2]):
                     x_in.append(
-                        model_out_neuron.addVars(kernal.shape[0], kernal.shape[1], lb=-GRB.INFINITY, ub=GRB.INFINITY,
+                        model_out_neuron.addVars(kernel.shape[0], kernel.shape[1], lb=-GRB.INFINITY, ub=GRB.INFINITY,
                                                  vtype=GRB.CONTINUOUS))
                 x_out = model_out_neuron.addVar(lb=-GRB.INFINITY, ub=GRB.INFINITY)
                 constraints = []
                 sum_expr = 0
                 for s in range(layer.input_dim[2]):
-                    for p in range(kernal.shape[0]):
-                        for q in range(kernal.shape[1]):
+                    for p in range(kernel.shape[0]):
+                        for q in range(kernel.shape[1]):
                             x_in[s][p, q].setAttr(GRB.Attr.LB, input_range_layer[
                                 i * stride[0] + p,
                                 j * stride[1] + q,
@@ -1417,7 +1420,7 @@ def output_range_convolutional_layer_naive_v1(layer, input_range_layer, kernal, 
                                 j * stride[1] + q,
                                 s,
                                 1])
-                            sum_expr = sum_expr + x_in[s][p, q] * kernal[p, q, s, k]
+                            sum_expr = sum_expr + x_in[s][p, q] * kernel[p, q, s, k]
                     sum_expr = sum_expr + bias[k]
                 model_out_neuron.addConstr(sum_expr == x_out)
 
@@ -1568,15 +1571,15 @@ def output_range_activation_layer_naive(layer, input_range_layer, activation):
 ## Constraints of MILP relaxation for different layers
 # convolutional layer
 # x_in should be 3-dimensional, x_out should be 3-dimensional
-def relaxation_convolutional_layer(model, layer, x_in, x_out, kernal, bias, stride):
+def relaxation_convolutional_layer(model, layer, x_in, x_out, kernel, bias, stride):
     for i in range(layer.output_dim[0]):
         for j in range(layer.output_dim[1]):
             for k in range(layer.output_dim[2]):
                 sum_expr = 0
                 for s in range(layer.input_dim[2]):
-                    for p in range(kernal.shape[0]):
-                        for q in range(kernal.shape[1]):
-                            sum_expr = sum_expr + x_in[s][i * stride[0] + p, j * stride[1] + q] * kernal[p, q, s, k]
+                    for p in range(kernel.shape[0]):
+                        for q in range(kernel.shape[1]):
+                            sum_expr = sum_expr + x_in[s][i * stride[0] + p, j * stride[1] + q] * kernel[p, q, s, k]
                     sum_expr = sum_expr + bias[k]
                 model.addConstr(sum_expr == x_out[k][i, j], str([i,j,s]) + '_convolutional_layer_linear')
 

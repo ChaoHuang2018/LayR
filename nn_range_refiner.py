@@ -487,7 +487,7 @@ class NNRangeRefiner(NNRange):
                             for p in range(filter_size[0]):
                                 for q in range(filter_size[1]):
                                     model.addConstr(x_out[s][i, j] >= x_in[s][i * stride[0] + p, j * stride[1] + q])
-                                    model.addConstr(x_out[s][i, j] <= x_in[s][i * stride[0] + p, j * stride[1] + q].ub)
+                                    model.addConstr(x_out[s][i, j] <= x_in[s][i * stride[0] + p, j * stride[1] + q])
                         else:
                             temp_list = []
                             for p in range(filter_size[0]):
