@@ -315,6 +315,8 @@ class NNRange(object):
                                                         p, q, s, k]
                         min_test = min_test + bias[k]
                         max_test = max_test + bias[k]
+                        if i == 0 and k == 0:
+                            print([min_test, max_test])
                         if min_test > max_test:
                             print([min_test, max_test])
                             print('Wrong range for convolution layer propagation.')
