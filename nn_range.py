@@ -313,8 +313,12 @@ class NNRange(object):
                                         max_test += input_range_layer[s][i * stride[0] + p][j * stride[0] + q][1] * \
                                                     kernel[
                                                         p, q, s, k]
-                            min_test = min_test + bias[k]
-                            max_test = max_test + bias[k]
+                        min_test = min_test + bias[k]
+                        max_test = max_test + bias[k]
+                        if min_test > max_test:
+                            print([min_test, max_test])
+                            print('Wrong range for convolution layer propagation.')
+                            print([i, j, k, layer_index])
                         output_range_layer_row.append([min_test, max_test])
                 output_range_layer_channel.append(output_range_layer_row)
             output_range_layer.append(output_range_layer_channel)
