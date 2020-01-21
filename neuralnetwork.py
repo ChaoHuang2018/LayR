@@ -250,7 +250,7 @@ class NN(object):
                         start = 7
                         layer_tmp._activation = "Affine"
                     if 'padding' in line:
-                        args =  runRepl(line[start:-1], [
+                        args = runRepl(line[start:-1], [
                             "filters", "input_shape", "kernel_size",
                             "stride", "padding"
                         ])
@@ -264,6 +264,7 @@ class NN(object):
                             args["kernel_size"][1] +
                             2 * args["padding"]
                         ) / args["stride"][1] + 1
+                        layer_tmp._padding = args["padding"]
                     else:
                         args = runRepl(line[start:-1], [
                             "filters", "input_shape", "kernel_size"
@@ -417,7 +418,6 @@ class NN(object):
         Output: control value after affine transformation
         """
         # transform the input
-        length = x.shape[0]
         g = x.reshape([-1, 1])
 
         # pass input through each layer
@@ -492,6 +492,7 @@ class Layer(object):
         weight
         bias
         kernel
+        padding
         stride
         activation
         filter_size
@@ -504,6 +505,7 @@ class Layer(object):
         self._weight = None
         self._bias = None
         self._kernel = None
+        self._padding = None
         self._stride = None
         self._activation = None
         self._filter_size = None
@@ -528,6 +530,10 @@ class Layer(object):
         return self._kernel
 
     @property
+    def padding(self):
+        return self._padding
+
+    @property
     def stride(self):
         return self._stride
 
@@ -549,7 +555,6 @@ class Layer(object):
 
 
 def extract_mean(text):
-    mean = ''
     m = re.search('mean=\[(.+?)\]', text)
 
     if m:
@@ -558,12 +563,11 @@ def extract_mean(text):
     num_means = len(mean_str)
     mean_array = np.zeros(num_means)
     for i in range(num_means):
-         mean_array[i] = np.float64(mean_str[i])
+        mean_array[i] = np.float64(mean_str[i])
     return mean_array
 
 
 def extract_std(text):
-    std = ''
     m = re.search('std=\[(.+?)\]', text)
     if m:
         stds = m.group(1)
