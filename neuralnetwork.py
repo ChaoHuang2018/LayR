@@ -84,6 +84,7 @@ class NN(object):
             self.weights = []
             self.bias = []
             self.model = model
+            self.model_json = model_json
             with open(model_json) as json_file:
                 self.config = json.load(json_file)
             self.set_type()
@@ -110,79 +111,126 @@ class NN(object):
     def set_layer(self):
         self.layers = []
         if not self.eran:
-            layers_config = self.config['config']['layers']
-            for idx, layer in enumerate(self.model.layers):
-                layer_tmp = Layer()
-                layer_activation = None
-                layer_config = layers_config[idx]
-                layer_detail = layer_config['config']
-                if layer_config['class_name'] == 'Flatten':
-                    layer_tmp._type = 'Flatten'
-                    flatten_input_shape = layer.input_shape[1:]
-                    if len(flatten_input_shape) == 2:
-                        flatten_input_shape = list(flatten_input_shape)
-                        flatten_input_shape.append(1)
-                        flatten_input_shape = tuple(flatten_input_shape)
-                    else:
+            with open(self.model_json[:-5] + '.txt', "w") as eran_model:
+                layers_config = self.config['config']['layers']
+                for idx, layer in enumerate(self.model.layers):
+                    layer_tmp = Layer()
+                    layer_activation = None
+                    layer_config = layers_config[idx]
+                    layer_detail = layer_config['config']
+                    if layer_config['class_name'] == 'Flatten':
+                        layer_tmp._type = 'Flatten'
                         flatten_input_shape = layer.input_shape[1:]
-                    layer_tmp._input_dim = flatten_input_shape
-                    layer_tmp._output_dim = layer.output_shape[1:]
-                    self.layers.append(layer_tmp)
-                elif layer_config['class_name'] == 'Conv2D':
-                    layer_tmp._type = 'Convolutional'
-                    layer_tmp._input_dim = layer.input_shape[1:]
-                    layer_tmp._output_dim = layer.output_shape[1:]
-                    layer_tmp._kernel = layer.get_weights()[0]
-                    layer_tmp._bias = layer.get_weights()[1]
-                    layer_tmp._stride = layer.strides
-                    layer_tmp._activation = self.activation_function(
-                        layer_detail['activation']
-                    )
-                    layer_tmp._filter_size = layer.filters
-                    self.layers.append(layer_tmp)
+                        if len(flatten_input_shape) == 2:
+                            flatten_input_shape = list(flatten_input_shape)
+                            flatten_input_shape.append(1)
+                            flatten_input_shape = tuple(flatten_input_shape)
+                        else:
+                            flatten_input_shape = layer.input_shape[1:]
+                        layer_tmp._input_dim = flatten_input_shape
+                        layer_tmp._output_dim = layer.output_shape[1:]
+                        self.layers.append(layer_tmp)
+                    elif layer_config['class_name'] == 'Conv2D':
+                        layer_tmp._type = 'Convolutional'
+                        layer_tmp._input_dim = layer.input_shape[1:]
+                        layer_tmp._output_dim = layer.output_shape[1:]
+                        layer_tmp._kernel = layer.get_weights()[0]
+                        layer_tmp._bias = layer.get_weights()[1]
+                        layer_tmp._stride = layer.strides
+                        layer_tmp._activation = self.activation_function(
+                            layer_detail['activation']
+                        )
+                        layer_tmp._filter_size = layer.filters
+                        self.layers.append(layer_tmp)
 
-                    # Activation layer
-                    layer_activation = Layer()
-                    layer_activation._type = 'Activation'
-                    layer_activation._activation = layer_tmp.activation
-                    layer_activation._input_dim, layer_activation._output_dim = (
-                        layer_tmp.output_dim,
-                        layer_tmp.output_dim
-                    )
-                    self.layers.append(layer_activation)
+                        # Activation layer
+                        layer_activation = Layer()
+                        layer_activation._type = 'Activation'
+                        layer_activation._activation = layer_tmp.activation
+                        layer_activation._input_dim, layer_activation._output_dim = (
+                            layer_tmp.output_dim,
+                            layer_tmp.output_dim
+                        )
+                        self.layers.append(layer_activation)
+                        eran_model.write('Conv2D')
+                        eran_model.write('\n')
+                        eran_model.write(
+                            layer_tmp.activation +
+                            ', filters=' + str(layer_tmp.output_dim[2]) +
+                            ', kernel_size=' + str(
+                                list(layer_tmp.kernel.shape[:2])
+                            ) +
+                            ', input_shape=' + str(
+                                list(layer_tmp.input_dim)
+                            ) +
+                            ', stride=' + str(list(layer_tmp.stride)) +
+                            ', padding=0'
+                        )
+                        eran_model.write('\n')
+                        eran_model.write(str(layer_tmp.kernel.tolist()))
+                        eran_model.write('\n')
+                        eran_model.write(str(layer_tmp.bias.tolist()))
+                        eran_model.write('\n')
 
-                elif (
-                    layer_config['class_name'] == 'Dense' and
-                    layer_detail['activation'] != 'softmax'
-                ):
-                    layer_tmp._type = 'Fully_connected'
-                    layer_tmp._input_dim = layer.output_shape[1:]
-                    layer_tmp._output_dim = layer.output_shape[1:]
-                    layer_tmp._activation = self.activation_function(
-                        layer_detail['activation']
-                    )
-                    params = layer.get_weights()
-                    layer_tmp._weight = params[0]
-                    layer_tmp._bias = params[1]
-                    self.layers.append(layer_tmp)
+                    elif (
+                        layer_config['class_name'] == 'Dense' and
+                        layer_detail['activation'] != 'softmax'
+                    ):
+                        layer_tmp._type = 'Fully_connected'
+                        layer_tmp._input_dim = layer.output_shape[1:]
+                        layer_tmp._output_dim = layer.output_shape[1:]
+                        layer_tmp._activation = self.activation_function(
+                            layer_detail['activation']
+                        )
+                        params = layer.get_weights()
+                        layer_tmp._weight = params[0]
+                        layer_tmp._bias = params[1]
+                        self.layers.append(layer_tmp)
+                        eran_model.write(layer_tmp.activation)
+                        eran_model.write('\n')
+                        eran_model.write(str(layer_tmp.weight.T.tolist()))
+                        eran_model.write('\n')
+                        eran_model.write(str(layer_tmp.bias.tolist()))
+                        eran_model.write('\n')
 
-                elif layer_config['class_name'] == 'MaxPooling2D':
-                    layer_tmp._type = 'Pooling'
-                    layer_tmp._activation = 'max'
-                    layer_tmp._stride = layer.strides
-                    layer_tmp._filter_size = layer.pool_size
-                    layer_tmp._input_dim = layer.input_shape[1:]
-                    layer_tmp._output_dim = layer.output_shape[1:]
-                    self.layers.append(layer_tmp)
+                    elif (
+                        layer_config['class_name'] == 'Dense' and
+                        layer_detail['activation'] == 'softmax'
+                    ):
+                        layer_tmp._type = 'Fully_connected'
+                        layer_tmp._input_dim = layer.output_shape[1:]
+                        layer_tmp._output_dim = layer.output_shape[1:]
+                        layer_tmp._activation = self.activation_function(
+                            layer_detail['activation']
+                        )
+                        params = layer.get_weights()
+                        layer_tmp._weight = params[0]
+                        layer_tmp._bias = params[1]
+                        self.layers.append(layer_tmp)
+                        eran_model.write(layer_tmp.activation)
+                        eran_model.write('\n')
+                        eran_model.write(str(layer_tmp.weight.T.tolist()))
+                        eran_model.write('\n')
+                        eran_model.write(str(layer_tmp.bias.tolist()))
+                        eran_model.write('\n')
 
-                elif layer_config['class_name'] == 'AveragePooling2D':
-                    layer_tmp._type = 'Pooling'
-                    layer_tmp._activation = 'average'
-                    layer_tmp._stride = layer.strides
-                    layer_tmp._filter_size = layer.pool_size
-                    layer_tmp._input_dim = layer.input_shape[1:]
-                    layer_tmp._output_dim = layer.output_shape[1:]
-                    self.layers.append(layer_tmp)
+                    elif layer_config['class_name'] == 'MaxPooling2D':
+                        layer_tmp._type = 'Pooling'
+                        layer_tmp._activation = 'max'
+                        layer_tmp._stride = layer.strides
+                        layer_tmp._filter_size = layer.pool_size
+                        layer_tmp._input_dim = layer.input_shape[1:]
+                        layer_tmp._output_dim = layer.output_shape[1:]
+                        self.layers.append(layer_tmp)
+
+                    elif layer_config['class_name'] == 'AveragePooling2D':
+                        layer_tmp._type = 'Pooling'
+                        layer_tmp._activation = 'average'
+                        layer_tmp._stride = layer.strides
+                        layer_tmp._filter_size = layer.pool_size
+                        layer_tmp._input_dim = layer.input_shape[1:]
+                        layer_tmp._output_dim = layer.output_shape[1:]
+                        self.layers.append(layer_tmp)
         else:
             self.type = 'Flatten'
 
@@ -324,6 +372,8 @@ class NN(object):
     def activation_function(self, activation_type):
         if activation_type == 'relu':
             return 'ReLU'
+        elif activation_type == 'softmax':
+            return 'Affine'
         else:
             return activation_type
 
