@@ -111,7 +111,7 @@ class NN(object):
     def set_layer(self):
         self.layers = []
         if not self.eran:
-            with open(self.model_json[:-5] + '.txt', "w") as eran_model:
+            with open(self.model_json[:-5] + '.py.txt', "w") as eran_model:
                 layers_config = self.config['config']['layers']
                 for idx, layer in enumerate(self.model.layers):
                     layer_tmp = Layer()
@@ -155,7 +155,7 @@ class NN(object):
                         eran_model.write('Conv2D')
                         eran_model.write('\n')
                         eran_model.write(
-                            layer_tmp.activation +
+                            self.eran_activation(layer_tmp.activation) +
                             ', filters=' + str(layer_tmp.output_dim[2]) +
                             ', kernel_size=' + str(
                                 list(layer_tmp.kernel.shape[:2])
@@ -186,7 +186,9 @@ class NN(object):
                         layer_tmp._weight = params[0]
                         layer_tmp._bias = params[1]
                         self.layers.append(layer_tmp)
-                        eran_model.write(layer_tmp.activation)
+                        eran_model.write(
+                            self.eran_activation(layer_tmp.activation)
+                        )
                         eran_model.write('\n')
                         eran_model.write(str(layer_tmp.weight.T.tolist()))
                         eran_model.write('\n')
@@ -207,7 +209,9 @@ class NN(object):
                         layer_tmp._weight = params[0]
                         layer_tmp._bias = params[1]
                         self.layers.append(layer_tmp)
-                        eran_model.write(layer_tmp.activation)
+                        eran_model.write(
+                            self.eran_activation(layer_tmp.activation)
+                        )
                         eran_model.write('\n')
                         eran_model.write(str(layer_tmp.weight.T.tolist()))
                         eran_model.write('\n')
@@ -374,6 +378,18 @@ class NN(object):
             return 'ReLU'
         elif activation_type == 'softmax':
             return 'Affine'
+        else:
+            return activation_type
+
+    def eran_activation(self, activation_type):
+        if activation_type == 'relu':
+            return 'ReLU'
+        elif activation_type == 'softmax':
+            return 'Affine'
+        elif activation_type == 'sigmoid':
+            return 'Sigmoid'
+        elif activation_type == 'tanh':
+            return 'Tanh'
         else:
             return activation_type
 
