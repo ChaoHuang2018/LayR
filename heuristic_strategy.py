@@ -39,38 +39,38 @@ class HeuristicSeachingStrategy(object):
         print('Initial input range of the interested neuron is: ' + str(old_input_range))
         print('After LP relaxation: ' + str(nn_refiner.refine_neuron(nn_refiner.NN.num_of_hidden_layers - 1, output_index, approach='UPDATE_RANGE')))
         print('-------' + strategy_name + ' refinement begins.----------')
-        # for i in range(self.iteration):
-        #     print('Iteration ' + str(i) + ' begins.')
-        #     for layer_index in range(1, nn_refiner.NN.num_of_hidden_layers-1):
-        #         if nn_refiner.NN.layers[layer_index].type not in ('Activation', 'Fully_connected'):
-        #             continue
-        #         print('Start to process layer ' + str(layer_index))
-        #         if strategy_name == 'METRIC':
-        #             self.strategy_metric_ranking_layer(nn_refiner, layer_index)
-        #         if strategy_name == 'RANDOM':
-        #             self.strategy_random_ranking_layer(nn_refiner, layer_index)
-        #         neuron_list = self.pop_neurons_by_priority(layer_index, self.refinement_per)
-        #         print(neuron_list)
-        #         for neuron_index in neuron_list:
-        #             nn_refiner.refine_neuron(layer_index, neuron_index, approach='BOTH')
-        #             self.increase_selected_number(layer_index, neuron_index)
-        #         print('Integer variable of this layer: ' + str(sum(nn_refiner.refinement_degree_all[layer_index])))
-        #     if if_check_output:
-        #         new_range = nn_refiner.refine_neuron(nn_refiner.NN.num_of_hidden_layers - 1, output_index, approach='UPDATE_RANGE', outputFlag=1)
-        #         print('Output range updates: ' + str(new_range))
-        self.select_num_dic = {}
-        self.priority_all = {}
         for i in range(self.iteration):
-            if strategy_name == 'RANDOM':
-                self.strategy_purely_random(nn_refiner)
-            if strategy_name == 'VOLUME_FIRST':
-                self.strategy_volume_first(nn_refiner)
-            if strategy_name == 'METRIC':
-                self.strategy_metric_ranking(nn_refiner)
-            layer_index, neuron_index = self.pop_neuron_by_priority()
-            self.increase_selected_number_test(layer_index, neuron_index)
-            print('test: update ' + str([layer_index, neuron_index]))
-            nn_refiner.refine_neuron(layer_index, neuron_index, approach='BOTH')
+            print('Iteration ' + str(i) + ' begins.')
+            for layer_index in range(1, nn_refiner.NN.num_of_hidden_layers-1):
+                if nn_refiner.NN.layers[layer_index].type not in ('Activation', 'Fully_connected'):
+                    continue
+                print('Start to process layer ' + str(layer_index))
+                if strategy_name == 'METRIC':
+                    self.strategy_metric_ranking_layer(nn_refiner, layer_index)
+                if strategy_name == 'RANDOM':
+                    self.strategy_random_ranking_layer(nn_refiner, layer_index)
+                neuron_list = self.pop_neurons_by_priority(layer_index, self.refinement_per)
+                print(neuron_list)
+                for neuron_index in neuron_list:
+                    nn_refiner.refine_neuron(layer_index, neuron_index, approach='BOTH')
+                    self.increase_selected_number(layer_index, neuron_index)
+                print('Integer variable of this layer: ' + str(sum(nn_refiner.refinement_degree_all[layer_index])))
+            if if_check_output:
+                new_range = nn_refiner.refine_neuron(nn_refiner.NN.num_of_hidden_layers - 1, output_index, approach='UPDATE_RANGE', outputFlag=1)
+                print('Output range updates: ' + str(new_range))
+        # self.select_num_dic = {}
+        # self.priority_all = {}
+        # for i in range(self.iteration):
+        #     if strategy_name == 'RANDOM':
+        #         self.strategy_purely_random(nn_refiner)
+        #     if strategy_name == 'VOLUME_FIRST':
+        #         self.strategy_volume_first(nn_refiner)
+        #     if strategy_name == 'METRIC':
+        #         self.strategy_metric_ranking(nn_refiner)
+        #     layer_index, neuron_index = self.pop_neuron_by_priority()
+        #     self.increase_selected_number_test(layer_index, neuron_index)
+        #     print('test: update ' + str([layer_index, neuron_index]))
+        #     nn_refiner.refine_neuron(layer_index, neuron_index, approach='BOTH')
 
         new_input_range = nn_refiner.refine_neuron(nn_refiner.NN.num_of_hidden_layers - 1, output_index, approach='UPDATE_RANGE')
         print('Refinement finishes.')
