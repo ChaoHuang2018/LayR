@@ -111,7 +111,7 @@ class NN(object):
     def set_layer(self):
         self.layers = []
         if not self.eran:
-            with open(self.model_json[:-5] + '.py.txt', "w") as eran_model:
+            with open(self.model_json[:-5] + '.tf.txt', "w") as eran_model:
                 layers_config = self.config['config']['layers']
                 for idx, layer in enumerate(self.model.layers):
                     layer_tmp = Layer()
