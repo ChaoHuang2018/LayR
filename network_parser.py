@@ -75,6 +75,7 @@ def nn_controller_details(filename, activation=None, keras=False):
         loaded_model.load_weights('model/' + filename + '.h5')
         print("Loaded kera model from disk.")
         NN_controller = NN(
+            name=filename,
             keras=True,
             model=loaded_model,
             model_json=json_filename
