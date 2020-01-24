@@ -99,11 +99,7 @@ class NNRange(object):
         if method == 'ERAN':
             eran = ERANModel(NN)
             input_range_eran = eran.input_range_eran(network_input_box)
-
-        # print('ERAN:' + str(input_range_eran[0][0][0]))
-        # print('ERAN:' + str(input_range_eran[1][0][0]))
-        # print('ERAN:' + str(input_range_eran[2][0:10]))
-        # print('ERAN:' + str(input_range_eran[3]))
+            print(len(input_range_eran))
 
         i = 0
         j = 0
@@ -112,28 +108,28 @@ class NNRange(object):
             print(NN.layers[i].type)
 
             # assign the input the range of each layer
-            if NN.layers[i].type != 'Fully_connected':
-                input_range_layer = output_range_layer
+            if NN.layers[i].type == 'Fully_connected':
+                input_range_layer = self.__input_range_fc_layer_naive(i, output_range_layer)
+            elif NN.layers[i].type == 'Convolutional':
+                input_range_layer = self.__pad_input(i, output_range_layer)
             else:
-                input_range_layer = self.__input_range_fc_layer_naive(
-                    i,
-                    output_range_layer
-                )
+                input_range_layer = output_range_layer
 
-            if (NN.layers[i].type == 'Fully_connected' or NN.layers[i].type == 'Activation') and method == 'ERAN':
+            if (NN.layers[i].type == 'Fully_connected' # or NN.layers[i].type == 'Activation'
+                    ) and method == 'ERAN':
                 input_range_layer = copy.deepcopy(self.merge_range(i, input_range_layer, input_range_eran[j]))
                 # input_range_layer = copy.deepcopy(np.array(input_range_eran[j]))
                 j += 1
 
             input_range_all.append(input_range_layer)
-            if (NN.layers[i].type != 'Fully_connected'):
-                print('BASIC:' + str(input_range_layer[0][0]))
-            else:
-                print('BASIC:' + str(input_range_layer[0:10]))
 
             print('The dimension of input range of layer ' + str(i) + ' :')
-            print(input_range_layer.shape)
+            print(np.array(input_range_layer).shape)
             print(NN.layers[i].input_dim)
+            if NN.layers[i].type != 'Fully_connected':
+                print(input_range_layer[0][0][0:10])
+            else:
+                print(input_range_layer[0:10])
 
 
             # Compute the output range of each layer
@@ -232,6 +228,7 @@ class NNRange(object):
         kernel = self.NN.layers[layer_index].kernel
         bias = self.NN.layers[layer_index].bias
         stride = self.NN.layers[layer_index].stride
+        padding = self.NN.layers[layer_index].padding
 
         output_range_layer = []
         print('The size of bias is: ' + str(bias.shape))
@@ -423,6 +420,34 @@ class NNRange(object):
                     output_range_layer.append(input_range_layer[s][i][j])
         return np.array(output_range_layer)
 
+    def __pad_input(self, layer_index, input_range_layer):
+        layer = self.NN.layers[layer_index]
+        padding = layer.padding
+
+        padding_range_low = []
+        padding_range_upp = []
+        for s in range(layer.input_dim[2]):
+            padding_range_channel_low = np.zeros((layer.input_dim[0] + 2 * padding, layer.input_dim[1] + 2 * padding))
+            padding_range_channel_upp = np.zeros((layer.input_dim[0] + 2 * padding, layer.input_dim[1] + 2 * padding))
+            for i in range(padding, layer.input_dim[0] + padding):
+                for j in range(padding, layer.input_dim[1] + padding):
+                    padding_range_channel_low[i][j] = input_range_layer[s][i - padding][j - padding][0]
+                    padding_range_channel_upp[i][j] = input_range_layer[s][i - padding][j - padding][1]
+            padding_range_low.append(padding_range_channel_low)
+            padding_range_upp.append(padding_range_channel_upp)
+
+        input_range_layer_padding = []
+        for s in range(layer.input_dim[2]):
+            input_range_layer_padding_channel = []
+            for i in range(layer.input_dim[0] + 2 * padding):
+                input_range_layer_padding_row = []
+                for j in range(layer.input_dim[1] + 2 * padding):
+                    input_range_layer_padding_row.append([padding_range_low[s][i][j], padding_range_upp[s][i][j]])
+                input_range_layer_padding_channel.append(input_range_layer_padding_row)
+            input_range_layer_padding.append(input_range_layer_padding_channel)
+
+        return input_range_layer_padding
+
     def merge_range(self, layer_index, range_a, range_b):
         layer = self.NN.layers[layer_index]
         range_new = copy.deepcopy(range_a)
@@ -441,8 +466,8 @@ class NNRange(object):
                 if range_new[i][0] > range_new[i][1]:
                     print(layer_index)
                     print(i)
-                    print(range_new[i])
                     print(range_a[i])
                     print(range_b[i])
-                    raise ValueError('ERROR range after merging!')
+                    #raise ValueError('ERROR range after merging!')
+                    print(('ERROR range after merging!'))
         return range_new

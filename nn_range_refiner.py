@@ -26,11 +26,12 @@ class NNRangeRefiner(NNRange):
         self.v_name = v_name
         self.traceback = traceback
 
-    def refine_neuron(self, layer_index, neuron_index, approach='BOTH'):
-        print('Start to refine neuron with index:')
-        print('layer_index: ' + str(layer_index) + ', neuron_index: ' + str(neuron_index))
+    def refine_neuron(self, layer_index, neuron_index, approach='BOTH', outputFlag=0):
+        if outputFlag == 1:
+            print('Start to refine neuron with index:')
+            print('layer_index: ' + str(layer_index) + ', neuron_index: ' + str(neuron_index))
         if approach == 'ADD_INTEGER':
-            self.add_neuron_slack_integer(layer_index, neuron_index)
+            self.add_neuron_slack_integer(layer_index, neuron_index, outputFlag)
             if isinstance(neuron_index, list):
                 old_range = self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]]
             else:
@@ -38,65 +39,81 @@ class NNRangeRefiner(NNRange):
             new_range = old_range
         elif approach == 'UPDATE_RANGE':
             start_layer = layer_index - min(self.traceback, layer_index + 1)
-            new_range = self.update_neuron_input_range(start_layer, layer_index, neuron_index)
+            new_range = self.update_neuron_input_range(start_layer, layer_index, neuron_index, outputFlag)
         else:
             start_layer = layer_index - min(self.traceback, layer_index + 1)
-            self.add_neuron_slack_integer(layer_index, neuron_index)
-            new_range = self.update_neuron_input_range(start_layer, layer_index, neuron_index)
+            self.add_neuron_slack_integer(layer_index, neuron_index, outputFlag)
+            new_range = self.update_neuron_input_range(start_layer, layer_index, neuron_index, outputFlag=1)
         return new_range
 
-    def add_neuron_slack_integer(self, layer_index, neuron_index):
-        print('Add integer variable of neuron :' + 'layer_index: ' + str(layer_index) + ', neuron_index: ' + str(
+    def add_neuron_slack_integer(self, layer_index, neuron_index, outputFlag=0):
+        if outputFlag == 1:
+            print('Add integer variable of neuron :' + 'layer_index: ' + str(layer_index) + ', neuron_index: ' + str(
             neuron_index))
         # need to carefully handle ReLU
         if type(neuron_index) == list:
             if self.NN.layers[layer_index].activation == 'identity':
-                print('No need to add more slack binary variables for this neuron!')
+                if outputFlag == 1:
+                    print('No need to add more slack binary variables for this neuron!')
                 return
             elif self.NN.layers[layer_index].activation == 'ReLU':
                 if (self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][0] > 0 or
                         self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][1] < 0):
-                    print('No need to add more slack binary variables for this neuron!')
+                    if outputFlag == 1:
+                        print('No need to add more slack binary variables for this neuron!')
+                    return
                 elif self.refinement_degree_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] == 2:
-                    print('No need to add more slack binary variables for this neuron!')
+                    if outputFlag == 1:
+                        print('No need to add more slack binary variables for this neuron!')
+                    return
                 else:
                     self.refinement_degree_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] += 1
-                    print('Add a slack integer variables.')
+                    if outputFlag == 1:
+                        print('Add a slack integer variables.')
             else:
                 self.refinement_degree_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] += 1
-                print('Add a slack integer variables.')
+                if outputFlag == 1:
+                    print('Add a slack integer variables.')
         else:
             if self.NN.layers[layer_index].activation == 'identity':
-                print('No need to add more slack binary variables for this neuron!')
+                if outputFlag == 1:
+                    print('No need to add more slack binary variables for this neuron!')
                 return
             elif self.NN.layers[layer_index].activation == 'ReLU':
                 if (self.input_range_all[layer_index][neuron_index][0] > 0 or
                         self.input_range_all[layer_index][neuron_index][1] < 0):
-                    print('No need to add more slack binary variables for this neuron!')
+                    if outputFlag == 1:
+                        print('No need to add more slack binary variables for this neuron!')
+                    return
                 elif self.refinement_degree_all[layer_index][neuron_index] == 2:
-                    print('No need to add more slack binary variables for this neuron!')
+                    if outputFlag == 1:
+                        print('No need to add more slack binary variables for this neuron!')
+                    return
                 else:
                     self.refinement_degree_all[layer_index][neuron_index] += 1
-                    print('Add a slack integer variables.')
+                    if outputFlag == 1:
+                        print('Add a slack integer variables.')
             else:
                 self.refinement_degree_all[layer_index][neuron_index] += 1
-                print('Add a slack integer variables.')
+                if outputFlag == 1:
+                    print('Add a slack integer variables.')
 
-    def update_neuron_input_range(self, start_layer, layer_index, neuron_index):
+    def update_neuron_input_range(self, start_layer, layer_index, neuron_index, outputFlag=0):
         model = gp.Model('Input_range_update')
         NN = self.NN
         input_range_all = self.input_range_all
         v_name = self.v_name
 
-        print('Update range of neuron :' + 'layer_index: ' + str(layer_index) + ', neuron_index: ' + str(neuron_index))
-        all_variables = self._declare_variables(model, v_name, start_layer, layer_index)
+        if outputFlag == 1:
+            print('Update range of neuron :' + 'layer_index: ' + str(layer_index) + ', neuron_index: ' + str(neuron_index))
+        all_variables = self.declare_variables(model, v_name, start_layer, layer_index)
         for k in range(layer_index, start_layer - 1, -1):
             if k >= 0:
-                self._add_innerlayer_constraint(model, all_variables, v_name, k)
+                self.add_innerlayer_constraint(model, all_variables, v_name, k)
             if k >= start_layer + 1:
-                self._add_interlayers_constraint(model, all_variables, v_name, k)
+                self.add_interlayers_constraint(model, all_variables, v_name, k)
             if k == -1:
-                self._add_input_constraint(model, all_variables, v_name)
+                self.add_input_constraint(model, all_variables, v_name)
 
         x_in = all_variables[v_name + '_1']
         if type(neuron_index) == list:
@@ -109,25 +126,26 @@ class NNRangeRefiner(NNRange):
         model.setObjective(x_in_neuron, GRB.MAXIMIZE)
         neuron_max = self._optimize_model(model, 0)
 
-        print([start_layer,layer_index])
         if type(neuron_index) == list:
             old_range = input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]]
         else:
             old_range = input_range_all[layer_index][neuron_index]
-        print('Old input range: {}'.format(old_range))
+
         new_range = [neuron_min, neuron_max]
         if NN.layers[layer_index].type == 'Fully_connected':
             input_range_all[layer_index][neuron_index] = new_range
         else:
             input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] = new_range
-        print('Finish Updating.')
-        print('New input range: {}'.format(new_range))
+        if outputFlag == 1 and (abs(new_range[0]-old_range[0]) >= 0.1 or abs(new_range[1]-old_range[1]) >= 0.1):
+            print('Old input range: {}'.format(old_range))
+            print('Finish Updating.')
+            print('New input range: {}'.format(new_range))
         return new_range
 
-    def _declare_variables(self, model, v_name, start_layer, end_layer):
+    def declare_variables(self, model, v_name, start_layer, end_layer):
         # variables in the input layer
-        NN = self.NN
         refinement_degree_all = self.refinement_degree_all
+        NN = self.NN
 
         if start_layer == -1:
             if NN.type == 'Convolutional' or NN.type == 'Flatten':
@@ -167,11 +185,12 @@ class NNRangeRefiner(NNRange):
                 continue
             if NN.layers[k].type == 'Convolutional':
                 x_in_layer = []
+                padding = NN.layers[k].padding
                 for s in range(NN.layers[k].input_dim[2]):
                     x_in_layer.append(
                         model.addVars(
-                            NN.layers[k].input_dim[0],
-                            NN.layers[k].input_dim[1],
+                            NN.layers[k].input_dim[0] + 2 * padding,
+                            NN.layers[k].input_dim[1] + 2 * padding,
                             lb=-GRB.INFINITY,
                             ub=GRB.INFINITY,
                             vtype=GRB.CONTINUOUS,
@@ -341,7 +360,7 @@ class NNRangeRefiner(NNRange):
 
     #############################################################################################
     # add constraints for the input layer
-    def _add_input_constraint(self, model, all_variables, v_name):
+    def add_input_constraint(self, model, all_variables, v_name):
         NN = self.NN
         network_input_box = self.network_input_box
         network_in = all_variables[v_name + '_0']
@@ -365,7 +384,7 @@ class NNRangeRefiner(NNRange):
                     network_in[s][i].setAttr(GRB.Attr.UB, network_input_box[i][1])
 
     # add interlayer constraints between layer_index-1 and layer_index
-    def _add_interlayers_constraint(self, model, all_variables, v_name, layer_index):
+    def add_interlayers_constraint(self, model, all_variables, v_name, layer_index):
         NN = self.NN
         network_in = all_variables[v_name + '_0']
         x_in = all_variables[v_name + '_1']
@@ -380,14 +399,35 @@ class NNRangeRefiner(NNRange):
                         weight_dic[j] = weight[j][0]
                     model.addConstr(
                         network_in.prod(weight_dic) + NN.layers[layer_index].bias[i] == x_in[layer_index][i])
+            elif NN.layers[layer_index].type == 'Convolutional':
+                padding = NN.layers[layer_index].padding
+                for s in range(NN.layers[layer_index].input_dim[2]):
+                    for i in range(NN.layers[layer_index].input_dim[0] + 2 * padding):
+                        for j in range(NN.layers[layer_index].input_dim[1] + 2 * padding):
+                            if (padding <= i <= NN.layers[layer_index].input_dim[0] + padding - 1) and (
+                                    padding <= j <= NN.layers[layer_index].input_dim[1] - 1):
+                                model.addConstr(network_in[s][i - padding, j - padding] == x_in[layer_index][s][i, j])
+                            else:
+                                model.addConstr(x_in[layer_index][s][i, j] == 0)
             else:
                 for s in range(NN.layers[layer_index].input_dim[2]):
                     for i in range(NN.layers[layer_index].input_dim[0]):
                         for j in range(NN.layers[layer_index].input_dim[1]):
                             model.addConstr(network_in[s][i, j] == x_in[layer_index][s][i, j])
         else:
-            if (NN.layers[layer_index].type == 'Convolutional' or NN.layers[layer_index].type == 'Activation' or
-                    NN.layers[layer_index].type == 'Pooling' or NN.layers[layer_index].type == 'Flatten'):
+            if NN.layers[layer_index].type == 'Convolutional':
+                padding = NN.layers[layer_index].padding
+                for s in range(NN.layers[layer_index].input_dim[2]):
+                    for i in range(NN.layers[layer_index].input_dim[0] + 2 * padding):
+                        for j in range(NN.layers[layer_index].input_dim[1] + 2 * padding):
+                            if (padding <= i <= NN.layers[layer_index].input_dim[0] + padding - 1) and (
+                                    padding <= j <= NN.layers[layer_index].input_dim[1] - 1):
+                                model.addConstr(
+                                    x_out[layer_index - 1][s][i - padding, j - padding] == x_in[layer_index][s][i, j])
+                            else:
+                                model.addConstr(x_in[layer_index][s][i, j] == 0)
+            elif (NN.layers[layer_index].type == 'Activation' or NN.layers[layer_index].type == 'Pooling' or
+                      NN.layers[layer_index].type == 'Flatten'):
                 for s in range(NN.layers[layer_index].input_dim[2]):
                     for i in range(NN.layers[layer_index].input_dim[0]):
                         for j in range(NN.layers[layer_index].input_dim[1]):
@@ -404,7 +444,7 @@ class NNRangeRefiner(NNRange):
                             i])
 
     # add innerlayer constraints for layer_index
-    def _add_innerlayer_constraint(self, model, all_variables, v_name, layer_index):
+    def add_innerlayer_constraint(self, model, all_variables, v_name, layer_index):
         NN = self.NN
         if NN.layers[layer_index].type == 'Convolutional':
             self._relaxation_convolutional_layer(model, all_variables, v_name, layer_index)

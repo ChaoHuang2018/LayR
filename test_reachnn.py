@@ -28,11 +28,11 @@ def get_tests(dataset):
     return tests
 
 
-
 # test new approach for estimating sigmoid network's output range
-eps = 0.01
-perturbation = 0.1
-NN = nn_controller_details('convSmallRELU__Point.pyt', keras='eran')
+eps = 0.02
+NN = nn_controller_details('model_MNIST_FC10_50_sigmoid', keras=True)
+print(NN.mean)
+print(NN.std)
 
 # Normalize
 mean = NN.mean
@@ -52,17 +52,15 @@ for k in range(input_dim[2]):
         for j in range(input_dim[1]):
             input_range_row.append([max(0, data[i][j][k] - eps), min(1, data[i][j][k] + eps)])
             # input_range_row.append(
-            #    [(data[i][j][k] - NN.mean) / NN.std - eps, (data[i][j][k] - NN.mean) / NN.std + eps])
-            # input_range_row.append(
             #     [(max(0, data[i][j][k] - eps) - NN.mean) / NN.std, (min(1, data[i][j][k] + eps)- NN.mean) / NN.std])
         input_range_channel.append(input_range_row)
     input_range.append(input_range_channel)
 print(np.array(input_range).shape)
 start_time = time.time()
-# nn_analyzer = ReachNN(NN, np.array(input_range), 4, 'BASIC', global_robustness_type='L-INFINITY', perturbation_bound=0.01)
-# new_output_range = nn_analyzer.output_range_analysis('METRIC', 9, number=10)
-nn_refiner = NNRangeRefiner(NN, np.array(input_range), 'BASIC', traceback=2)
-test_range = nn_refiner.update_neuron_input_range(0, 6, 9)
+nn_analyzer = ReachNN(NN, np.array(input_range), 3, 'ERAN', global_robustness_type='L-INFINITY', perturbation_bound=0.01)
+new_output_range = nn_analyzer.output_range_analysis('METRIC', 7, iteration=100, per=0.2)
+# nn_refiner = NNRangeRefiner(NN, np.array(input_range), 'ERAN', traceback=2)
+# test_range = nn_refiner.update_neuron_input_range(0, 6, 9)
 print("--- %s seconds ---" % (time.time() - start_time))
 
 

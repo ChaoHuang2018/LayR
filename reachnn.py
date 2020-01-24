@@ -62,9 +62,9 @@ class ReachNN(object):
         # traceback
         self.traceback = traceback
 
-    def output_range_analysis(self, strategy_name, output_index, number=40):
+    def output_range_analysis(self, strategy_name, output_index, iteration=20, per=0.1):
         nn_refiner = NNRangeRefiner(self.NN1, self.network_input_box, self.initialize_approach, traceback=self.traceback)
-        heuristic_search = HeuristicSeachingStrategy(strategy_name, number, if_check_output=False)
+        heuristic_search = HeuristicSeachingStrategy(strategy_name, iteration, per, if_check_output=True)
         new_output_range = heuristic_search.refine_by_heuristic(nn_refiner, output_index)
         # new_output_range = nn_refiner.update_neuron_input_range(self.NN1.num_of_hidden_layers - 1, output_index)
         return new_output_range

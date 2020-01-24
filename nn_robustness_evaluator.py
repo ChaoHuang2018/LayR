@@ -40,45 +40,45 @@ class NNRobusnessEvaluator(NNRangeRefiner):
         print('Update global robustness result of the ' + str(output_index) + '-th output.')
         # declare variables for two inputs NN and NN2. For each input variables, we need construct the LP/MILP relaxation
         # seperately with the same setting
-        all_variables = self._declare_variables(model, v_name, -1, layer_index)
-        all_variables_NN2 = self._declare_variables(model, v_name2, -1, layer_index)
+        all_variables = self.declare_variables(model, v_name, -1, layer_index)
+        all_variables_NN2 = self.declare_variables(model, v_name2, -1, layer_index)
 
         # add Infinity constraint
         if self.type == 'L-INFINITY':
-            self._add_linfinity_perturbedt_constraints(model, all_variables, all_variables_NN2, v_name, v_name2)
+            self._add_linfinity_perturbence_constraints(model, all_variables, all_variables_NN2, v_name, v_name2)
         elif self.type == 'BLUR':
-            self._add_blur_perturbedt_constraints(model, all_variables, all_variables_NN2, v_name, v_name2)
+            self._add_blur_perturbence_constraints(model, all_variables, all_variables_NN2, v_name, v_name2)
 
         # add constraints for NN
         for k in range(layer_index, -2, -1):
             if k >= 0:
-                self._add_innerlayer_constraint(model, all_variables, v_name, k)
-                self._add_interlayers_constraint(model, all_variables, v_name, k)
+                self.add_innerlayer_constraint(model, all_variables, v_name, k)
+                self.add_interlayers_constraint(model, all_variables, v_name, k)
             if k == -1:
-                self._add_input_constraint(model, all_variables, v_name)
+                self.add_input_constraint(model, all_variables, v_name)
         # add constraints for NN2
         for k in range(layer_index, -2, -1):
             if k >= 0:
-                self._add_innerlayer_constraint(model, all_variables_NN2, v_name2, k)
-                self._add_interlayers_constraint(model, all_variables_NN2, v_name2, k)
+                self.add_innerlayer_constraint(model, all_variables_NN2, v_name2, k)
+                self.add_interlayers_constraint(model, all_variables_NN2, v_name2, k)
             if k == -1:
-                self._add_input_constraint(model, all_variables_NN2, v_name2)
+                self.add_input_constraint(model, all_variables_NN2, v_name2)
 
         x_out_neuron = all_variables[v_name + '_2'][layer_index][output_index]
         x_out_neuron2 = all_variables_NN2[v_name2 + '_2'][layer_index][output_index]
 
-        model.setObjective(x_out_neuron - x_out_neuron2, GRB.MINIMIZE)
-        distance_min = self._optimize_model(model, 0)
+        # model.setObjective(x_out_neuron - x_out_neuron2, GRB.MINIMIZE)
+        # distance_min = self._optimize_model(model, 0)
         model.setObjective(x_out_neuron - x_out_neuron2, GRB.MAXIMIZE)
         distance_max = self._optimize_model(model, 0)
 
         print('Finish evaluating the global robustness.')
-        print('Range: {}'.format([distance_min, distance_max]))
+        print('Range: {}'.format([-distance_max, distance_max]))
 
-        return [distance_min, distance_max]
+        return [-distance_max, distance_max]
 
     # for L-Infinity robustness input specification
-    def _add_linfinity_perturbedt_constraints(self, model, all_variables, all_variables_NN2, v_name, v_name2):
+    def _add_linfinity_perturbence_constraints(self, model, all_variables, all_variables_NN2, v_name, v_name2):
         NN = self.NN
         perturbation = self.perturbation
         network_in = all_variables[v_name + '_0']
@@ -95,7 +95,7 @@ class NNRobusnessEvaluator(NNRangeRefiner):
                 model.addConstr(network_in[i] - network_in_NN2[i] >= -perturbation)
 
     # for Blurring by spartial lowpass specification
-    def _add_blur_perturbedt_constraints(self, model, all_variables, all_variables_NN2, v_name, v_name2):
+    def _add_blur_perturbence_constraints(self, model, all_variables, all_variables_NN2, v_name, v_name2):
         NN = self.NN
         blur_r = 3
         network_in = all_variables[v_name + '_0']

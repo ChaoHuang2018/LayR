@@ -26,10 +26,13 @@ class ERANModel(object):
     ):
         # neural networks
         self.NN = NN
-        netfolder = 'ERAN/nets'
-        filename, file_extension = os.path.splitext(self.NN.name)
-        num_pixels = 784 # for mnist
+        netfolder = 'model'
+        num_pixels = 784
 
+        if '.' not in self.NN.name:
+            self.NN.name = self.NN.name + '.tf'
+        filename, file_extension = os.path.splitext(self.NN.name)
+        # for mnist
         if file_extension == ".meta" or file_extension == ".pb":
             sess = tf.Session()
             saver = tf.train.import_meta_graph(netfolder + '/' + self.NN.name)
@@ -80,11 +83,14 @@ class ERANModel(object):
                     nlb_eran_raw.append(nlb[-1])
                     nub_eran_raw.append(nub[-1])
                     i += 1
+                    j += 1
             elif (operations[i] == 'Conv2D') and (operations[i+1] in ['Add', 'BiasAdd']):
                 if operations[i + 2] == 'Relu':
-                    nlb_eran_raw.append(nlb[j])
-                    nub_eran_raw.append(nub[j])
                     j = j + 1
+                if operations[i + 2] == 'Tanh' or operations[i + 2] == 'Sigmoid':
+                    # nlb_eran_raw.append(nlb[j])
+                    # nub_eran_raw.append(nub[j])
+                    j = j + 2
                 i += 3
             else:
                 i += 1
@@ -92,7 +98,9 @@ class ERANModel(object):
         i = 0
         j = 0
         while i < self.NN.num_of_hidden_layers:
-            if NN.layers[i].type == 'Activation' or NN.layers[i].type == 'Fully_connected':
+            if NN.layers[i].type == 'Fully_connected': # or NN.layers[i].type == 'Activation':
+                print(len(nlb_eran_raw[j]))
+                print(len(nub_eran_raw[j]))
                 input_range_layer = self.eran_range_reashape(i, nlb_eran_raw[j], nub_eran_raw[j])
                 j += 1
                 input_range_all.append(input_range_layer)
@@ -120,11 +128,11 @@ class ERANModel(object):
 
     def eran_range_reashape(self, layer_index, nlb_layer, nub_layer):
         layer = self.NN.layers[layer_index]
-        print(layer_index)
-        print(self.NN.layers[layer_index].type)
         if layer.type == 'Activation':
             nlb_3d = np.reshape(np.array(nlb_layer), (layer.input_dim[2], round(layer.input_dim[0]), round(layer.input_dim[1])))
             nub_3d = np.reshape(np.array(nub_layer), (layer.input_dim[2], round(layer.input_dim[0]), round(layer.input_dim[1])))
+            print(nlb_3d.shape)
+            print(nub_3d.shape)
             input_range_layer = copy.deepcopy(nlb_3d).tolist()
             for s in range(layer.input_dim[2]):
                 for i in range(layer.input_dim[0]):
