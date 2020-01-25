@@ -39,7 +39,7 @@ class HeuristicSeachingStrategy(object):
         print('Initial input range of the interested neuron is: ' + str(old_input_range))
         print('After LP relaxation: ' + str(
             nn_refiner.refine_neuron(nn_refiner.NN.num_of_hidden_layers - 1, output_index, approach='UPDATE_RANGE')))
-        # print('After LP relaxation: ' + str(nn_refiner.update_neuron_input_range(-1, nn_refiner.NN.num_of_hidden_layers - 1, output_index, outputFlag=1)))
+        print('After LP relaxation: ' + str(nn_refiner.update_neuron_input_range(-1, nn_refiner.NN.num_of_hidden_layers - 1, output_index, outputFlag=1)))
         print('-------' + strategy_name + ' refinement begins.----------')
         for i in range(self.iteration):
             print('Iteration ' + str(i) + ' begins.')
