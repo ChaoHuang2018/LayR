@@ -793,15 +793,14 @@ class NNRangeRefiner(NNRange):
 
         if model.status == GRB.OPTIMAL:
             opt = model.objVal
-            model.write("model.lp")
             return opt
         else:
             model.write("model.lp")
             print(model.printStats())
-            model.computeIIS()
-            if model.IISMinimal:
-                print('IIS is minimal\n')
-            else:
-                print('IIS is not minimal\n')
-            model.write("model.ilp")
+            # model.computeIIS()
+            # if model.IISMinimal:
+            #     print('IIS is minimal\n')
+            # else:
+            #     print('IIS is not minimal\n')
+            # model.write("model.ilp")
             raise ValueError('Error: No solution founded!')

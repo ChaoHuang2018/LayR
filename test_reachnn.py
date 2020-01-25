@@ -30,7 +30,7 @@ def get_tests(dataset):
 
 # test new approach for estimating sigmoid network's output range
 eps = 0.01
-NN = nn_controller_details('model_MNIST_CNN_5L_sigmoid', keras=True)
+NN = nn_controller_details('convMedGTANH__Point.pyt', keras='eran')
 print(NN.mean)
 print(NN.std)
 
