@@ -30,7 +30,7 @@ class ERANModel(object):
         num_pixels = 784
 
         if '.' not in self.NN.name:
-            self.NN.name = self.NN.name + '.tf'
+            self.NN.name = self.NN.name + '.pyt'
         filename, file_extension = os.path.splitext(self.NN.name)
         # for mnist
         if file_extension == ".meta" or file_extension == ".pb":
