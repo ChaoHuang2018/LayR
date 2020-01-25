@@ -141,6 +141,7 @@ class NN(object):
                             layer_detail['activation']
                         )
                         layer_tmp._filter_size = layer.filters
+                        layer_tmp._padding = 0
                         self.layers.append(layer_tmp)
 
                         # Activation layer
