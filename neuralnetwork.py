@@ -112,6 +112,8 @@ class NN(object):
         self.layers = []
         if not self.eran:
             with open(self.model_json[:-5] + '.pyt', "w") as eran_model:
+                eran_model.write('Normalize mean=[0] std=[1]')
+                eran_model.write('\n')
                 layers_config = self.config['config']['layers']
                 for idx, layer in enumerate(self.model.layers):
                     layer_tmp = Layer()
