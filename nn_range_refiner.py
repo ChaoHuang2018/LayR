@@ -248,17 +248,19 @@ class NNRangeRefiner(NNRange):
                     for i in range(NN.layers[k].input_dim[0]):
                         z_row = []
                         for j in range(NN.layers[k].input_dim[1]):
-                            if NN.layers[k].activation == 'ReLU' and refinement_degree_all[k][s][i][j] > 2:
-                                section = 2
+                            if refinement_degree_all[k][s][i][j] == 1:
+                                z_row.append(())
                             else:
-                                section = refinement_degree_all[k][s][i][j]
-                            z_row.append(
-                                model.addVars(
-                                    section,
-                                    vtype=GRB.BINARY
+                                if NN.layers[k].activation == 'ReLU' and refinement_degree_all[k][s][i][j] > 2:
+                                    section = 2
+                                else:
+                                    section = refinement_degree_all[k][s][i][j]
+                                z_row.append(
+                                    model.addVars(
+                                        section,
+                                        vtype=GRB.BINARY
+                                    )
                                 )
-                            )
-
                         z_channel.append(z_row)
                     z_layer.append(z_channel)
                 z.append(z_layer)
@@ -339,16 +341,19 @@ class NNRangeRefiner(NNRange):
                 # define slack binary variables
                 z_layer = []
                 for i in range(NN.layers[k].output_dim[0]):
-                    if NN.layers[k].activation == 'ReLU' and refinement_degree_all[k][i] > 2:
-                        section = 2
+                    if refinement_degree_all[k][i] == 1:
+                        z_layer.append(())
                     else:
-                        section = refinement_degree_all[k][i]
-                    z_layer.append(
-                        model.addVars(
-                            section,
-                            vtype=GRB.BINARY
+                        if NN.layers[k].activation == 'ReLU' and refinement_degree_all[k][i] > 2:
+                            section = 2
+                        else:
+                            section = refinement_degree_all[k][i]
+                        z_layer.append(
+                            model.addVars(
+                                section,
+                                vtype=GRB.BINARY
+                            )
                         )
-                    )
                 z.append(z_layer)
 
         all_variables = {}
@@ -380,8 +385,8 @@ class NNRangeRefiner(NNRange):
                             )
             else:
                 for i in range(NN.layers[0].input_dim[0]):
-                    network_in[s][i].setAttr(GRB.Attr.LB, network_input_box[i][0])
-                    network_in[s][i].setAttr(GRB.Attr.UB, network_input_box[i][1])
+                    network_in[i].setAttr(GRB.Attr.LB, network_input_box[i][0])
+                    network_in[i].setAttr(GRB.Attr.UB, network_input_box[i][1])
 
     # add interlayer constraints between layer_index-1 and layer_index
     def add_interlayers_constraint(self, model, all_variables, v_name, layer_index):
@@ -607,6 +612,10 @@ class NNRangeRefiner(NNRange):
                         #     x_out[s][i, j].setAttr(GRB.Attr.UB, act.activate(upp))
                         #     continue
                         # Stay inside one and only one region, thus sum of slack integers should be 1
+                        if isinstance(z[s][i][j], tuple):
+                            self.segment_relaxation_LP(model, x_in[s][i, j], x_out[s][i, j], low,
+                                                          upp, activation, [i, j, s], layer_index)
+                            continue
                         model.addConstr(z[s][i][j].sum() == 1)
                         # construct segmentation_list with respect to refinement_degree_layer[s][i][j]
                         if activation == 'ReLU' and refinement_degree_layer[s][i][j] == 2:
@@ -635,6 +644,9 @@ class NNRangeRefiner(NNRange):
                 #     x_out[i].setAttr(GRB.Attr.UB, act.activate(upp))
                 #     continue
                 # any neuron can only be within a region, thus sum of slack integers should be 1
+                if isinstance(z[i], tuple):
+                    self.segment_relaxation_LP(model, x_in[i], x_out[i], low, upp, activation, i, layer_index)
+                    continue
                 model.addConstr(z[i].sum() == 1)
                 if activation == 'ReLU' and refinement_degree_layer[i] == 2:
                     segmentations_list = [low, 0, upp]
@@ -781,6 +793,128 @@ class NNRangeRefiner(NNRange):
                                 name='layer_' + str(layer_index) + '_' + str(index) + '_relaxation_C2')
                 model.addConstr((z_seg == 1) >>
                                 (x_out_neuron - der * (x_in_neuron - seg_right) - act.activate(seg_right) >= 0),
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relaxation_C3')
+
+    def segment_relaxation_LP(self, model, x_in_neuron, x_out_neuron, seg_left, seg_right, activation, index,
+                                 layer_index):
+        act = Activation(activation)
+        if isinstance(seg_left, np.ndarray):
+            seg_left = seg_left[0]
+        if isinstance(seg_right, np.ndarray):
+            seg_right = seg_right[0]
+
+        M = 10e6
+
+        temp_x_diff = M * (seg_right - seg_left)
+        temp_y_diff = M * (act.activate(seg_right) - act.activate(seg_left))
+        der = temp_y_diff / temp_x_diff
+        if activation == 'Affine':
+            model.addConstr(x_in_neuron == x_out_neuron,
+                            name='layer_' + str(layer_index) + '_' + str(index).replace(" ","_") + '_identity')
+        elif seg_left < 0 < seg_right:
+            if activation == 'ReLU':
+                model.addConstr(x_in_neuron >= seg_left,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relu_A_lowbound')
+                model.addConstr(x_in_neuron <= seg_right,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relu_A_uppbound')
+                model.addConstr(-x_out_neuron + act.activate_de_left(seg_right) * (
+                                        x_in_neuron - seg_right) + act.activate(seg_right) <= 0,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ", "_") + '_relu_A1')
+                model.addConstr(-x_out_neuron + act.activate_de_right(seg_left) * (
+                                        x_in_neuron - seg_left) + act.activate(seg_left) <= 0,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ", "_") + '_relu_A2')
+                model.addConstr(x_out_neuron - der * (x_in_neuron - seg_right) - act.activate(seg_right) <= 0,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ", "_") + '_relu_A3')
+            else:
+                model.addConstr(x_in_neuron >= seg_left,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relaxation_A_lowbound')
+                model.addConstr(x_in_neuron <= seg_right,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relaxation_A_uppbound')
+                if der < act.activate_de_right(seg_left):
+                    model.addConstr(-x_out_neuron + der * (x_in_neuron - seg_left) + act.activate(seg_left) <= 0,
+                        name='layer_' + str(layer_index) + '_' + str(index).replace(" ", "_") + '_relaxation_A1')
+                else:
+                    model.addConstr(-x_out_neuron + act.activate_de_right(seg_left) * (
+                                x_in_neuron - seg_left) + act.activate(seg_left) <= 0,
+                                    name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                                "_") + '_relaxation_A1_1')
+                    neg_out = (act.activate_de_right(seg_left) * (0 - seg_left) + act.activate(seg_left))
+                    model.addConstr(- x_out_neuron + ((act.activate(seg_right) - neg_out) / (seg_right - 0)) * (
+                                    x_in_neuron - 0) + neg_out <= 0,
+                                    name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                                "_") + '_relaxation_A1_2')
+                if der < act.activate_de_left(seg_right):
+                    model.addConstr(-x_out_neuron + der * (x_in_neuron - seg_left) + act.activate(seg_left) >= 0,
+                        name='layer_' + str(layer_index) + '_' + str(index).replace(" ", "_") + '_relaxation_A2')
+                else:
+                    model.addConstr(-x_out_neuron + act.activate_de_left(seg_right) * (
+                                x_in_neuron - seg_right) + act.activate(seg_right) >= 0,
+                                    name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                                "_") + '_relaxation_A2_1')
+                    pos_out = (act.activate_de_left(seg_right) * (0 - seg_right) + act.activate(seg_right))
+                    model.addConstr(- x_out_neuron + ((act.activate(seg_left) - pos_out) / (seg_left - 0)) * (
+                                    x_in_neuron - 0) + pos_out >= 0,
+                                    name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                                "_") + '_relaxation_A2_2')
+        elif seg_right <= 0:
+            if activation == 'ReLU':
+                model.addConstr(x_in_neuron >= seg_left,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relu_B_lowbound')
+                model.addConstr(x_in_neuron <= seg_right,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relu_B_uppbound')
+                model.addConstr(x_out_neuron == 0,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ", "_") + '_relu_B')
+            else:
+                # triangle relaxation
+                model.addConstr(x_in_neuron >= seg_left,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relaxation_B_lowbound')
+                model.addConstr(x_in_neuron <= seg_right,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relaxation_B_uppbound')
+                model.addConstr(-x_out_neuron + act.activate_de_left(seg_right) * (
+                                        x_in_neuron - seg_right) + act.activate(seg_right) <= 0,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relaxation_B1')
+                model.addConstr(-x_out_neuron + act.activate_de_right(seg_left) * (
+                                        x_in_neuron - seg_left) + act.activate(seg_left) <= 0,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relaxation_B2')
+                model.addConstr(x_out_neuron - der * (x_in_neuron - seg_right) - act.activate(seg_right) <= 0,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relaxation_B3')
+        else:
+            if activation == 'ReLU':
+                model.addConstr(x_in_neuron >= seg_left,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relu_C_lowbound')
+                model.addConstr(x_in_neuron <= seg_right,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relu_C_uppbound')
+                model.addConstr(x_out_neuron == x_in_neuron,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ", "_") + '_relu_C')
+            else:
+                # triangle relaxation
+                model.addConstr(x_in_neuron >= seg_left,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relaxation_C_lowbound')
+                model.addConstr(x_in_neuron <= seg_right,
+                                name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                            "_") + '_relaxation_C_uppbound')
+                model.addConstr(-x_out_neuron + act.activate_de_left(seg_right) * (
+                                        x_in_neuron - seg_right) + act.activate(seg_right) >= 0,
+                                name='layer_' + str(layer_index) + '_' + str(index) + '_relaxation_C1')
+                model.addConstr(-x_out_neuron + act.activate_de_right(seg_left) * (
+                                        x_in_neuron - seg_left) + act.activate(seg_left) >= 0,
+                                name='layer_' + str(layer_index) + '_' + str(index) + '_relaxation_C2')
+                model.addConstr(x_out_neuron - der * (x_in_neuron - seg_right) - act.activate(seg_right) >= 0,
                                 name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
                                                                                             "_") + '_relaxation_C3')
 
