@@ -405,7 +405,7 @@ class NNRangeRefiner(NNRange):
                     for i in range(NN.layers[layer_index].input_dim[0] + 2 * padding):
                         for j in range(NN.layers[layer_index].input_dim[1] + 2 * padding):
                             if (padding <= i <= NN.layers[layer_index].input_dim[0] + padding - 1) and (
-                                    padding <= j <= NN.layers[layer_index].input_dim[1] - 1):
+                                    padding <= j <= NN.layers[layer_index].input_dim[1] + padding - 1):
                                 model.addConstr(network_in[s][i - padding, j - padding] == x_in[layer_index][s][i, j])
                             else:
                                 model.addConstr(x_in[layer_index][s][i, j] == 0)
@@ -421,7 +421,7 @@ class NNRangeRefiner(NNRange):
                     for i in range(NN.layers[layer_index].input_dim[0] + 2 * padding):
                         for j in range(NN.layers[layer_index].input_dim[1] + 2 * padding):
                             if (padding <= i <= NN.layers[layer_index].input_dim[0] + padding - 1) and (
-                                    padding <= j <= NN.layers[layer_index].input_dim[1] - 1):
+                                    padding <= j <= NN.layers[layer_index].input_dim[1] + padding - 1):
                                 model.addConstr(
                                     x_out[layer_index - 1][s][i - padding, j - padding] == x_in[layer_index][s][i, j])
                             else:
