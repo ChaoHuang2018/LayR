@@ -62,7 +62,7 @@ class ReachNN(object):
         # traceback
         self.traceback = traceback
 
-    def output_range_analysis(self, strategy_name, output_index, iteration=20, per=0.1):
+    def output_range_analysis(self, strategy_name, output_index, iteration, per):
         nn_refiner = NNRangeRefiner(self.NN1, self.network_input_box, self.initialize_approach, traceback=self.traceback)
         heuristic_search = HeuristicSeachingStrategy(strategy_name, iteration, per, if_check_output=True)
         new_output_range = heuristic_search.refine_by_heuristic(nn_refiner, output_index)

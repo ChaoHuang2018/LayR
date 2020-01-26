@@ -115,6 +115,15 @@ class NNRange(object):
             else:
                 input_range_layer = output_range_layer
 
+            print('The dimension of input range of layer ' + str(i) + ' :')
+            print(np.array(input_range_layer).shape)
+            print(NN.layers[i].input_dim)
+            print('Naive')
+            if NN.layers[i].type != 'Fully_connected':
+                print(input_range_layer[0][0][0:10])
+            else:
+                print(input_range_layer[0:10])
+
             if (NN.layers[i].type == 'Fully_connected' # or NN.layers[i].type == 'Activation'
                     ) and method == 'ERAN':
                 input_range_layer = copy.deepcopy(self.merge_range(i, input_range_layer, input_range_eran[j]))
@@ -123,13 +132,8 @@ class NNRange(object):
 
             input_range_all.append(input_range_layer)
 
-            print('The dimension of input range of layer ' + str(i) + ' :')
-            print(np.array(input_range_layer).shape)
-            print(NN.layers[i].input_dim)
-            if NN.layers[i].type != 'Fully_connected':
-                print(input_range_layer[0][0][0:10])
-            else:
-                print(input_range_layer[0:10])
+
+
 
 
             # Compute the output range of each layer

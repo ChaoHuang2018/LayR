@@ -21,14 +21,14 @@ class HeuristicSeachingStrategy(object):
     ):
         self.strategy_name = strategy_name
         self.iteration = iteration
-        self.refinement_per = refinement_per
+        self.refinement_per_cnn = refinement_per[0]
+        self.refinement_per_fc = refinement_per[1]
         self.if_check_output = if_check_output
         self.select_num_dic = []
         self.priority_all = []
 
     def refine_by_heuristic(self, nn_refiner, output_index):
         strategy_name = self.strategy_name
-        per = self.refinement_per
         if_check_output = self.if_check_output
 
         for i in range(nn_refiner.NN.num_of_hidden_layers):
@@ -51,12 +51,16 @@ class HeuristicSeachingStrategy(object):
                     self.strategy_metric_ranking_layer(nn_refiner, layer_index)
                 if strategy_name == 'RANDOM':
                     self.strategy_random_ranking_layer(nn_refiner, layer_index)
-                neuron_list = self.pop_neurons_by_priority(layer_index, self.refinement_per)
+
+                if nn_refiner.NN.layers[layer_index].type == 'Fully_connected':
+                    neuron_list = self.pop_neurons_by_priority(layer_index, self.refinement_per_fc)
+                elif nn_refiner.NN.layers[layer_index].type == 'Activation':
+                    neuron_list = self.pop_neurons_by_priority(layer_index, self.refinement_per_cnn)
                 print(neuron_list)
                 for neuron_index in neuron_list:
                     nn_refiner.refine_neuron(layer_index, neuron_index, approach='BOTH')
                     self.increase_selected_number(layer_index, neuron_index)
-                print('Integer variable of this layer: ' + str(sum(nn_refiner.refinement_degree_all[layer_index])))
+                # print('Integer variable of this layer: ' + str(sum(nn_refiner.refinement_degree_all[layer_index])))
             if if_check_output:
                 new_range = nn_refiner.refine_neuron(nn_refiner.NN.num_of_hidden_layers - 1, output_index, approach='UPDATE_RANGE', outputFlag=1)
                 print('Output range updates: ' + str(new_range))
