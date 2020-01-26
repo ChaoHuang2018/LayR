@@ -30,7 +30,7 @@ def get_tests(dataset):
 
 # test new approach for estimating sigmoid network's output range
 eps = 0.01
-NN = nn_controller_details('model_MNIST_CNN_4L_sigmoid', keras=True)
+NN = nn_controller_details('convMedGSIGMOID__PGDK_w_0.3.pyt', keras='eran')
 print(NN.mean)
 print(NN.std)
 
@@ -57,7 +57,7 @@ for k in range(input_dim[2]):
     input_range.append(input_range_channel)
 print(np.array(input_range).shape)
 start_time = time.time()
-nn_analyzer = ReachNN(NN, np.array(input_range), 3, 'ERAN', global_robustness_type='L-INFINITY', perturbation_bound=0.01)
+nn_analyzer = ReachNN(NN, np.array(input_range), 3, 'BASIC', global_robustness_type='L-INFINITY', perturbation_bound=0.01)
 new_output_range = nn_analyzer.output_range_analysis('METRIC', 9, iteration=5, per=0.2)
 # nn_refiner = NNRangeRefiner(NN, np.array(input_range), 'ERAN', traceback=2)
 # test_range = nn_refiner.update_neuron_input_range(0, 6, 9)
