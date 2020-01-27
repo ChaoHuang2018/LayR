@@ -718,7 +718,7 @@ class NNRangeRefiner(NNRange):
                                     x_in_neuron - 0) + neg_out <= 0),
                                     name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
                                                                                                 "_") + '_relaxation_A1_2')
-                if der < act.activate_de_left(seg_right):
+                if der > act.activate_de_left(seg_right):
                     model.addConstr(
                         (z_seg == 1) >> (-x_out_neuron + der * (x_in_neuron - seg_left) + act.activate(seg_left) >= 0),
                         name='layer_' + str(layer_index) + '_' + str(index).replace(" ", "_") + '_relaxation_A2')
