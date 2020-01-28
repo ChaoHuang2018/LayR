@@ -707,8 +707,8 @@ class NNRangeRefiner(NNRange):
                                                                                             "_") + '_relaxation_A_uppbound')
 
                 # slope = min(act.activate_de_right(seg_left), act.activate_de_left(seg_right))
-                # model.addConstr(-x_out_neuron + slope * (x_in_neuron - seg_left) + act.activate(seg_left) <= 0)
-                # model.addConstr(-x_out_neuron + slope * (x_in_neuron - seg_right) + act.activate(seg_right) >= 0)
+                # model.addConstr((z_seg == 1) >> (-x_out_neuron + slope * (x_in_neuron - seg_left) + act.activate(seg_left) <= 0))
+                # model.addConstr((z_seg == 1) >> (-x_out_neuron + slope * (x_in_neuron - seg_right) + act.activate(seg_right) >= 0))
 
                 if der < act.activate_de_right(seg_left):
                     model.addConstr(
@@ -758,6 +758,11 @@ class NNRangeRefiner(NNRange):
                 model.addConstr((z_seg == 1) >> (x_in_neuron <= seg_right),
                                 name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
                                                                                             "_") + '_relaxation_B_uppbound')
+                # slope = min(act.activate_de_right(seg_left), act.activate_de_left(seg_right))
+                # model.addConstr(
+                #     (z_seg == 1) >> (-x_out_neuron + slope * (x_in_neuron - seg_left) + act.activate(seg_left) <= 0))
+                # model.addConstr(
+                #     (z_seg == 1) >> (-x_out_neuron + slope * (x_in_neuron - seg_right) + act.activate(seg_right) >= 0))
                 model.addConstr((z_seg == 1) >>
                                 (-x_out_neuron + act.activate_de_left(seg_right) * (
                                         x_in_neuron - seg_right) + act.activate(seg_right) <= 0),
@@ -790,6 +795,13 @@ class NNRangeRefiner(NNRange):
                 model.addConstr((z_seg == 1) >> (x_in_neuron <= seg_right),
                                 name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
                                                                                             "_") + '_relaxation_C_uppbound')
+
+                # slope = min(act.activate_de_right(seg_left), act.activate_de_left(seg_right))
+                # model.addConstr(
+                #     (z_seg == 1) >> (-x_out_neuron + slope * (x_in_neuron - seg_left) + act.activate(seg_left) <= 0))
+                # model.addConstr(
+                #     (z_seg == 1) >> (-x_out_neuron + slope * (x_in_neuron - seg_right) + act.activate(seg_right) >= 0))
+
                 model.addConstr((z_seg == 1) >>
                                 (-x_out_neuron + act.activate_de_left(seg_right) * (
                                         x_in_neuron - seg_right) + act.activate(seg_right) >= 0),
