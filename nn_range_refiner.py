@@ -248,19 +248,19 @@ class NNRangeRefiner(NNRange):
                     for i in range(NN.layers[k].input_dim[0]):
                         z_row = []
                         for j in range(NN.layers[k].input_dim[1]):
-                            if refinement_degree_all[k][s][i][j] == 1:
-                                z_row.append(())
+                            # if refinement_degree_all[k][s][i][j] == 1:
+                            #     z_row.append(())
+                            # else:
+                            if NN.layers[k].activation == 'ReLU' and refinement_degree_all[k][s][i][j] > 2:
+                                section = 2
                             else:
-                                if NN.layers[k].activation == 'ReLU' and refinement_degree_all[k][s][i][j] > 2:
-                                    section = 2
-                                else:
-                                    section = refinement_degree_all[k][s][i][j]
-                                z_row.append(
-                                    model.addVars(
-                                        section,
-                                        vtype=GRB.BINARY
-                                    )
+                                section = refinement_degree_all[k][s][i][j]
+                            z_row.append(
+                                model.addVars(
+                                    section,
+                                    vtype=GRB.BINARY
                                 )
+                            )
                         z_channel.append(z_row)
                     z_layer.append(z_channel)
                 z.append(z_layer)
@@ -341,19 +341,19 @@ class NNRangeRefiner(NNRange):
                 # define slack binary variables
                 z_layer = []
                 for i in range(NN.layers[k].output_dim[0]):
-                    if refinement_degree_all[k][i] == 1:
-                        z_layer.append(())
+                    # if refinement_degree_all[k][i] == 1:
+                    #     z_layer.append(())
+                    # else:
+                    if NN.layers[k].activation == 'ReLU' and refinement_degree_all[k][i] > 2:
+                        section = 2
                     else:
-                        if NN.layers[k].activation == 'ReLU' and refinement_degree_all[k][i] > 2:
-                            section = 2
-                        else:
-                            section = refinement_degree_all[k][i]
-                        z_layer.append(
-                            model.addVars(
-                                section,
-                                vtype=GRB.BINARY
-                            )
+                        section = refinement_degree_all[k][i]
+                    z_layer.append(
+                        model.addVars(
+                            section,
+                            vtype=GRB.BINARY
                         )
+                    )
                 z.append(z_layer)
 
         all_variables = {}
@@ -607,15 +607,16 @@ class NNRangeRefiner(NNRange):
                         x_in[s][i, j].setAttr(GRB.Attr.LB, low)
                         x_in[s][i, j].setAttr(GRB.Attr.UB, upp)
                         # if act.activate(upp) - act.activate(low) <= 10e5:
-                        #     model.addConstr(z[s][i][j].sum() == 0)
-                        #     x_out[s][i, j].setAttr(GRB.Attr.LB, act.activate(low))
-                        #     x_out[s][i, j].setAttr(GRB.Attr.UB, act.activate(upp))
-                        #     continue
+                        # model.addConstr(z[s][i][j].sum() == 0)
+                        # x_out[s][i, j].setAttr(GRB.Attr.LB, act.activate(low))
+                        # x_out[s][i, j].setAttr(GRB.Attr.UB, act.activate(upp))
+                        # continue
                         # Stay inside one and only one region, thus sum of slack integers should be 1
-                        if isinstance(z[s][i][j], tuple):
-                            self.segment_relaxation_LP(model, x_in[s][i, j], x_out[s][i, j], low,
-                                                          upp, activation, [i, j, s], layer_index)
-                            continue
+
+                        # if isinstance(z[s][i][j], tuple):
+                        #     self.segment_relaxation_LP(model, x_in[s][i, j], x_out[s][i, j], low,
+                        #                                   upp, activation, [i, j, s], layer_index)
+                        #     continue
                         model.addConstr(z[s][i][j].sum() == 1)
                         # construct segmentation_list with respect to refinement_degree_layer[s][i][j]
                         if activation == 'ReLU' and refinement_degree_layer[s][i][j] == 2:
@@ -639,14 +640,15 @@ class NNRangeRefiner(NNRange):
                 x_in[i].setAttr(GRB.Attr.LB, low)
                 x_in[i].setAttr(GRB.Attr.UB, upp)
                 # if act.activate(upp) - act.activate(low) <= 10e5:
-                #     model.addConstr(z[i].sum() == 0)
+                # model.addConstr(z[i].sum() == 0)
                 #     x_out[i].setAttr(GRB.Attr.LB, act.activate(low))
                 #     x_out[i].setAttr(GRB.Attr.UB, act.activate(upp))
                 #     continue
                 # any neuron can only be within a region, thus sum of slack integers should be 1
-                if isinstance(z[i], tuple):
-                    self.segment_relaxation_LP(model, x_in[i], x_out[i], low, upp, activation, i, layer_index)
-                    continue
+
+                # if isinstance(z[i], tuple):
+                #     self.segment_relaxation_LP(model, x_in[i], x_out[i], low, upp, activation, i, layer_index)
+                #     continue
                 model.addConstr(z[i].sum() == 1)
                 if activation == 'ReLU' and refinement_degree_layer[i] == 2:
                     segmentations_list = [low, 0, upp]
@@ -703,6 +705,11 @@ class NNRangeRefiner(NNRange):
                 model.addConstr((z_seg == 1) >> (x_in_neuron <= seg_right),
                                 name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
                                                                                             "_") + '_relaxation_A_uppbound')
+
+                # slope = min(act.activate_de_right(seg_left), act.activate_de_left(seg_right))
+                # model.addConstr(-x_out_neuron + slope * (x_in_neuron - seg_left) + act.activate(seg_left) <= 0)
+                # model.addConstr(-x_out_neuron + slope * (x_in_neuron - seg_right) + act.activate(seg_right) >= 0)
+
                 if der < act.activate_de_right(seg_left):
                     model.addConstr(
                         (z_seg == 1) >> (-x_out_neuron + der * (x_in_neuron - seg_left) + act.activate(seg_left) <= 0),
@@ -718,7 +725,7 @@ class NNRangeRefiner(NNRange):
                                     x_in_neuron - 0) + neg_out <= 0),
                                     name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
                                                                                                 "_") + '_relaxation_A1_2')
-                if der > act.activate_de_left(seg_right):
+                if der < act.activate_de_left(seg_right):
                     model.addConstr(
                         (z_seg == 1) >> (-x_out_neuron + der * (x_in_neuron - seg_left) + act.activate(seg_left) >= 0),
                         name='layer_' + str(layer_index) + '_' + str(index).replace(" ", "_") + '_relaxation_A2')
@@ -835,6 +842,11 @@ class NNRangeRefiner(NNRange):
                 model.addConstr(x_in_neuron <= seg_right,
                                 name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
                                                                                             "_") + '_relaxation_A_uppbound')
+
+                # slope = min(act.activate_de_right(seg_left), act.activate_de_left(seg_right))
+                # model.addConstr(-x_out_neuron + slope * (x_in_neuron - seg_left) + act.activate(seg_left) <= 0)
+                # model.addConstr(-x_out_neuron + slope * (x_in_neuron - seg_right) + act.activate(seg_right) >= 0)
+
                 if der < act.activate_de_right(seg_left):
                     model.addConstr(-x_out_neuron + der * (x_in_neuron - seg_left) + act.activate(seg_left) <= 0,
                         name='layer_' + str(layer_index) + '_' + str(index).replace(" ", "_") + '_relaxation_A1')
