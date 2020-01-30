@@ -947,14 +947,20 @@ class NNRangeRefiner(NNRange):
         model.setParam('OutputFlag', DETAILS_FLAG)
         model.setParam('BarHomogeneous', 1)
         # model.setParam('DualReductions', 0)
-        model.optimize()
+        start_time = time.time()
+        p = model.presolve()
+        # presolve_time = start_time
+        # print("Presolve time: %s seconds." % (presolve_time - start_time))
+        p.optimize()
+        # print("Optimization time: %s seconds." % (time.time() - presolve_time))
+        # print("Total solving time: %s seconds." % (time.time() - start_time))
 
-        if model.status == GRB.OPTIMAL:
-            opt = model.objVal
+        if p.status == GRB.OPTIMAL:
+            opt = p.objVal
             return opt
         else:
-            model.write("model.lp")
-            print(model.printStats())
+            p.write("model.lp")
+            print(p.printStats())
             # model.computeIIS()
             # if model.IISMinimal:
             #     print('IIS is minimal\n')
