@@ -124,9 +124,33 @@ class NNRange(object):
             else:
                 print(input_range_layer[0:10])
 
-            if (NN.layers[i].type == 'Fully_connected' # or NN.layers[i].type == 'Activation'
-                    ) and method == 'ERAN':
-                input_range_layer = copy.deepcopy(self.merge_range(i, input_range_layer, input_range_eran[j]))
+            if (NN.layers[i].type == 'Fully_connected' or NN.layers[i].type == 'Activation'
+                    ):
+                print(np.array(input_range_layer).shape)
+                # if method == 'ERAN':
+                #     print(input_range_eran[j][0][0][0:4])
+                #     print(input_range_eran[j][0][1][0:4])
+                #     print(input_range_eran[j][0][2][0:4])
+                #     print(input_range_eran[j][0][3][0:4])
+                #     print(input_range_eran[j][1][0][0:4])
+                #     print(input_range_eran[j][1][1][0:4])
+                #     print(input_range_eran[j][1][2][0:4])
+                #     print(input_range_eran[j][2][0][0:4])
+                #     print(input_range_eran[j][2][1][0:4])
+                #     print(input_range_eran[j][2][2][0:4])
+                # print(input_range_layer[0][0][0:4])
+                # print(input_range_layer[0][1][0:4])
+                # print(input_range_layer[0][2][0:4])
+                # print(input_range_layer[0][3][0:4])
+                # print(input_range_layer[1][0][0:4])
+                # print(input_range_layer[1][1][0:4])
+                # print(input_range_layer[1][2][0:4])
+                # print(input_range_layer[2][0][0:4])
+                # print(input_range_layer[2][1][0:4])
+                # print(input_range_layer[2][2][0:4])
+                # print(input_range_layer[2][3][0:4])
+                if method == 'ERAN':
+                    input_range_layer = copy.deepcopy(self.merge_range(i, input_range_layer, input_range_eran[j]))
                 # input_range_layer = copy.deepcopy(np.array(input_range_eran[j]))
                 j += 1
 
@@ -243,7 +267,7 @@ class NNRange(object):
             for i in range(layer.output_dim[0]):
                 output_range_layer_row = []
                 for j in range(layer.output_dim[1]):
-                    solver = 'GUROBI'
+                    solver = 'NAIVE'
                     if solver == 'GUROBI':
                         model_out_neuron = gp.Model()
                         x_in = []
@@ -254,15 +278,20 @@ class NNRange(object):
                                                          vtype=GRB.CONTINUOUS))
                         x_out = model_out_neuron.addVar(lb=-GRB.INFINITY, ub=GRB.INFINITY)
                         sum_expr = 0
+                        if layer_index == 2 and k == 1 and i == 0 and j == 0:
+                            print('check : ' + str([k,i,j]) + ' of layer ' + str(layer_index))
+                            print(kernel.shape)
                         for s in range(kernel.shape[2]):
                             for p in range(kernel.shape[0]):
                                 for q in range(kernel.shape[1]):
+                                    if layer_index == 2 and k == 1 and i == 0 and j == 0:
+                                        print([s, i * stride[0] + p, j * stride[1] + q])
                                     x_in[s][p, q].setAttr(GRB.Attr.LB, input_range_layer[s][
                                         i * stride[0] + p][j * stride[1] + q][0])
                                     x_in[s][p, q].setAttr(GRB.Attr.UB, input_range_layer[s][
                                         i * stride[0] + p][j * stride[1] + q][1])
                                     sum_expr = sum_expr + x_in[s][p, q] * kernel[p, q, s, k]
-                            sum_expr = sum_expr + bias[k]
+                        sum_expr = sum_expr + bias[k]
                         model_out_neuron.addConstr(sum_expr == x_out)
 
                         # define objective: smallest output
@@ -464,6 +493,13 @@ class NNRange(object):
                 for i in range(layer.input_dim[0]):
                     for j in range(layer.input_dim[1]):
                         range_new[s][i][j] = [max(range_a[s][i][j][0], range_b[s][i][j][0]), min(range_a[s][i][j][1], range_b[s][i][j][1])]
+                        if range_new[s][i][j][0] > range_new[s][i][j][1]:
+                            print(layer_index)
+                            print([s,i,j])
+                            print(range_a[s][i][j])
+                            print(range_b[s][i][j])
+                            # raise ValueError('ERROR range after merging!')
+                            raise ValueError('ERROR range after merging!')
         else:
             for i in range(layer.input_dim[0]):
                 range_new[i] = [max(range_a[i][0], range_b[i][0]), min(range_a[i][1], range_b[i][1])]

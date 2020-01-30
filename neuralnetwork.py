@@ -403,8 +403,9 @@ class NN(object):
 
     def keras_model_pre_softmax(self, x):
         get_output_pre_softmax = K.function([self.model.layers[0].input],
-                                            [self.model.layers[-2].output])
-        layer_output = get_output_pre_softmax([x])[0][0][0]
+                                            [self.model.layers[1].output])
+        print('Size of the output: ' + str(get_output_pre_softmax([x])[0][0].shape))
+        layer_output = get_output_pre_softmax([x])[0][0][0][0][1]
         return layer_output
 
     def activate(self, x):

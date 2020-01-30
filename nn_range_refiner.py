@@ -495,7 +495,7 @@ class NNRangeRefiner(NNRange):
                         for p in range(kernel.shape[0]):
                             for q in range(kernel.shape[1]):
                                 sum_expr = sum_expr + x_in[s][i * stride[0] + p, j * stride[1] + q] * kernel[p, q, s, k]
-                        sum_expr = sum_expr + bias[k]
+                    sum_expr = sum_expr + bias[k]
                     model.addConstr(sum_expr == x_out[k][i, j], name='layer_' + str(layer_index) + '_' + str(
                         [i, j, s]) + '_convolutional_layer_linear')
 

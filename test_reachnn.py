@@ -43,13 +43,16 @@ for test in tests:
     break
 image= np.float64(test[1:len(test)])/np.float64(255)
 data = image.reshape(28, 28, 1)
+data0 = image.reshape(1, 28, 28, 1)
 input_dim = NN.layers[0].input_dim
 print(input_dim)
+print('channel 1, row 0, column 0 of 2nd CL: ' + str(NN.keras_model_pre_softmax(data0)))
 for k in range(input_dim[2]):
     input_range_channel = []
     for i in range(input_dim[0]):
         input_range_row = []
         for j in range(input_dim[1]):
+            # input_range_row.append([data[i][j][k], data[i][j][k]])
             input_range_row.append([max(0, data[i][j][k] - eps), min(1, data[i][j][k] + eps)])
             # input_range_row.append(
             #     [(max(0, data[i][j][k] - eps) - NN.mean) / NN.std, (min(1, data[i][j][k] + eps)- NN.mean) / NN.std])

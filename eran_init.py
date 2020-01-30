@@ -59,8 +59,8 @@ class ERANModel(object):
         NN = self.NN
         network_in_lower_bound, network_in_upper_bound = self.network_in_split(network_in)
         # print(network_in_lower_bound)
-        label, _, nlb, nub = self.eran.analyze_box(network_in_lower_bound, network_in_upper_bound, 'deepzono', 1, 1,
-                                                   False)
+        label, _, nlb, nub, output_info = self.eran.analyze_box(network_in_lower_bound, network_in_upper_bound, 'deepzono', 1, 1,
+                                                   False, testing=True)
         operations = self.eran.optimizer.operations
         # operation 0 is 'Placeholder'
         i = 1
@@ -88,8 +88,8 @@ class ERANModel(object):
                 if operations[i + 2] == 'Relu':
                     j = j + 1
                 if operations[i + 2] == 'Tanh' or operations[i + 2] == 'Sigmoid':
-                    # nlb_eran_raw.append(nlb[j])
-                    # nub_eran_raw.append(nub[j])
+                    nlb_eran_raw.append(nlb[j])
+                    nub_eran_raw.append(nub[j])
                     j = j + 2
                 i += 3
             else:
@@ -98,9 +98,9 @@ class ERANModel(object):
         i = 0
         j = 0
         while i < self.NN.num_of_hidden_layers:
-            if NN.layers[i].type == 'Fully_connected': # or NN.layers[i].type == 'Activation':
-                print(len(nlb_eran_raw[j]))
-                print(len(nub_eran_raw[j]))
+            if NN.layers[i].type == 'Fully_connected' or NN.layers[i].type == 'Activation':
+                # print(len(nlb_eran_raw[j]))
+                # print(len(nub_eran_raw[j]))
                 input_range_layer = self.eran_range_reashape(i, nlb_eran_raw[j], nub_eran_raw[j])
                 j += 1
                 input_range_all.append(input_range_layer)
@@ -129,15 +129,15 @@ class ERANModel(object):
     def eran_range_reashape(self, layer_index, nlb_layer, nub_layer):
         layer = self.NN.layers[layer_index]
         if layer.type == 'Activation':
-            nlb_3d = np.reshape(np.array(nlb_layer), (layer.input_dim[2], round(layer.input_dim[0]), round(layer.input_dim[1])))
-            nub_3d = np.reshape(np.array(nub_layer), (layer.input_dim[2], round(layer.input_dim[0]), round(layer.input_dim[1])))
+            nlb_3d = np.reshape(np.array(nlb_layer), (round(layer.input_dim[0]), round(layer.input_dim[1]), layer.input_dim[2]))
+            nub_3d = np.reshape(np.array(nub_layer), (round(layer.input_dim[0]), round(layer.input_dim[1]), layer.input_dim[2]))
             print(nlb_3d.shape)
             print(nub_3d.shape)
-            input_range_layer = copy.deepcopy(nlb_3d).tolist()
+            input_range_layer = np.zeros((layer.input_dim[2],layer.input_dim[0],layer.input_dim[1])).tolist()
             for s in range(layer.input_dim[2]):
                 for i in range(layer.input_dim[0]):
                     for j in range(layer.input_dim[1]):
-                        input_range_layer[s][i][j] = [nlb_3d[s][i][j], nub_3d[s][i][j]]
+                        input_range_layer[s][i][j] = [nlb_3d[i][j][s], nub_3d[i][j][s]]
         else:
             input_range_layer = copy.deepcopy(nlb_layer)
             for i in range(layer.input_dim[0]):
