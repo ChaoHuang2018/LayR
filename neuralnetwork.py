@@ -143,7 +143,12 @@ class NN(object):
                             layer_detail['activation']
                         )
                         layer_tmp._filter_size = layer.filters
-                        layer_tmp._padding = 0
+                        if layer.padding == 'valid':
+                            layer_tmp._padding = 0
+                        elif layer.padding == 'same':
+                            layer_tmp._padding = (
+                                layer_tmp.kernel.shape[0] - 1
+                            )/2
                         self.layers.append(layer_tmp)
 
                         # Activation layer
@@ -403,9 +408,8 @@ class NN(object):
 
     def keras_model_pre_softmax(self, x):
         get_output_pre_softmax = K.function([self.model.layers[0].input],
-                                            [self.model.layers[1].output])
-        print('Size of the output: ' + str(get_output_pre_softmax([x])[0][0].shape))
-        layer_output = get_output_pre_softmax([x])[0][0][0][0][1]
+                                            [self.model.layers[-2].output])
+        layer_output = get_output_pre_softmax([x])[0][0][0]
         return layer_output
 
     def activate(self, x):
