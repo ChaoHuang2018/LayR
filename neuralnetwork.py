@@ -172,7 +172,7 @@ class NN(object):
                                 list(layer_tmp.input_dim)
                             ) +
                             ', stride=' + str(list(layer_tmp.stride)) +
-                            ', padding=0'
+                            ', padding=' + str(layer_tmp.padding)
                         )
                         eran_model.write('\n')
                         eran_model.write(str(layer_tmp.kernel.tolist()))
