@@ -38,6 +38,8 @@ class ReachNN(object):
     def __init__(
         self,
         NN1,
+        type,
+        data,
         network_input_box,
         traceback,
         initialize_approach,
@@ -48,6 +50,11 @@ class ReachNN(object):
         # neural networks
         self.NN1 = NN1
         self.NN2 = NN2
+
+        self.type = type
+
+        # testing input
+        self.data = data
 
         # input space
         self.network_input_box = network_input_box
@@ -62,8 +69,20 @@ class ReachNN(object):
         # traceback
         self.traceback = traceback
 
-    def output_range_analysis(self, strategy_name, output_index, iteration, per):
-        nn_refiner = NNRangeRefiner(self.NN1, self.network_input_box, self.initialize_approach, traceback=self.traceback)
+    def output_range_analysis(self, strategy_name, output_index, iteration, per, is_test=False):
+        if is_test:
+            low = 100
+            upp = -100
+            for i in range(1000):
+                random_per = np.random.rand(self.data.shape[0], self.data.shape[1], self.data.shape[2],
+                                            self.data.shape[3]) * self.perturbation_bound
+                output = self.NN1.keras_model(random_per + self.data)[0][output_index]
+                if output > upp:
+                    upp = output
+                if output < low:
+                    low = output
+            print('Bound by random sampling is: ' + str([low, upp]))
+        nn_refiner = NNRangeRefiner(self.NN1, self.type, self.network_input_box, self.initialize_approach, traceback=self.traceback)
         heuristic_search = HeuristicSeachingStrategy(strategy_name, iteration, per, if_check_output=True)
         new_output_range = heuristic_search.refine_by_heuristic(nn_refiner, output_index)
         # new_output_range = nn_refiner.update_neuron_input_range(self.NN1.num_of_hidden_layers - 1, output_index)

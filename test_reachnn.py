@@ -30,7 +30,7 @@ def get_tests(dataset):
 
 # test new approach for estimating sigmoid network's output range
 eps = 0.01
-NN = nn_controller_details('model_MNIST_CNN_5L_sigmoid', keras=True)
+NN = nn_controller_details('model_CIFAR_CNN_Large', keras=True)
 print(NN.mean)
 print(NN.std)
 
@@ -38,15 +38,38 @@ print(NN.std)
 mean = NN.mean
 std = NN.std
 input_range = []
-tests = get_tests('mnist')
+# for mnist dataset
+# tests = get_tests('mnist')
+# for test in tests:
+#     break
+# image= np.float64(test[1:len(test)])/np.float64(255)
+# data = image.reshape(28, 28, 1)
+# data0 = image.reshape(1, 28, 28, 1)
+# print(NN.keras_model(data0)[0][9])
+# input_dim = NN.layers[0].input_dim
+# # print('channel 1, row 0, column 0 of 2nd CL: ' + str(NN.keras_model_pre_softmax(data0)))
+# for k in range(input_dim[2]):
+#     input_range_channel = []
+#     for i in range(input_dim[0]):
+#         input_range_row = []
+#         for j in range(input_dim[1]):
+#             # input_range_row.append([data[i][j][k], data[i][j][k]])
+#             input_range_row.append([max(0, data[i][j][k] - eps), min(1, data[i][j][k] + eps)])
+#             # input_range_row.append(
+#             #     [(max(0, data[i][j][k] - eps) - NN.mean) / NN.std, (min(1, data[i][j][k] + eps)- NN.mean) / NN.std])
+#         input_range_channel.append(input_range_row)
+#     input_range.append(input_range_channel)
+
+# for cifar10 dataset
+tests = get_tests('cifar10')
 for test in tests:
     break
 image= np.float64(test[1:len(test)])/np.float64(255)
-data = image.reshape(28, 28, 1)
-data0 = image.reshape(1, 28, 28, 1)
+data = image.reshape(32, 32, 3)
+data0 = image.reshape(1, 32, 32, 3)
+print(NN.keras_model(data0)[0][9])
 input_dim = NN.layers[0].input_dim
-print(input_dim)
-print('channel 1, row 0, column 0 of 2nd CL: ' + str(NN.keras_model_pre_softmax(data0)))
+# print('channel 1, row 0, column 0 of 2nd CL: ' + str(NN.keras_model_pre_softmax(data0)))
 for k in range(input_dim[2]):
     input_range_channel = []
     for i in range(input_dim[0]):
@@ -58,10 +81,10 @@ for k in range(input_dim[2]):
             #     [(max(0, data[i][j][k] - eps) - NN.mean) / NN.std, (min(1, data[i][j][k] + eps)- NN.mean) / NN.std])
         input_range_channel.append(input_range_row)
     input_range.append(input_range_channel)
-print(np.array(input_range).shape)
+
 start_time = time.time()
-nn_analyzer = ReachNN(NN, np.array(input_range), 3, 'ERAN', global_robustness_type='L-INFINITY', perturbation_bound=0.01)
-new_output_range = nn_analyzer.output_range_analysis('METRIC', 9, iteration=5, per=[0.005, 0.2])
+nn_analyzer = ReachNN(NN, 'CIFAR', data0, np.array(input_range), 3, 'ERAN', global_robustness_type='L-INFINITY', perturbation_bound=0.01)
+new_output_range = nn_analyzer.output_range_analysis('METRIC', 9, iteration=5, per=[0.0005, 0.2], is_test=True)
 # nn_refiner = NNRangeRefiner(NN, np.array(input_range), 'ERAN', traceback=2)
 # test_range = nn_refiner.update_neuron_input_range(0, 6, 9)
 print("--- %s seconds ---" % (time.time() - start_time))

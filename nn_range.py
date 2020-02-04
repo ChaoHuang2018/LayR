@@ -17,6 +17,7 @@ class NNRange(object):
     def __init__(
         self,
         NN,
+        type,
         network_input_box,
         initialize_approach,
         input_range_all=None,
@@ -24,6 +25,7 @@ class NNRange(object):
     ):
         # neural networks
         self.NN = NN
+        self.type = type
         # input space
         self.network_input_box = network_input_box
         self.initialize_approach = initialize_approach
@@ -66,8 +68,8 @@ class NNRange(object):
             if self.NN.layers[layer_index].activation == 'Affine':
                 return 1
             elif self.NN.layers[layer_index].activation == 'ReLU':
-                if (self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][0] > 0 or
-                        self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][1] < 0):
+                if (self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][0] >= 0 or
+                        self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][1] <= 0):
                     return min(1, neuron_refinement_degree)
                 else:
                     return min(2, neuron_refinement_degree)
@@ -77,8 +79,8 @@ class NNRange(object):
             if self.NN.layers[layer_index].activation == 'Affine':
                 return 1
             elif self.NN.layers[layer_index].activation == 'ReLU':
-                if (self.input_range_all[layer_index][neuron_index][0] > 0 or
-                        self.input_range_all[layer_index][neuron_index][1] < 0):
+                if (self.input_range_all[layer_index][neuron_index][0] >= 0 or
+                        self.input_range_all[layer_index][neuron_index][1] <= 0):
                     return min(1, neuron_refinement_degree)
                 else:
                     return min(2, neuron_refinement_degree)
@@ -97,7 +99,7 @@ class NNRange(object):
         print('-----------Start to construct the initial input range of each neuron for further analysis.------------')
 
         if method == 'ERAN':
-            eran = ERANModel(NN)
+            eran = ERANModel(NN, self.type)
             input_range_eran = eran.input_range_eran(network_input_box)
             print(len(input_range_eran))
 

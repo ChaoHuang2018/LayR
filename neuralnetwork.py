@@ -497,6 +497,7 @@ class NN(object):
         # pass input through each layer
         for i in range(self.num_of_hidden_layers - 2):
             # linear transformation
+            print(self.weights[i].shape)
             g = self.weights[i] @ g
             g = g + self.bias[i]
 

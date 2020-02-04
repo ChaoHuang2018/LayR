@@ -10,23 +10,26 @@ import math
 import random
 import time
 import copy
-
+import os
+import warnings
+warnings.filterwarnings("error")
 
 class NNRangeRefiner(NNRange):
 
     def __init__(
         self,
         NN,
+        type,
         network_input_box,
         initialize_approach,
         v_name='NN',
         traceback=None
     ):
-        NNRange.__init__(self, NN, network_input_box, initialize_approach)
+        NNRange.__init__(self, NN, type, network_input_box, initialize_approach)
         self.v_name = v_name
         self.traceback = traceback
 
-    def refine_neuron(self, layer_index, neuron_index, approach='BOTH', outputFlag=0):
+    def refine_neuron(self, layer_index, neuron_index, approach='BOTH', outputFlag=0, presolve=0):
         if outputFlag == 1:
             print('Start to refine neuron with index:')
             print('layer_index: ' + str(layer_index) + ', neuron_index: ' + str(neuron_index))
@@ -39,11 +42,11 @@ class NNRangeRefiner(NNRange):
             new_range = old_range
         elif approach == 'UPDATE_RANGE':
             start_layer = layer_index - min(self.traceback, layer_index + 1)
-            new_range = self.update_neuron_input_range(start_layer, layer_index, neuron_index, outputFlag)
+            new_range = self.update_neuron_input_range(start_layer, layer_index, neuron_index, outputFlag, presolve=presolve)
         else:
             start_layer = layer_index - min(self.traceback, layer_index + 1)
             self.add_neuron_slack_integer(layer_index, neuron_index, outputFlag)
-            new_range = self.update_neuron_input_range(start_layer, layer_index, neuron_index, outputFlag=1)
+            new_range = self.update_neuron_input_range(start_layer, layer_index, neuron_index, outputFlag, presolve=presolve)
         return new_range
 
     def add_neuron_slack_integer(self, layer_index, neuron_index, outputFlag=0):
@@ -57,8 +60,8 @@ class NNRangeRefiner(NNRange):
                     print('No need to add more slack binary variables for this neuron!')
                 return
             elif self.NN.layers[layer_index].activation == 'ReLU':
-                if (self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][0] > 0 or
-                        self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][1] < 0):
+                if (self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][0] >= 0 or
+                        self.input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]][1] <= 0):
                     if outputFlag == 1:
                         print('No need to add more slack binary variables for this neuron!')
                     return
@@ -80,8 +83,8 @@ class NNRangeRefiner(NNRange):
                     print('No need to add more slack binary variables for this neuron!')
                 return
             elif self.NN.layers[layer_index].activation == 'ReLU':
-                if (self.input_range_all[layer_index][neuron_index][0] > 0 or
-                        self.input_range_all[layer_index][neuron_index][1] < 0):
+                if (self.input_range_all[layer_index][neuron_index][0] >= 0 or
+                        self.input_range_all[layer_index][neuron_index][1] <= 0):
                     if outputFlag == 1:
                         print('No need to add more slack binary variables for this neuron!')
                     return
@@ -98,7 +101,7 @@ class NNRangeRefiner(NNRange):
                 if outputFlag == 1:
                     print('Add a slack integer variables.')
 
-    def update_neuron_input_range(self, start_layer, layer_index, neuron_index, outputFlag=0):
+    def update_neuron_input_range(self, start_layer, layer_index, neuron_index, outputFlag=0, presolve=0):
         model = gp.Model('Input_range_update')
         NN = self.NN
         input_range_all = self.input_range_all
@@ -122,14 +125,14 @@ class NNRangeRefiner(NNRange):
             x_in_neuron = x_in[layer_index][neuron_index]
 
         model.setObjective(x_in_neuron, GRB.MINIMIZE)
-        neuron_min = self._optimize_model(model, 0)
+        neuron_min = self._optimize_model(model, 0, presolve=presolve)
         model.setObjective(x_in_neuron, GRB.MAXIMIZE)
-        neuron_max = self._optimize_model(model, 0)
+        neuron_max = self._optimize_model(model, 0, presolve=presolve)
 
         if type(neuron_index) == list:
-            old_range = input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]]
+            old_range = copy.deepcopy(input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]])
         else:
-            old_range = input_range_all[layer_index][neuron_index]
+            old_range = copy.deepcopy(input_range_all[layer_index][neuron_index])
 
         new_range = [neuron_min, neuron_max]
         if NN.layers[layer_index].type == 'Fully_connected':
@@ -138,7 +141,7 @@ class NNRangeRefiner(NNRange):
             input_range_all[layer_index][neuron_index[2]][neuron_index[0]][neuron_index[1]] = new_range
         if outputFlag == 1 and (abs(new_range[0]-old_range[0]) >= 0.1 or abs(new_range[1]-old_range[1]) >= 0.1):
             print('Old input range: {}'.format(old_range))
-            print('Finish Updating.')
+            # print('Finish Updating.')
             print('New input range: {}'.format(new_range))
         return new_range
 
@@ -496,7 +499,7 @@ class NNRangeRefiner(NNRange):
                             for q in range(kernel.shape[1]):
                                 sum_expr = sum_expr + x_in[s][i * stride[0] + p, j * stride[1] + q] * kernel[p, q, s, k]
                     sum_expr = sum_expr + bias[k]
-                    model.addConstr(sum_expr == x_out[k][i, j], name='layer_' + str(layer_index) + '_' + str(
+                    model.addConstr(sum_expr == x_out[k][i, j], name='layer_' + str(layer_index).replace(" ", "_") + '_' + str(
                         [i, j, s]) + '_convolutional_layer_linear')
 
     # pooling layer
@@ -551,7 +554,7 @@ class NNRangeRefiner(NNRange):
                                 temp_sum = temp_sum + x_in[s][i * stride[0] + p, j * stride[1] + q]
                         model.addConstr(temp_sum / (filter_size[0] * filter_size[1]) == x_out[s][i, j],
                                         name='layer_' + str(layer_index) + '_' + str(
-                                            [i, j, s]) + '_pooling_layer_linear')
+                                            [i, j, s]).replace(" ", "_") + '_pooling_layer_linear')
 
     # flatten layer
     # x_in should be 3-dimensional, x_out should be 1-dimensional
@@ -606,11 +609,11 @@ class NNRangeRefiner(NNRange):
                         # set input range of the neuron
                         x_in[s][i, j].setAttr(GRB.Attr.LB, low)
                         x_in[s][i, j].setAttr(GRB.Attr.UB, upp)
-                        # if act.activate(upp) - act.activate(low) <= 10e5:
-                        # model.addConstr(z[s][i][j].sum() == 0)
-                        # x_out[s][i, j].setAttr(GRB.Attr.LB, act.activate(low))
-                        # x_out[s][i, j].setAttr(GRB.Attr.UB, act.activate(upp))
-                        # continue
+                        # if act.activate(upp) - act.activate(low) <= 10e8:
+                        #     model.addConstr(z[s][i][j].sum() == 0)
+                        #     x_out[s][i, j].setAttr(GRB.Attr.LB, act.activate(low))
+                        #     x_out[s][i, j].setAttr(GRB.Attr.UB, act.activate(upp))
+                        #     continue
                         # Stay inside one and only one region, thus sum of slack integers should be 1
 
                         # if isinstance(z[s][i][j], tuple):
@@ -639,8 +642,8 @@ class NNRangeRefiner(NNRange):
                 # set range of the neuron
                 x_in[i].setAttr(GRB.Attr.LB, low)
                 x_in[i].setAttr(GRB.Attr.UB, upp)
-                # if act.activate(upp) - act.activate(low) <= 10e5:
-                # model.addConstr(z[i].sum() == 0)
+                # if act.activate(upp) - act.activate(low) <= 10e8:
+                #     model.addConstr(z[i].sum() == 0)
                 #     x_out[i].setAttr(GRB.Attr.LB, act.activate(low))
                 #     x_out[i].setAttr(GRB.Attr.UB, act.activate(upp))
                 #     continue
@@ -675,7 +678,22 @@ class NNRangeRefiner(NNRange):
 
         temp_x_diff = M * (seg_right - seg_left)
         temp_y_diff = M * (act.activate(seg_right) - act.activate(seg_left))
+        if temp_x_diff == 0:
+            model.addConstr((z_seg == 1) >> (x_in_neuron >= seg_left),
+                            name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                        "_") + '_no_refine_lowbound')
+            model.addConstr((z_seg == 1) >> (x_in_neuron <= seg_right),
+                            name='layer_' + str(layer_index) + '_' + str(index).replace(" ",
+                                                                                        "_") + '_no_refine_uppbound')
+            model.addConstr((z_seg == 1) >> (x_out_neuron == act.activate(seg_left)),
+                            name='layer_' + str(layer_index) + '_' + str(index).replace(" ", "_") + '_no_refine')
+            return
         der = temp_y_diff / temp_x_diff
+        # try:
+        #     der = temp_y_diff / temp_x_diff
+        # except (RuntimeWarning, RuntimeError, ZeroDivisionError) as error:
+        #     print(str(error) + 'occurs!')
+        #     raise ValueError('Input range of the neuron: layer' + str(layer_index) + ', index: ' + str(index) + ': ' + str(temp_x_diff))
         if activation == 'Affine':
             model.addConstr((z_seg == 1) >> (x_in_neuron == x_out_neuron),
                             name='layer_' + str(layer_index) + '_' + str(index).replace(" ","_") + '_identity')
@@ -943,28 +961,35 @@ class NNRangeRefiner(NNRange):
                                                                                             "_") + '_relaxation_C3')
 
     # optimize a model
-    def _optimize_model(self, model, DETAILS_FLAG):
+    def _optimize_model(self, model, DETAILS_FLAG, presolve=1):
         model.setParam('OutputFlag', DETAILS_FLAG)
         model.setParam('BarHomogeneous', 1)
         # model.setParam('DualReductions', 0)
         start_time = time.time()
-        p = model.presolve()
         # presolve_time = start_time
         # print("Presolve time: %s seconds." % (presolve_time - start_time))
-        p.optimize()
+        # try:
+        #     p = model.presolve()
+        # except gp.GurobiError:
+        #     p = model
         # print("Optimization time: %s seconds." % (time.time() - presolve_time))
         # print("Total solving time: %s seconds." % (time.time() - start_time))
 
+        if presolve == 1:
+            p = model.presolve()
+        else:
+            p = model
+        p.optimize()
         if p.status == GRB.OPTIMAL:
             opt = p.objVal
             return opt
         else:
             p.write("model.lp")
             print(p.printStats())
-            # model.computeIIS()
+            p.computeIIS()
             # if model.IISMinimal:
             #     print('IIS is minimal\n')
             # else:
             #     print('IIS is not minimal\n')
-            # model.write("model.ilp")
+            p.write("model.ilp")
             raise ValueError('Error: No solution founded!')

@@ -22,12 +22,18 @@ from ERAN.tf_verify.config import config
 class ERANModel(object):
     def __init__(
         self,
-        NN
+        NN,
+        type
     ):
         # neural networks
         self.NN = NN
+        self.type = type
         netfolder = 'model'
-        num_pixels = 784
+
+        if self.type == 'CIFAR':
+            num_pixels = 3072
+        elif self.type == 'MNIST':
+            num_pixels = 784
 
         if '.' not in self.NN.name:
             self.NN.name = self.NN.name + '.pyt'
@@ -73,7 +79,7 @@ class ERANModel(object):
                     if operations[i+2] == 'Relu':
                         nlb_eran_raw.append(nlb[j])
                         nub_eran_raw.append(nub[j])
-                        j = j + 1
+                        j = j + 2
                     if operations[i+2] == 'Tanh' or operations[i+2] == 'Sigmoid':
                         nlb_eran_raw.append(nlb[j])
                         nub_eran_raw.append(nub[j])
@@ -86,7 +92,9 @@ class ERANModel(object):
                     j += 1
             elif (operations[i] == 'Conv2D') and (operations[i+1] in ['Add', 'BiasAdd']):
                 if operations[i + 2] == 'Relu':
-                    j = j + 1
+                    nlb_eran_raw.append(nlb[j])
+                    nub_eran_raw.append(nub[j])
+                    j = j + 2
                 if operations[i + 2] == 'Tanh' or operations[i + 2] == 'Sigmoid':
                     nlb_eran_raw.append(nlb[j])
                     nub_eran_raw.append(nub[j])
@@ -94,13 +102,12 @@ class ERANModel(object):
                 i += 3
             else:
                 i += 1
+        print(len(nub_eran_raw))
         input_range_all = []
         i = 0
         j = 0
         while i < self.NN.num_of_hidden_layers:
             if NN.layers[i].type == 'Fully_connected' or NN.layers[i].type == 'Activation':
-                # print(len(nlb_eran_raw[j]))
-                # print(len(nub_eran_raw[j]))
                 input_range_layer = self.eran_range_reashape(i, nlb_eran_raw[j], nub_eran_raw[j])
                 j += 1
                 input_range_all.append(input_range_layer)

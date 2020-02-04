@@ -10,6 +10,7 @@ import math
 import random
 import time
 import copy
+import os
 
 class HeuristicSeachingStrategy(object):
     def __init__(
@@ -37,10 +38,10 @@ class HeuristicSeachingStrategy(object):
 
         old_input_range = copy.deepcopy(nn_refiner.input_range_all[-1][output_index])
         print('Initial input range of the interested neuron is: ' + str(old_input_range))
-        # print('After LP relaxation: ' + str(
-        #     nn_refiner.refine_neuron(nn_refiner.NN.num_of_hidden_layers - 1, output_index, approach='UPDATE_RANGE')))
-        print('After LP relaxation: ' + str(nn_refiner.update_neuron_input_range(-1, nn_refiner.NN.num_of_hidden_layers - 1, output_index, outputFlag=1)))
-        print('-------' + strategy_name + ' refinement begins.----------')
+        # nn_refiner.update_neuron_input_range(-1, 1, [8,16,28], outputFlag=1)
+        print('After LP relaxation: ' + str(
+            nn_refiner.update_neuron_input_range(-1, nn_refiner.NN.num_of_hidden_layers - 1, output_index, outputFlag=1,
+                                                 presolve=1)))
         for i in range(self.iteration):
             print('Iteration ' + str(i) + ' begins.')
             for layer_index in range(1, nn_refiner.NN.num_of_hidden_layers-1):
@@ -48,9 +49,9 @@ class HeuristicSeachingStrategy(object):
                     continue
                 print('Start to process layer ' + str(layer_index))
                 if strategy_name == 'METRIC':
-                    self.strategy_metric_ranking_layer(nn_refiner, layer_index)
+                    range_neuron = self.strategy_metric_ranking_layer(nn_refiner, layer_index)
                 if strategy_name == 'RANDOM':
-                    self.strategy_random_ranking_layer(nn_refiner, layer_index)
+                    range_neuron = self.strategy_random_ranking_layer(nn_refiner, layer_index)
 
                 if nn_refiner.NN.layers[layer_index].type == 'Fully_connected':
                     neuron_list = self.pop_neurons_by_priority(layer_index, self.refinement_per_fc)
@@ -58,7 +59,7 @@ class HeuristicSeachingStrategy(object):
                     neuron_list = self.pop_neurons_by_priority(layer_index, self.refinement_per_cnn)
                 print(neuron_list)
                 for neuron_index in neuron_list:
-                    nn_refiner.refine_neuron(layer_index, neuron_index, approach='BOTH')
+                    nn_refiner.refine_neuron(layer_index, neuron_index, approach='BOTH', presolve=0)
                     self.increase_selected_number(layer_index, neuron_index)
                 # print('Integer variable of this layer: ' + str(sum(nn_refiner.refinement_degree_all[layer_index])))
             if if_check_output:
@@ -219,6 +220,11 @@ class HeuristicSeachingStrategy(object):
                 for i in range(NN.layers[layer_index].input_dim[0]):
                     for j in range(NN.layers[layer_index].input_dim[1]):
                         if NN.layers[layer_index].type == 'Activation':
+                            # for relu neuron with zero output, no need for refinement
+                            if NN.layers[layer_index].activation == 'ReLU' and input_range_all[layer_index][s][i][j][1] <= 0:
+                                coef = 0
+                            else:
+                                coef = 1
                             volume = input_range_all[layer_index][s][i][j][1] - input_range_all[layer_index][s][i][j][0]
                             refinement = refinement_degree_all[layer_index][s][i][j]
                             if (i, j, s) in self.select_num_dic[layer_index].keys():
@@ -228,11 +234,16 @@ class HeuristicSeachingStrategy(object):
                                 select_number = 0
                             output_weight = 1
                             self.priority_all[layer_index][
-                                i, j, s] = (1 / (select_number+1)) * (volume / refinement) * output_weight
+                                i, j, s] = (1 / (select_number+1)) * (volume / refinement) * output_weight * coef
                         else:
                             self.priority_all[layer_index][i, j, s] = 0
         else:
             for i in range(NN.layers[layer_index].input_dim[0]):
+                # for relu neuron with zero output, no need for refinement
+                if NN.layers[layer_index].activation == 'ReLU' and input_range_all[layer_index][i][1] <= 0:
+                    coef = 0
+                else:
+                    coef = 1
                 volume = input_range_all[layer_index][i][1] - input_range_all[layer_index][i][0]
                 refinement = refinement_degree_all[layer_index][i]
                 if i in self.select_num_dic[layer_index].keys():
@@ -241,4 +252,4 @@ class HeuristicSeachingStrategy(object):
                     self.select_num_dic[layer_index][i] = 0
                     select_number = 0
                 output_weight = np.linalg.norm(NN.layers[layer_index].weight[i, :])
-                self.priority_all[layer_index][i] = (1 / (select_number + 1)) * (volume / refinement) * output_weight
+                self.priority_all[layer_index][i] = (1 / (select_number + 1)) * (volume / refinement) * output_weight * coef
