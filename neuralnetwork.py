@@ -146,8 +146,9 @@ class NN(object):
                         if layer.padding == 'valid':
                             layer_tmp._padding = 0
                         elif layer.padding == 'same':
-                            layer_tmp._padding = (
-                                layer_tmp.kernel.shape[0] - 1
+                            layer_tmp._padding =(
+                                layer_tmp.kernel.shape[0] -
+                                layer_tmp.stride[0]
                             )/2
                         self.layers.append(layer_tmp)
 
