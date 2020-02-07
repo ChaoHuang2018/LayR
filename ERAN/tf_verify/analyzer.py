@@ -92,9 +92,9 @@ class Analyzer:
                 print()
                 print('ERAN is processing Layer ' + str(i))
                 element_test_bounds = self.ir_list[i].transformer(self.nn, self.man, element, nlb, nub, self.relu_groups, self.domain=='refinezono', self.timeout_lp, self.timeout_milp, self.testing)
-                # print(len(nlb[-1]))
-                # print(nlb[-1][0:10])
-                # print(nub[-1][0:10])
+                print(len(nlb[-1]))
+                print(nlb[-1][0:10])
+                print(nub[-1][0:10])
             else:
                 element_test_bounds = self.ir_list[i].transformer(self.nn, self.man, element, nlb, nub, self.relu_groups, self.domain=='refinepoly', self.timeout_lp, self.timeout_milp, self.use_area_heuristic, self.testing)
 

@@ -64,6 +64,8 @@ class ERANModel(object):
     def input_range_eran(self, network_in):
         NN = self.NN
         network_in_lower_bound, network_in_upper_bound = self.network_in_split(network_in)
+        print(network_in_lower_bound[0:3])
+        print(network_in_upper_bound[0:3])
         # print(network_in_lower_bound)
         label, _, nlb, nub, output_info = self.eran.analyze_box(network_in_lower_bound, network_in_upper_bound, 'deepzono', 1, 1,
                                                    False, testing=True)
@@ -118,9 +120,9 @@ class ERANModel(object):
         network_in_lower_bound = []
         network_in_upper_bound = []
         if self.NN.type == 'Convolutional' or self.NN.type == 'Flatten':
-            for s in range(self.NN.layers[0].input_dim[2]):
-                for i in range(self.NN.layers[0].input_dim[0]):
-                    for j in range(self.NN.layers[0].input_dim[1]):
+            for i in range(self.NN.layers[0].input_dim[0]):
+                for j in range(self.NN.layers[0].input_dim[1]):
+                    for s in range(self.NN.layers[0].input_dim[2]):
                         if isinstance(network_in[s][i][j][0], np.ndarray):
                             network_in_lower_bound.append(network_in[s][i][j][0][0])
                             network_in_upper_bound.append(network_in[s][i][j][1][0])

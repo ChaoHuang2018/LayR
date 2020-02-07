@@ -30,7 +30,7 @@ def get_tests(dataset):
 
 # test new approach for estimating sigmoid network's output range
 eps = 0.01
-NN = nn_controller_details('model_CIFAR_CNN_Large', keras=True)
+NN = nn_controller_details('model_CIFAR_CNN_Medium', keras=True)
 print(NN.mean)
 print(NN.std)
 
@@ -68,17 +68,20 @@ image= np.float64(test[1:len(test)])/np.float64(255)
 data = image.reshape(32, 32, 3)
 data0 = image.reshape(1, 32, 32, 3)
 print(NN.keras_model(data0)[0][9])
+# print(NN.layers[0].kernel.shape)
+# print(NN.layers[0].kernel[:,:,:,3])
+# print(NN.layers[0].bias[3])
 input_dim = NN.layers[0].input_dim
-# print('channel 1, row 0, column 0 of 2nd CL: ' + str(NN.keras_model_pre_softmax(data0)))
+print('channel 0, row 0, column 0 of 1nd CL: ' + str(NN.keras_model_pre_softmax(data0)))
 for k in range(input_dim[2]):
     input_range_channel = []
     for i in range(input_dim[0]):
         input_range_row = []
         for j in range(input_dim[1]):
             # input_range_row.append([data[i][j][k], data[i][j][k]])
-            input_range_row.append([max(0, data[i][j][k] - eps), min(1, data[i][j][k] + eps)])
-            # input_range_row.append(
-            #     [(max(0, data[i][j][k] - eps) - NN.mean) / NN.std, (min(1, data[i][j][k] + eps)- NN.mean) / NN.std])
+            # input_range_row.append([max(0, data[i][j][k] - eps), min(1, data[i][j][k] + eps)])
+            input_range_row.append(
+                [(max(0, (data[i][j][k] - eps)) - NN.mean) / NN.std, (min(1, (data[i][j][k] + eps))- NN.mean) / NN.std])
         input_range_channel.append(input_range_row)
     input_range.append(input_range_channel)
 

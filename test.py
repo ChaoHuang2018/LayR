@@ -3,6 +3,9 @@
 import time
 import keras
 import os
+import csv
+import copy
+import random
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID";
 
@@ -10,61 +13,77 @@ os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID";
 os.environ["CUDA_VISIBLE_DEVICES"]="0";
 
 import numpy as np
-import sympy as sp
 import cvxpy as cp
 
 from network_parser import nn_controller, nn_controller_details
 from numpy import pi, tanh, array, dot
 from gurobipy import *
-from analyzeCNN import output_range_MILP_CNN
-#import controller_approximation_lib as cal
+from reachnn import ReachNN
+from nn_range_refiner import NNRangeRefiner
 
 #import tensorflow as tf
-
+def get_tests(dataset):
+    csvfile = open('data/{}_test.csv'.format(dataset), 'r')
+    tests = csv.reader(csvfile, delimiter=',')
+    return tests
 
 
 # test new approach for estimating sigmoid network's output range
-eps = 0.1
-NN = nn_controller_details('model_CNN_avgpool_simple',keras=True)
-# the data, split between train and test sets
-fashion_mnist = keras.datasets.fashion_mnist
-(x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
-data = x_test[0]
-data = data.reshape(data.shape[0], data.shape[1], 1)
+eps = 0.01
+NN = nn_controller_details('model_CIFAR_CNN_Medium', keras=True)
+
+w = [[[ 0.09480116, -0.04812197, -0.09353992],
+  [-0.02359495, -0.01279663,  0.03123438],
+  [-0.0504902,  -0.06165261, -0.05582498],
+  [ 0.0008492,   0.09251167,  0.01976186]],
+ [[ 0.00713766, -0.2349602,  -0.27480617],
+  [-0.01125166, -0.23150535, -0.05289953],
+  [ 0.02868317, -0.00037204,  0.19999257],
+  [-0.03179998,  0.13388725,  0.24728076]],
+ [[ 0.03181054, -0.24173619, -0.30916935],
+  [ 0.04295825, -0.23104002,  0.01876903],
+  [ 0.21704498,  0.06316286,  0.23970185],
+  [-0.16174626,  0.21232843,  0.09777785]],
+ [[ 0.05890926, -0.15512267, -0.17352128],
+  [ 0.00675091,  0.07449771,  0.02546142],
+  [ 0.04035579,  0.20861667, 0.09841397],
+  [ 0.01244394,  0.06305319,  0.0609398]]]
+
+b = -0.025138568
+
 input_range = []
-input_dim = NN.layers[0].input_dim
-for i in range(input_dim[0]):
-    input_range_row = []
-    for j in range(input_dim[1]):
-        input_range_channel = []
-        for k in range(input_dim[2]):
-            input_range_channel.append([data[i][j][k] - eps, data[i][j][k] + eps])
-        input_range_row.append(input_range_channel)
-    input_range.append(input_range_row)
-print(np.array(input_range).shape)
-output_l, output_u = output_range_MILP_CNN(NN, np.array(input_range), 3)
-print("lower bound: {}; upper bound: {}".format(output_l, output_u))
-print("actual output: {}".format(NN.keras_model_pre_softmax(data)))
 
+tests = get_tests('cifar10')
+for test in tests:
+    break
+image= np.float64(test[1:len(test)])/np.float64(255)
+data = image.reshape(32, 32, 3)
+data0 = image.reshape(1, 32, 32, 3)
+for k in range(3):
+    input_range_channel = []
+    for i in range(4):
+        input_range_row = []
+        for j in range(4):
+            # input_range_row.append([data[i][j][k], data[i][j][k]])
+            input_range_row.append([max(0, data[i][j][k] - eps), min(1, data[i][j][k] + eps)])
+            # input_range_row.append(
+            #     [(max(0, data[i][j][k] - eps) - NN.mean) / NN.std, (min(1, data[i][j][k] + eps)- NN.mean) / NN.std])
+        input_range_channel.append(input_range_row)
+    input_range.append(input_range_channel)
 
-# test cvxpy
-##def c(x,y):
-##    return [x+y<=1]
-##
-##x = cp.Variable()
-##y = cp.Variable()
-##
-##
-##objective = cp.Maximize(2*x+y)
-##constraints = [0 <= x, 0 <= y]
-##con = c(x,y)
-##constraints += con
-##
-##prob = cp.Problem(objective, constraints)
-##
-##print("Optimal value", prob.solve())
-##print("Optimal var")
-##print(x.value)
-
-
-
+min_test = 0
+max_test = 0
+k = 0
+for s in range(3):
+    for p in range(4):
+        for q in range(4):
+            if w[p][q][s] >= 0:
+                min_test += input_range[s][p][q][0] * w[p][q][s]
+                max_test += input_range[s][p][q][1] * w[p][q][s]
+            else:
+                min_test += input_range[s][p][q][1] * w[p][q][s]
+                max_test += input_range[s][p][q][0] * w[p][q][s]
+min_test = min_test + b
+max_test = max_test + b
+print(min_test)
+print(max_test)

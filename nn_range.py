@@ -92,6 +92,8 @@ class NNRange(object):
     def __initialize_input_range(self, method='BASIC'):
         NN = self.NN
         network_input_box = self.network_input_box
+        for k in range(len(network_input_box)):
+            print(network_input_box[k][0][0])
 
         input_range_all = []
         output_range_all = []
@@ -120,11 +122,11 @@ class NNRange(object):
             print('The dimension of input range of layer ' + str(i) + ' :')
             print(np.array(input_range_layer).shape)
             print(NN.layers[i].input_dim)
-            print('Naive')
-            if NN.layers[i].type != 'Fully_connected':
-                print(input_range_layer[0][0][0:10])
-            else:
-                print(input_range_layer[0:10])
+            # print('Naive')
+            # if NN.layers[i].type != 'Fully_connected':
+            #     print(input_range_layer[0][0][0:10])
+            # else:
+            #     print(input_range_layer[0:10])
 
             if (NN.layers[i].type == 'Fully_connected' or NN.layers[i].type == 'Activation'
                     ):
@@ -151,6 +153,11 @@ class NNRange(object):
                 # print(input_range_layer[2][1][0:4])
                 # print(input_range_layer[2][2][0:4])
                 # print(input_range_layer[2][3][0:4])
+                # print(input_range_layer[3][0][0])
+                # print(input_range_layer[4][0][0])
+                # print(input_range_layer[5][0][0])
+                # print(input_range_layer[6][0][0])
+                # print(input_range_layer[7][0][0])
                 if method == 'ERAN':
                     input_range_layer = copy.deepcopy(self.merge_range(i, input_range_layer, input_range_eran[j]))
                 # input_range_layer = copy.deepcopy(np.array(input_range_eran[j]))
