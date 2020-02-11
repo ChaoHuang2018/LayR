@@ -86,7 +86,7 @@ for k in range(input_dim[2]):
     input_range.append(input_range_channel)
 
 start_time = time.time()
-nn_analyzer = ReachNN(NN, 'CIFAR', data0, np.array(input_range), 3, 'ERAN', global_robustness_type='L-INFINITY', perturbation_bound=0.01)
+nn_analyzer = ReachNN(NN, 'CIFAR', data0, np.array(input_range), 3, 'BASIC', global_robustness_type='L-INFINITY', perturbation_bound=0.01)
 new_output_range = nn_analyzer.output_range_analysis('METRIC', 9, iteration=5, per=[0.0005, 0.2], is_test=True)
 # nn_refiner = NNRangeRefiner(NN, np.array(input_range), 'ERAN', traceback=2)
 # test_range = nn_refiner.update_neuron_input_range(0, 6, 9)
