@@ -84,7 +84,7 @@ class HeuristicSeachingStrategy(object):
         new_input_range = nn_refiner.refine_neuron(nn_refiner.NN.num_of_hidden_layers - 1, output_index, approach='UPDATE_RANGE')
         print('Refinement finishes.')
         print('New range after refinement process is: ' + str(new_input_range))
-        return new_input_range
+        return old_input_range, new_input_range
 
     def increase_selected_number_test(self, layer_index, neuron_index):
         if isinstance(neuron_index, list):
