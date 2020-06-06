@@ -28,7 +28,9 @@ class HeuristicSeachingStrategy(object):
         self.select_num_dic = []
         self.priority_all = []
 
-    def refine_by_heuristic(self, nn_refiner, output_index, robustness=False):
+    def refine_by_heuristic(
+        self, nn_refiner, output_index, robustness=False, approach='BOTH'
+    ):
         strategy_name = self.strategy_name
         if_check_output = self.if_check_output
 
@@ -63,7 +65,7 @@ class HeuristicSeachingStrategy(object):
                     neuron_list = self.pop_neurons_by_priority(layer_index, self.refinement_per_cnn)
                 print(neuron_list)
                 for neuron_index in neuron_list:
-                    nn_refiner.refine_neuron(layer_index, neuron_index, approach='BOTH', presolve=0)
+                    nn_refiner.refine_neuron(layer_index, neuron_index, approach=approach, presolve=0)
                     self.increase_selected_number(layer_index, neuron_index)
                 # print('Integer variable of this layer: ' + str(sum(nn_refiner.refinement_degree_all[layer_index])))
             if if_check_output:

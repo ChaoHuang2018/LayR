@@ -94,7 +94,7 @@ def run(args):
             nn_analyzer = ReachNN(
                 NN, args.dataset, data0, np.array(input_range), args.traceback,
                 args.propagation_method, global_robustness_type='L-INFINITY',
-                perturbation_bound=eps
+                perturbation_bound=eps, approach=args.approach
             )
             old_range, new_range = nn_analyzer.output_range_analysis(
                 'METRIC', label, iteration=args.it_num,
@@ -140,6 +140,10 @@ if __name__ == '__main__':
     parser.add_argument(
         '--percentage', type=str,
         default='[0.0005, 0.2]', help='refinement percentage'
+    )
+    parser.add_argument(
+        '--approach', type=str,
+        default='BOTH', help='refinement approach'
     )
     parser.add_argument(
         '--store', type=str, default='result/cifar', help='store result'

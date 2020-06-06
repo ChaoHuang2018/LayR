@@ -45,7 +45,8 @@ class ReachNN(object):
         initialize_approach,
         global_robustness_type=None,
         perturbation_bound=None,
-        NN2=None
+        NN2=None,
+        approach='BOTH'
     ):
         # neural networks
         self.NN1 = NN1
@@ -69,6 +70,9 @@ class ReachNN(object):
         # traceback
         self.traceback = traceback
 
+        # refienment
+        self.approach = approach
+
     def output_range_analysis(self, strategy_name, output_index, iteration, per, is_test=False, robustness=False):
         if is_test:
             low = 100
@@ -84,7 +88,7 @@ class ReachNN(object):
             print('Bound by random sampling is: ' + str([low, upp]))
         nn_refiner = NNRangeRefiner(self.NN1, self.type, self.network_input_box, self.initialize_approach, traceback=self.traceback)
         heuristic_search = HeuristicSeachingStrategy(strategy_name, iteration, per, if_check_output=True)
-        old_output_range, new_output_range = heuristic_search.refine_by_heuristic(nn_refiner, output_index)
+        old_output_range, new_output_range = heuristic_search.refine_by_heuristic(nn_refiner, output_index, approach=self.approach)
         # new_output_range = nn_refiner.update_neuron_input_range(self.NN1.num_of_hidden_layers - 1, output_index)
         return old_output_range, new_output_range
 

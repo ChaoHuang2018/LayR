@@ -1,4 +1,5 @@
 # python main.py --data_id [0,1,2,3] --dataset CIFAR --netname model_CIFAR_CNN_Large model_CIFAR_CNN_Medium --epsilon 0.001 --traceback 2 --percentage [0.0005,0.1] &&
+# python main.py --data_id [0,1,2,3] --dataset CIFAR --netname model_CIFAR_CNN_Large --percentage [0.0005,0.2] --epsilon 0.001 --it_num 3 &&
 python main.py --data_id [0,1,2,3] --traceback 2 --netname model_MNIST_CNN_Small model_MNIST_CNN_Large --store result/mnist_traceback2_new &&
 python main.py --data_id [0,1,2,3] --traceback 1 --netname model_MNIST_CNN_Small model_MNIST_CNN_Large --store result/mnist_traceback1_new &&
 python main.py --data_id [0,1,2,3] --netname model_MNIST_CNN_Small model_MNIST_CNN_Large --percentage [0.000125,0.05] --store result/mnist_percentage1_new &&
