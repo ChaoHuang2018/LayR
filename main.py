@@ -41,7 +41,7 @@ def run(args):
         NN = nn_details(netname, keras=True)
 
         # the data, split between train and test sets
-        for data_id in args.data_id:
+        for data_id in eval(args.data_id):
             dict[netname][data_id] = {}
             if args.dataset == 'MNIST':
                 tests = get_tests('mnist')
@@ -50,7 +50,7 @@ def run(args):
                         break
                 image = np.float64(test[1:len(test)]) / np.float64(255)
                 data = image.reshape(28, 28, 1)
-                data0 = data.reshape(1, 28, 28, 1)
+                data0 = data.reshape(1, 28, 28)
                 label = np.int(test[0])
                 input_dim = NN.layers[0].input_dim
 
@@ -72,7 +72,7 @@ def run(args):
                         break
                 image = np.float64(test[1:len(test)]) / np.float64(255)
                 data = image.reshape(32, 32, 3)
-                data0 = (data.reshape(1, 32, 32, 3) - NN.mean) / NN.std
+                data0 = data.reshape(1, 32, 32, 3)
                 label = np.int(test[0])
                 input_dim = NN.layers[0].input_dim
 
@@ -98,12 +98,12 @@ def run(args):
             )
             old_range, new_range = nn_analyzer.output_range_analysis(
                 'METRIC', label, iteration=args.it_num,
-                per=args.percentage, is_test=False
+                per=eval(args.percentage), is_test=False
             )
             runtime = time.time() - start_time
             print("--- %s seconds ---" % (runtime))
             dict[netname][data_id]['label'] = label
-            dict[netname][data_id]['old_range'] = old_range
+            dict[netname][data_id]['old_range'] = old_range.tolist()
             dict[netname][data_id]['new_range'] = new_range
             dict[netname][data_id]['runtime'] = runtime
             with open(args.store + '.json', 'w') as file:
@@ -116,10 +116,7 @@ if __name__ == '__main__':
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument(
-        '--netname', type=list, default=[
-            'model_MNIST_CNN_Small',
-            'model_MNIST_CNN_Medium', 'model_MNIST_CNN_Large'
-        ],
+        '--netname', nargs="*", type=str, default=[],
         help='the network name'
     )
     parser.add_argument(
@@ -130,7 +127,7 @@ if __name__ == '__main__':
         help='propagation method for initial solution'
     )
     parser.add_argument(
-        '--data_id', type=list, default=[0], help='data id of the test set'
+        '--data_id', type=str, default=[0], help='data id of the test set'
     )
     parser.add_argument(
         '--epsilon', type=float, default=1e-2,
@@ -138,14 +135,14 @@ if __name__ == '__main__':
     )
     parser.add_argument('--traceback', type=int, default=3, help='traceback')
     parser.add_argument(
-        '--it_num', type=int, default=1, help='iteration number'
+        '--it_num', type=int, default=4, help='iteration number'
     )
     parser.add_argument(
-        '--percentage', type=list,
-        default=[0.0005, 0.2], help='refinement percentage'
+        '--percentage', type=str,
+        default='[0.0005, 0.2]', help='refinement percentage'
     )
     parser.add_argument(
-        '--store', type=str, default='result/mnist', help='store result'
+        '--store', type=str, default='result/cifar', help='store result'
     )
     args = parser.parse_args()
     run(args)

@@ -28,7 +28,7 @@ class HeuristicSeachingStrategy(object):
         self.select_num_dic = []
         self.priority_all = []
 
-    def refine_by_heuristic(self, nn_refiner, output_index):
+    def refine_by_heuristic(self, nn_refiner, output_index, robustness=False):
         strategy_name = self.strategy_name
         if_check_output = self.if_check_output
 
@@ -42,7 +42,11 @@ class HeuristicSeachingStrategy(object):
         print('After LP relaxation: ' + str(
             nn_refiner.update_neuron_input_range(-1, nn_refiner.NN.num_of_hidden_layers - 1, output_index, outputFlag=1,
                                                  presolve=1)))
+
+        new_range_dict = {}
+        time_dict = {}
         for i in range(self.iteration):
+            start_time = time.time()
             print('Iteration ' + str(i) + ' begins.')
             for layer_index in range(1, nn_refiner.NN.num_of_hidden_layers-1):
                 if nn_refiner.NN.layers[layer_index].type not in ('Activation', 'Fully_connected'):
@@ -64,6 +68,9 @@ class HeuristicSeachingStrategy(object):
                 # print('Integer variable of this layer: ' + str(sum(nn_refiner.refinement_degree_all[layer_index])))
             if if_check_output:
                 new_range = nn_refiner.refine_neuron(nn_refiner.NN.num_of_hidden_layers - 1, output_index, approach='UPDATE_RANGE', outputFlag=1)
+                end_time = time.time() - start_time
+                new_range_dict['it' + str(i)] = new_range
+                time_dict['it' + str(i)] = end_time
                 print('Output range updates: ' + str(new_range))
 
 
@@ -82,9 +89,19 @@ class HeuristicSeachingStrategy(object):
         #     nn_refiner.refine_neuron(layer_index, neuron_index, approach='BOTH')
 
         new_input_range = nn_refiner.refine_neuron(nn_refiner.NN.num_of_hidden_layers - 1, output_index, approach='UPDATE_RANGE')
+        if robustness:
+            for idx in range(10):
+                if idx != output_index:
+                    new_range = nn_refiner.refine_neuron(
+                        nn_refiner.NN.num_of_hidden_layers - 1,
+                        idx, approach='UPDATE_RANGE'
+                    )
+                    new_range_dict['label'+str(idx)] = new_range
+        new_range_dict['final_range'] = new_input_range
+        new_range_dict['time'] = time_dict
         print('Refinement finishes.')
         print('New range after refinement process is: ' + str(new_input_range))
-        return old_input_range, new_input_range
+        return old_input_range, new_range_dict
 
     def increase_selected_number_test(self, layer_index, neuron_index):
         if isinstance(neuron_index, list):

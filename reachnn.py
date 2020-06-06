@@ -69,7 +69,7 @@ class ReachNN(object):
         # traceback
         self.traceback = traceback
 
-    def output_range_analysis(self, strategy_name, output_index, iteration, per, is_test=False):
+    def output_range_analysis(self, strategy_name, output_index, iteration, per, is_test=False, robustness=False):
         if is_test:
             low = 100
             upp = -100
