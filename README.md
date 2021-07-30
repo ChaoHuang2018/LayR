@@ -1,2 +1,2 @@
-# ReachNN-CNN
-This version of ReachNN is for output range analysis of general CNN
+# LayR
+LayR is a verification tool for output range analysis of general CNN
